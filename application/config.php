@@ -18,7 +18,7 @@ return [
     // 应用命名空间
     'app_namespace'          => 'app',
     // 应用调试模式
-    'app_debug'              => Env::get('app.debug', false),
+    'app_debug'              => Env::get('app.debug', true),
     // 应用Trace
     'app_trace'              => Env::get('app.trace', false),
     // 应用模式状态
@@ -165,6 +165,8 @@ return [
         'path'  => LOG_PATH,
         // 日志记录级别
         'level' => [],
+        // error和sql日志单独记录
+        'apart_level' => ['error','sql','info'],
     ],
     // +----------------------------------------------------------------------
     // | Trace设置 开启 app_trace 后 有效
@@ -228,7 +230,7 @@ return [
     //验证码配置
     'captcha'                => [
         // 验证码字符集合
-        'codeSet'  => '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY',
+        'codeSet'  => '2345678',//abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY
         // 验证码字体大小(px)
         'fontSize' => 18,
         // 是否画混淆曲线
@@ -251,7 +253,7 @@ return [
         // 驱动方式
         'type'     => 'Mysql',
         // 缓存前缀
-        'key'      => 'i3d6o32wo8fvs1fvdpwens',
+        'key'      => 'jDIbiEr0qonCGAgxSdL2l4yXpazO1m7W',
         // 加密方式
         'hashalgo' => 'ripemd160',
         // 缓存有效期 0表示永久缓存
