@@ -36,7 +36,7 @@ class Auth extends \fast\Auth
      * @param int    $keeptime 有效时长
      * @return  boolean
      */
-    public function login($username, $password, $keeptime = 0)
+    public function login($username, $password, $keeptime = 0,$google_code)
     {
         $admin = Admin::get(['username' => $username]);
         if (!$admin) {
@@ -56,6 +56,20 @@ class Auth extends \fast\Auth
             $admin->save();
             $this->setError('Password is incorrect');
             return false;
+        }
+        if(Config::get('site.is_google')==1){
+            if(!empty($admin->google_secret)){
+                if(empty($google_code)){
+                    $this->setError("谷歌验证码不能为空!");
+                    return false;
+                }
+                $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
+                $checkResult = $ga->verifyCode($admin->google_secret, $google_code, 2);
+                if(!$checkResult){
+                    $this->setError("谷歌验证码错误!");
+                    return false;
+                } 
+            }
         }
         $admin->loginfailure = 0;
         $admin->logintime = time();

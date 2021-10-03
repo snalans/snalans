@@ -16,7 +16,7 @@ return [
     'FeMale'         => '女',
     'Birthday'       => '生日',
     'Bio'            => '格言',
-    'Score'          => '积分',
+    'Score'          => '有效值',
     'Successions'    => '连续登录天数',
     'Maxsuccessions' => '最大连续登录天数',
     'Prevtime'       => '上次登录时间',
@@ -29,5 +29,6 @@ return [
     'Updatetime'     => '更新时间',
     'Token'          => 'Token',
     'Status'         => '状态',
+    'Hidden'         => '拉黑',
     'Leave password blank if dont want to change' => '不修改密码请留空',
 ];

@@ -1,0 +1,88 @@
+<style>
+    .profile-avatar-container {
+        position: relative;
+        width: 100px;
+        margin: 0 auto;
+    }
+
+    .profile-avatar-container .profile-user-img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-avatar-container .profile-avatar-text {
+        display: none;
+    }
+
+    .profile-avatar-container:hover .profile-avatar-text {
+        display: block;
+        position: absolute;
+        height: 100px;
+        width: 100px;
+        background: #444;
+        opacity: .6;
+        color: #fff;
+        top: 0;
+        left: 0;
+        line-height: 100px;
+        text-align: center;
+    }
+
+    .profile-avatar-container button {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100px;
+        height: 100px;
+        opacity: 0;
+    }
+</style>
+<div class="row animated fadeInRight">
+    <div class="col-md-12">
+        <div class="box box-success">
+            <div class="panel-heading">
+                <a href="javascript:location.reload();" class="btn btn-primary btn-refresh" ><i class="fa fa-refresh"></i> </a>
+                绑定谷歌验证
+            </div>
+            <div class="panel-body">
+                {if($is_bing==0)}
+                <form id="update-form" role="form" data-toggle="validator" method="POST" action="">
+                    {:token()}
+                    <div class="box-body box-profile">
+                        <h3>绑定谷歌身份验证码</h3>
+                        <div style="padding: 10px 0;">
+                            <img src="{$qrCodeUrl}" alt="" style="width: 180px;">
+                        </div>
+
+                        <p>手机打开Google Authenticator(谷歌身份验证器)，扫描二维码</p>
+                        <p>不能扫码？点击 <a href="javascript:layer.alert('{$secret}')" style="color:blue;">查看密钥</a> 手动添加</p>
+                        <input type="hidden" name="secret" id="secret" value="{$secret}">
+                        
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="google_code" name="row[google_code]" data-rule="required" placeholder="请输入谷歌验证码进行绑定" style="width: 300px;"/>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-success google_bind">{:__('Submit')}</button>
+                            <button type="reset" class="btn btn-default">{:__('Reset')}</button>
+                        </div>
+
+                    </div>
+                </form>
+                {else}
+                 <div class="box-body box-profile">
+                    <div>
+                        该账户已经绑定谷歌身份验证
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="google_code" name="row[google_code]" data-rule="required" placeholder="请输入谷歌验证码进行解绑" style="width: 300px;"/>
+                    </div>
+                    <div class="form-group">
+                        <a href="javascript:;" class="google_unbind">解绑</a>
+                    </div>
+                </div>
+                {/if}
+            </div>
+        </div>
+
+    </div>
+</div>

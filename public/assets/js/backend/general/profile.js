@@ -52,6 +52,26 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'upload'], function (
                 return true;
             });
         },
+        google: function () {            
+            $(".google_bind").on("click",function(){
+                Fast.api.ajax({
+                    url: './general/Profile/google',
+                    data: {'google_code': $("#google_code").val(),'secret':$("#secret").val()},
+                    dataType:'json',
+                }, function (data) {
+                    location.reload()
+                });
+            })
+            $(".google_unbind").on("click",function(){
+                Fast.api.ajax({
+                    url: './general/Profile/unbind',
+                    data: {'google_code': $("#google_code").val(),'secret':$("#secret").val()},
+                    dataType:'json',
+                }, function (data) {
+                    location.reload()
+                });
+            })
+        }
     };
     return Controller;
 });

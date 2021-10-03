@@ -64,6 +64,7 @@ class Index extends Backend
         if ($this->request->isPost()) {
             $username = $this->request->post('username');
             $password = $this->request->post('password');
+            $google_code = $this->request->post('google_code');
             $keeplogin = $this->request->post('keeplogin');
             $token = $this->request->post('__token__');
             $rule = [
@@ -86,7 +87,7 @@ class Index extends Backend
                 $this->error($validate->getError(), $url, ['token' => $this->request->token()]);
             }
             AdminLog::setTitle(__('Login'));
-            $result = $this->auth->login($username, $password, $keeplogin ? 86400 : 0);
+            $result = $this->auth->login($username, $password, $keeplogin ? 86400 : 0,$google_code);
             if ($result === true) {
                 Hook::listen("admin_login_after", $this->request);
                 $this->success(__('Login successful'), $url, ['url' => $url, 'id' => $this->auth->id, 'username' => $username, 'avatar' => $this->auth->avatar]);

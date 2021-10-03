@@ -4,6 +4,7 @@ namespace app\common\model;
 
 use think\Db;
 use think\Model;
+use fast\Random;
 
 /**
  * 会员模型
@@ -147,5 +148,25 @@ class User extends Model
             }
         }
         return $level;
+    }
+
+    /**
+     * 获取邀请码
+     * @param int $type 类型 1=邀请码 2=会员编号
+     * @return string
+     */
+    public static function getInviteCode($type=1)
+    {
+        if($type){
+            $code = Random::alnum(6);
+            $result = Db::name("user")->where("invite_code",$code)->find();
+        }else{
+            $code = Random::alnum(8);
+            $result = Db::name("user")->where("serial_umber",$code)->find();
+        }
+        if($result){
+            return self::getInviteCode($type);
+        }
+        return $code;
     }
 }

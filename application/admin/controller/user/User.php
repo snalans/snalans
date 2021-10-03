@@ -4,6 +4,7 @@ namespace app\admin\controller\user;
 
 use app\common\controller\Backend;
 use app\common\library\Auth;
+use think\Db;
 
 /**
  * 会员管理
@@ -102,4 +103,20 @@ class User extends Backend
         $this->success();
     }
 
+    /**
+     * 修改状态
+     */
+    public function changeStatus($ids = "")
+    {
+        if ($this->request->isAjax()) {
+            $ids = $ids ? $ids : $this->request->post("ids");
+            $status = Db::name("user")->where("id",$ids)->value("status");
+            $status = $status=='hidden'?'normal':'hidden';
+            $result = Db::name("user")->where("id",$ids)->update(['status'=>$status]);
+            if($result){
+                $this->success();
+            }
+        }
+        $this->error();
+    }
 }

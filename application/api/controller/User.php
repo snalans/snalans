@@ -8,6 +8,7 @@ use app\common\library\Sms;
 use fast\Random;
 use think\Config;
 use think\Validate;
+use think\Db;
 
 /**
  * 会员接口
@@ -29,10 +30,18 @@ class User extends Api
 
     /**
      * 会员中心
+     * @param string $avatar  头像
+     * @param string $nickname 昵称
+     * @param string $serial_umber 会员编号
+     * @param string $mobile  手机号
+     * @param string $level 等级
+     * @param string $score 有效值
+     * @param string $invite_code 邀请码
      */
     public function index()
     {
-        $this->success('', ['welcome' => $this->auth->nickname]);
+        $result = Db::name("user")->field("avatar,nickname,serial_umber,mobile,level,score,invite_code")->where("id",$this->auth->id)->find();
+        $this->success('', $result);
     }
 
     /**
@@ -101,21 +110,28 @@ class User extends Api
      * 注册会员
      *
      * @ApiMethod (POST)
-     * @param string $username 用户名
+     * @param string $username   手机号
      * @param string $password 密码
-     * @param string $email    邮箱
-     * @param string $mobile   手机号
+     * @param string $invite_code    邀请码
      * @param string $code     验证码
      */
     public function register()
     {
         $username = $this->request->post('username');
+        $mobile = $username;
         $password = $this->request->post('password');
+        $invite_code = $this->request->post('invite_code');
         $email = $this->request->post('email');
-        $mobile = $this->request->post('mobile');
         $code = $this->request->post('code');
         if (!$username || !$password) {
             $this->error(__('Invalid parameters'));
+        }
+        $wh = [];
+        $wh['status']       = 'normal';
+        $wh['invite_code']  = $invite_code;
+        $result = Db::name("user")->where($wh)->find();
+        if(empty($result) || empty($invite_code)){
+            $this->error(__('Invalid invitation code, please check'));
         }
         if ($email && !Validate::is($email, "email")) {
             $this->error(__('Email is incorrect'));
@@ -127,7 +143,7 @@ class User extends Api
         if (!$ret) {
             $this->error(__('Captcha is incorrect'));
         }
-        $ret = $this->auth->register($username, $password, $email, $mobile, []);
+        $ret = $this->auth->register($username, $password, $email, $mobile, ['invite_code'=>$invite_code]);
         if ($ret) {
             $data = ['userinfo' => $this->auth->getUserinfo()];
             $this->success(__('Sign up successful'), $data);
@@ -156,7 +172,6 @@ class User extends Api
      * @param string $avatar   头像地址
      * @param string $username 用户名
      * @param string $nickname 昵称
-     * @param string $bio      个人简介
      */
     public function profile()
     {

@@ -21,27 +21,63 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pk: 'id',
                 sortName: 'user.id',
+                searchFormVisible: true,
+                search:false,
                 columns: [
                     [
                         {checkbox: true},
                         {field: 'id', title: __('Id'), sortable: true},
-                        {field: 'group.name', title: __('Group')},
-                        {field: 'username', title: __('Username'), operate: 'LIKE'},
-                        {field: 'nickname', title: __('Nickname'), operate: 'LIKE'},
-                        {field: 'email', title: __('Email'), operate: 'LIKE'},
-                        {field: 'mobile', title: __('Mobile'), operate: 'LIKE'},
                         {field: 'avatar', title: __('Avatar'), events: Table.api.events.image, formatter: Table.api.formatter.image, operate: false},
-                        {field: 'level', title: __('Level'), operate: 'BETWEEN', sortable: true},
-                        {field: 'gender', title: __('Gender'), visible: false, searchList: {1: __('Male'), 0: __('Female')}},
-                        {field: 'score', title: __('Score'), operate: 'BETWEEN', sortable: true},
-                        {field: 'successions', title: __('Successions'), visible: false, operate: 'BETWEEN', sortable: true},
-                        {field: 'maxsuccessions', title: __('Maxsuccessions'), visible: false, operate: 'BETWEEN', sortable: true},
-                        {field: 'logintime', title: __('Logintime'), formatter: Table.api.formatter.datetime, operate: 'RANGE', addclass: 'datetimerange', sortable: true},
-                        {field: 'loginip', title: __('Loginip'), formatter: Table.api.formatter.search},
-                        {field: 'jointime', title: __('Jointime'), formatter: Table.api.formatter.datetime, operate: 'RANGE', addclass: 'datetimerange', sortable: true},
-                        {field: 'joinip', title: __('Joinip'), formatter: Table.api.formatter.search},
+                        {field: 'username', title: __('Username'), operate: 'LIKE'},
+                        {field: 'mobile', title: __('Mobile'), operate: 'LIKE'},
+                        {field: 'level', title: __('Level'), sortable: true},
+                        {field: 'score', title: __('Score')},
+                        {field: 'logintime', title: __('Logintime'), operate: false, formatter: Table.api.formatter.datetime, addclass: 'datetimerange', sortable: true},
+                        {field: 'loginip', title: __('Loginip'), operate: false, formatter: Table.api.formatter.search},
+                        {field: 'jointime', title: __('Jointime'), operate: false, formatter: Table.api.formatter.datetime, addclass: 'datetimerange', sortable: true},
+                        {field: 'joinip', title: __('Joinip'), operate: false, formatter: Table.api.formatter.search}, 
                         {field: 'status', title: __('Status'), formatter: Table.api.formatter.status, searchList: {normal: __('Normal'), hidden: __('Hidden')}},
-                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                        {field: 'is_attestation', title: __('是否认证'), formatter: Table.api.formatter.normal, searchList: {0: '未认证', 1: '成功',2: '等待审核',3:'失败'}},
+                        {field: 'operate', title: __('Operate'), table: table,buttons: [
+                            {name: 'edit', text: '查看', title: '查看', icon: 'fa fa-list', classname: 'btn btn-xs btn-primary btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url},
+                            {
+                                name: 'ajax',
+                                text: '拉黑',
+                                title: '拉黑',
+                                classname: 'btn btn-xs btn-primary btn-stop btn-ajax',
+                                icon: 'fa fa-stop',
+                                confirm: '确认拉黑？',
+                                url: 'user/user/changeStatus',
+                                success: function (data, ret) {
+                                    table.bootstrapTable('refresh');
+                                    //如果需要阻止成功提示，则必须使用return false;
+                                    //return false;
+                                },
+                                hidden:function(row){
+                                    if(row.status == 'hidden'){ 
+                                        return true; 
+                                    }
+                                }
+                            },{
+                                name: 'ajax',
+                                text: '恢复',
+                                title: '恢复',
+                                classname: 'btn btn-xs btn-success btn-stop btn-ajax',
+                                icon: 'fa fa-stop',
+                                confirm: '确认恢复正常？',
+                                url: 'user/user/changeStatus',
+                                success: function (data, ret) {
+                                    table.bootstrapTable('refresh');
+                                    //如果需要阻止成功提示，则必须使用return false;
+                                    //return false;
+                                },
+                                hidden:function(row){
+                                    if(row.status == 'normal'){ 
+                                        return true; 
+                                    }
+                                }
+                            }
+                        ], events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
             });

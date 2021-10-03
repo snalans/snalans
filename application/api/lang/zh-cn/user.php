@@ -35,4 +35,5 @@ return [
     'Change password failure'               => '修改密码失败',
     'Change password successful'            => '修改密码成功',
     'Reset password successful'             => '重置密码成功',
+    'Invalid invitation code, please check' => '邀请码无效，请检查',
 ];
