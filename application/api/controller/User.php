@@ -30,13 +30,14 @@ class User extends Api
 
     /**
      * 会员中心
-     * @param string $avatar  头像
-     * @param string $nickname 昵称
-     * @param string $serial_umber 会员编号
-     * @param string $mobile  手机号
-     * @param string $level 等级
-     * @param string $score 有效值
-     * @param string $invite_code 邀请码
+     * 
+     * @ApiReturnParams   (name="avatar", type="string", description="头像")
+     * @ApiReturnParams   (name="nickname", type="string", description="昵称")
+     * @ApiReturnParams   (name="serial_umber", type="string", description="会员编号")
+     * @ApiReturnParams   (name="mobile", type="string", description="手机号")
+     * @ApiReturnParams   (name="level", type="integer", description="等级")
+     * @ApiReturnParams   (name="score", type="integer", description="有效值")
+     * @ApiReturnParams   (name="invite_code", type="string", description="邀请码")
      */
     public function index()
     {
@@ -355,5 +356,73 @@ class User extends Api
         } else {
             $this->error($this->auth->getError());
         }
+    }
+
+    /**
+     * 获取认证信息
+     *
+     * @ApiMethod (POST)
+     * @ApiReturnParams   (name="name", type="string", description="姓名")
+     * @ApiReturnParams   (name="id_card", type="string", description="身份证号")
+     * @ApiReturnParams   (name="front_img", type="string", description="正面照")
+     * @ApiReturnParams   (name="reverse_img", type="string", description="反面照")
+     * @ApiReturnParams   (name="hand_img", type="string", description="手持照")
+     * @ApiReturnParams   (name="hands_img", type="string", description="手持宣传语照")
+     * @ApiReturnParams   (name="remark", type="string", description="审核备注")
+     */
+    public function getAttestationInfo()
+    {
+        $result = Db::name("egg_attestation")->field(['id','user_id'],true)->where("user_id",$this->auth->id)->find();
+        $this->success('',$result);
+    }
+
+
+    /**
+     * 保存认证信息
+     *
+     * @ApiMethod (POST)
+     * @ApiParams   (name="name", type="string",required=true, description="姓名")
+     * @ApiParams   (name="id_card", type="string",required=true, description="身份证号")
+     * @ApiParams   (name="front_img", type="string",required=true, description="正面照")
+     * @ApiParams   (name="reverse_img", type="string",required=true, description="反面照")
+     * @ApiParams   (name="hand_img", type="string",required=true, description="手持照")
+     * @ApiParams   (name="hands_img", type="string",required=true, description="手持宣传语照")
+     */
+    public function saveAttestationInfo()
+    {
+        $name           = $this->request->post("name");
+        $id_card        = $this->request->post("id_card");
+        $front_img      = $this->request->post("front_img");
+        $reverse_img    = $this->request->post("reverse_img");
+        $hand_img       = $this->request->post("hand_img");
+        $hands_img      = $this->request->post("hands_img");
+
+        if (!\app\common\library\Validate::check_id_card($id_card)) {
+            $this->error(__('Id_card is incorrect'));
+        }
+        if (!$name || !$id_card || !$front_img || !$reverse_img || !$hand_img || !$hands_img) {
+            $this->error(__('Invalid parameters'));
+        }
+        $params = [];
+        $params['name']         = $name;
+        $params['id_card']      = $id_card;
+        $params['front_img']    = $front_img;
+        $params['reverse_img']  = $reverse_img;
+        $params['hand_img']     = $hand_img;
+        $params['hands_img']    = $hands_img;
+        $result = Db::name("egg_attestation")->where("user_id",$this->auth->id)->find();
+        if(empty($result)){
+            $params['user_id']    = $this->auth->id;
+            $result = Db::name("egg_attestation")->insert($params);
+            if($result){                
+                $this->success("添加成功");
+            }
+        }else{
+            $result = Db::name("egg_attestation")->where("user_id",$this->auth->id)->update($params);
+            if($result){                
+                $this->success("更新成功");
+            }
+        }
+        $this->error("执行失败");
     }
 }

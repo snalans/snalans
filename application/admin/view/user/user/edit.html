@@ -1,121 +1,99 @@
 <form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
-    {:token()}
-    <input type="hidden" name="row[id]" value="{$row.id}">
-
+    
     <div class="form-group">
-        <label for="c-avatar" class="control-label col-xs-12 col-sm-2">{:__('Avatar')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <div class="input-group">
-                <input id="c-avatar" data-rule="" class="form-control" size="50" name="row[avatar]" type="text" value="{$row.avatar}">
-                <div class="input-group-addon no-border no-padding">
-                    <span><button type="button" id="faupload-avatar" class="btn btn-danger faupload" data-input-id="c-avatar" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="false" data-preview-id="p-avatar"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
-                    <span><button type="button" id="fachoose-avatar" class="btn btn-primary fachoose" data-input-id="c-avatar" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> {:__('Choose')}</button></span>
-                </div>
-                <span class="msg-box n-right" for="c-avatar"></span>
-            </div>
-            <ul class="row list-inline faupload-preview" id="p-avatar"></ul>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="c-username" class="control-label col-xs-12 col-sm-2">{:__('Username')}:</label>
+        <label for="c-avatar" class="control-label col-xs-12 col-sm-3">{:__('Avatar')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-username" data-rule="required" class="form-control" name="row[username]" type="text" value="{$row.username|htmlentities}">
+            <img src="{$row.avatar}">
         </div>
     </div>
     <div class="form-group">
-        <label for="c-mobile" class="control-label col-xs-12 col-sm-2">{:__('Mobile')}:</label>
+        <label for="c-username" class="control-label col-xs-12 col-sm-3">{:__('Username')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-mobile" data-rule="" class="form-control" name="row[mobile]" type="text" value="{$row.mobile|htmlentities}">
+            <span class="form-control">{$row.username|htmlentities}</span>
         </div>
     </div>
     <div class="form-group">
-        <label for="c-level" class="control-label col-xs-12 col-sm-2">{:__('Level')}:</label>
+        <label for="c-mobile" class="control-label col-xs-12 col-sm-3">{:__('Mobile')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-level" data-rule="required" class="form-control" name="row[level]" type="number" value="{$row.level}">
+            <span class="form-control">{$row.mobile|htmlentities}</span>
         </div>
     </div>
     <div class="form-group">
-        <label for="c-gender" class="control-label col-xs-12 col-sm-2">{:__('Gender')}:</label>
+        <label for="c-level" class="control-label col-xs-12 col-sm-3">{:__('Level')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{$row.level|htmlentities}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-gender" class="control-label col-xs-12 col-sm-3">{:__('Gender')}:</label>
         <div class="col-xs-12 col-sm-8">
             {:build_radios('row[gender]', ['1'=>__('Male'), '0'=>__('Female')], $row['gender'])}
         </div>
     </div>
     <div class="form-group">
-        <label for="c-birthday" class="control-label col-xs-12 col-sm-2">{:__('Birthday')}:</label>
+        <label for="c-birthday" class="control-label col-xs-12 col-sm-3">{:__('Birthday')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-birthday" data-rule="" class="form-control datetimepicker" data-date-format="YYYY-MM-DD" data-use-current="true" name="row[birthday]" type="text" value="{$row.birthday}">
+            <span class="form-control">{$row.birthday|htmlentities}</span>
         </div>
     </div>
     <div class="form-group">
-        <label for="c-money" class="control-label col-xs-12 col-sm-2">{:__('Money')}:</label>
+        <label for="c-money" class="control-label col-xs-12 col-sm-3">{:__('Money')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-money" data-rule="required" class="form-control" name="row[money]" type="number" value="{$row.money}">
+            <span class="form-control">{$row.money|htmlentities}</span>
         </div>
     </div>
     <div class="form-group">
-        <label for="c-score" class="control-label col-xs-12 col-sm-2">{:__('Score')}:</label>
+        <label for="c-score" class="control-label col-xs-12 col-sm-3">{:__('Score')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-score" data-rule="required" class="form-control" name="row[score]" type="number" value="{$row.score}">
+            <span class="form-control">{$row.score|htmlentities}</span>
         </div>
     </div>
     <div class="form-group">
-        <label for="c-successions" class="control-label col-xs-12 col-sm-2">{:__('Successions')}:</label>
+        <label for="c-successions" class="control-label col-xs-12 col-sm-3">{:__('Successions')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-successions" data-rule="required" class="form-control" name="row[successions]" type="number" value="{$row.successions}">
+            <span class="form-control">{$row.successions|htmlentities}</span>
         </div>
     </div>
     <div class="form-group">
-        <label for="c-maxsuccessions" class="control-label col-xs-12 col-sm-2">{:__('Maxsuccessions')}:</label>
+        <label for="c-maxsuccessions" class="control-label col-xs-12 col-sm-3">{:__('Maxsuccessions')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-maxsuccessions" data-rule="required" class="form-control" name="row[maxsuccessions]" type="number" value="{$row.maxsuccessions}">
+            <span class="form-control">{$row.maxsuccessions|htmlentities}</span>
         </div>
     </div>
     <div class="form-group">
-        <label for="c-prevtime" class="control-label col-xs-12 col-sm-2">{:__('Prevtime')}:</label>
+        <label for="c-prevtime" class="control-label col-xs-12 col-sm-3">{:__('Prevtime')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-prevtime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[prevtime]" type="text" value="{$row.prevtime|datetime}">
+            <span class="form-control">{:date("Y-m-d H:i",$row.prevtime)}</span>
         </div>
     </div>
     <div class="form-group">
-        <label for="c-logintime" class="control-label col-xs-12 col-sm-2">{:__('Logintime')}:</label>
+        <label for="c-logintime" class="control-label col-xs-12 col-sm-3">{:__('Logintime')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-logintime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[logintime]" type="text" value="{$row.logintime|datetime}">
+            <span class="form-control">{:date("Y-m-d H:i",$row.logintime)}</span>
         </div>
     </div>
     <div class="form-group">
-        <label for="c-loginip" class="control-label col-xs-12 col-sm-2">{:__('Loginip')}:</label>
+        <label for="c-loginip" class="control-label col-xs-12 col-sm-3">{:__('Loginip')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-loginip" data-rule="required" class="form-control" name="row[loginip]" type="text" value="{$row.loginip}">
+            <span class="form-control">{$row.loginip|htmlentities}</span>
         </div>
     </div>
     <div class="form-group">
-        <label for="c-loginfailure" class="control-label col-xs-12 col-sm-2">{:__('Loginfailure')}:</label>
+        <label for="c-loginfailure" class="control-label col-xs-12 col-sm-3">{:__('Loginfailure')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-loginfailure" data-rule="required" class="form-control" name="row[loginfailure]" type="number" value="{$row.loginfailure}">
+            <span class="form-control">{$row.loginfailure|htmlentities}</span>
         </div>
     </div>
     <div class="form-group">
-        <label for="c-joinip" class="control-label col-xs-12 col-sm-2">{:__('Joinip')}:</label>
+        <label for="c-joinip" class="control-label col-xs-12 col-sm-3">{:__('Joinip')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-joinip" data-rule="required" class="form-control" name="row[joinip]" type="text" value="{$row.joinip}">
+            <span class="form-control">{$row.joinip|htmlentities}</span>
         </div>
     </div>
     <div class="form-group">
-        <label for="c-jointime" class="control-label col-xs-12 col-sm-2">{:__('Jointime')}:</label>
+        <label for="c-jointime" class="control-label col-xs-12 col-sm-3">{:__('Jointime')}:</label>
         <div class="col-xs-12 col-sm-4">
-            <input id="c-jointime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[jointime]" type="text" value="{$row.jointime|datetime}">
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="content" class="control-label col-xs-12 col-sm-2">{:__('Status')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            {:build_radios('row[status]', ['normal'=>__('Normal'), 'hidden'=>__('Hidden')], $row['status'])}
-        </div>
-    </div>
-    <div class="form-group layer-footer">
-        <label class="control-label col-xs-12 col-sm-2"></label>
-        <div class="col-xs-12 col-sm-8">
-            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <span class="form-control">{:date("Y-m-d H:i",$row.jointime)}</span>
         </div>
     </div>
 </form>
