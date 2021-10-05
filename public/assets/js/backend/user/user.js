@@ -28,18 +28,21 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {checkbox: true},
                         {field: 'id', title: __('Id'), sortable: true},
                         {field: 'avatar', title: __('Avatar'), events: Table.api.events.image, formatter: Table.api.formatter.image, operate: false},
+                        {field: 'serial_umber', title: __('Serial_umber'), operate: 'LIKE'},
                         {field: 'username', title: __('Username'), operate: 'LIKE'},
                         {field: 'mobile', title: __('Mobile'), operate: 'LIKE'},
                         {field: 'level', title: __('Level'), sortable: true},
                         {field: 'score', title: __('Score')},
+                        {field: 'valid_number', title: __('Valid_number')},
                         {field: 'logintime', title: __('Logintime'), operate: false, formatter: Table.api.formatter.datetime, addclass: 'datetimerange', sortable: true},
-                        {field: 'loginip', title: __('Loginip'), operate: false, formatter: Table.api.formatter.search},
-                        {field: 'jointime', title: __('Jointime'), operate: false, formatter: Table.api.formatter.datetime, addclass: 'datetimerange', sortable: true},
-                        {field: 'joinip', title: __('Joinip'), operate: false, formatter: Table.api.formatter.search}, 
+                        {field: 'loginip', title: __('Loginip'), operate: false, formatter: Table.api.formatter.search},                
                         {field: 'status', title: __('Status'), formatter: Table.api.formatter.status, searchList: {normal: __('Normal'), hidden: __('Hidden')}},
                         {field: 'is_attestation', title: __('是否认证'), formatter: Table.api.formatter.normal, searchList: {0: '未认证', 1: '成功',2: '等待审核',3:'失败'}},
                         {field: 'operate', title: __('Operate'), table: table,buttons: [
-                            {name: 'edit', text: '查看', title: '查看', icon: 'fa fa-list', classname: 'btn btn-xs btn-primary btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url},
+                            {name: 'edit', text: '查看', title: '查看详情', icon: 'fa fa-list', classname: 'btn btn-xs btn-primary btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url},
+                            {name: 'edit', text: '认证', title: '认证信息', icon: 'fa fa-list', classname: 'btn btn-xs btn-success btn-dialog' ,url:function(row){
+                                return 'user/attestation/index?user_id='+row.id
+                            }},
                             {
                                 name: 'ajax',
                                 text: '拉黑',

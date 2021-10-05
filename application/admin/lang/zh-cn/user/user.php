@@ -16,7 +16,7 @@ return [
     'FeMale'         => '女',
     'Birthday'       => '生日',
     'Bio'            => '格言',
-    'Score'          => '有效值',
+    'Score'          => '积分',
     'Successions'    => '连续登录天数',
     'Maxsuccessions' => '最大连续登录天数',
     'Prevtime'       => '上次登录时间',
@@ -31,4 +31,6 @@ return [
     'Status'         => '状态',
     'Hidden'         => '拉黑',
     'Leave password blank if dont want to change' => '不修改密码请留空',
+    'Valid_number'   => '有效值',
+    'Serial_umber'   => '用户编号',
 ];

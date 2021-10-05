@@ -1,0 +1,40 @@
+<form id="add-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-3">{:__('Eggkind.name')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-kind_id" data-rule="required" data-source="egg/kind/index" class="form-control selectpage" name="row[kind_id]" type="text" value="">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-3">{:__('Hatch_cycle')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-hatch_cycle" class="form-control" name="row[hatch_cycle]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-3">{:__('Grow_cycle')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-grow_cycle" class="form-control" name="row[grow_cycle]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-3">{:__('Raw_cycle')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-raw_cycle" class="form-control" name="row[raw_cycle]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-3">{:__('Max')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-max" class="form-control" name="row[max]" type="number">
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-3"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>
