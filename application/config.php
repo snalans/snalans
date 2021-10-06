@@ -166,7 +166,7 @@ return [
         // 日志记录级别
         'level' => [],
         // error和sql日志单独记录
-        'apart_level' => ['error','sql','info'],
+        'apart_level' => ['error','sql','info','sms'],
     ],
     // +----------------------------------------------------------------------
     // | Trace设置 开启 app_trace 后 有效

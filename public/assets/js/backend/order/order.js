@@ -40,6 +40,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'name', title: __('Name'), operate: 'LIKE'},
                         {field: 'price', title: __('Price'), operate: false},
                         {field: 'number', title: __('Number'), operate: false},
+                        {field: 'rate', title: __('Rate'), operate: false},
                         {field: 'amount', title: __('Amount'), operate: false},
                         {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {0: '待付款', 1: '完成', 2: '待确认', 3: '申诉', 4: '无效'}},
                         {field: 'note', title: __('Note'), operate: false},

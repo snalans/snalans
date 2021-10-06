@@ -1,28 +1,28 @@
 <?php
 
-namespace app\admin\controller\order;
+namespace app\admin\controller\egg;
 
 use app\common\controller\Backend;
 use think\Db;
 
 /**
- * 订单管理
+ * 蛋
  *
  * @icon fa fa-circle-o
  */
-class Order extends Backend
+class Egg extends Backend
 {
     
     /**
-     * Order模型对象
-     * @var \app\admin\model\order\Order
+     * Egg模型对象
+     * @var \app\admin\model\egg\Egg
      */
     protected $model = null;
 
     public function _initialize()
     {
         parent::_initialize();
-        $this->model = new \app\admin\model\order\Order;
+        $this->model = new \app\admin\model\egg\Egg;
 
     }
 
@@ -37,6 +37,41 @@ class Order extends Backend
      * 需要将application/admin/library/traits/Backend.php中对应的方法复制到当前控制器,然后进行修改
      */
     
+
+    /**
+     * 查看
+     */
+    public function index()
+    {
+        //当前是否为关联查询
+        $this->relationSearch = true;
+        //设置过滤方法
+        $this->request->filter(['strip_tags', 'trim']);
+        if ($this->request->isAjax()) {
+            //如果发送的来源是Selectpage，则转发到Selectpage
+            if ($this->request->request('keyField')) {
+                return $this->selectpage();
+            }
+            list($where, $sort, $order, $offset, $limit) = $this->buildparams();
+
+            $list = $this->model
+                    ->with(['eggkind','user'])
+                    ->where($where)
+                    ->order($sort, $order)
+                    ->paginate($limit);
+
+            foreach ($list as $row) {
+                
+                $row->getRelation('eggkind')->visible(['name']);
+				$row->getRelation('user')->visible(['username','mobile']);
+            }
+
+            $result = array("total" => $list->total(), "rows" => $list->items());
+
+            return json($result);
+        }
+        return $this->view->fetch();
+    }
 
     /**
      * 编辑
@@ -57,8 +92,12 @@ class Order extends Backend
             $params = $this->request->post("row/a");
             if ($params) {
                 $params = $this->preExcludeFields($params);
-                if($row['status'] != 3){
-                    $this->error('订单状态不允许执行');
+                if(!is_numeric($params['change_number']) || strpos($params['change_number'],".") !== false){
+                    $this->error('变动数量需要为整数');
+                }
+                $new_number = $row['number']+$params['change_number'];
+                if($new_number < 0){                    
+                    $this->error('变动数量超出已有的数量');
                 }
                 $result = false;
                 Db::startTrans();
@@ -69,34 +108,11 @@ class Order extends Backend
                         $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
                         $row->validateFailException(true)->validate($validate);
                     }
-                    $number = 0;
-                    $log_rate = true;
-                    $wh = [];
-                    if($params['status'] == 1){
-                        $note = "管理员：".$this->auth->username." 审核通过. ".$params['note'];
-                        $number = $row['number'];
-                        $user_id = $row['buy_user_id'];
-                    }else{
-                        $note = "管理员：".$this->auth->username." 审核不通过. ".$params['note'];
-                        $number = $row['number'] + $row['rate'];
-                        $user_id = $row['sell_user_id'];
-
-                        $log_rate = \app\admin\model\egg\Log::saveLog($user_id,$row['kind_id'],9,$row['order_sn'],$row['rate'],$note." 返还手续费");
-                    }
-                    $wh['user_id'] = $user_id;
-                    $wh['kind_id'] = $row['kind_id'];
-                    $rs = Db::name("egg")->where($wh)->setInc('number',$number);
-
-                    $logrs = \app\admin\model\egg\Log::saveLog($user_id,$row['kind_id'],4,$row['order_sn'],$row['number'],$note);
-
+                    $params['number'] = $new_number;
+                    $note = "管理员：".$this->auth->username." ".$params['note'];
+                    $logrs = \app\admin\model\egg\Log::saveLog($row['user_id'],$row['kind_id'],4,'',$params['change_number'],$note);
                     $result = $row->allowField(true)->save($params);
-                    
-                    if ($result !== false && $logrs && $rs && $log_rate) {
-                        Db::commit();
-                        $this->success();
-                    } else {
-                        $this->error(__('No rows were updated'));
-                    }
+                    Db::commit();
                 } catch (ValidateException $e) {
                     Db::rollback();
                     $this->error($e->getMessage());
@@ -106,6 +122,11 @@ class Order extends Backend
                 } catch (Exception $e) {
                     Db::rollback();
                     $this->error($e->getMessage());
+                }
+                if ($result !== false) {
+                    $this->success();
+                } else {
+                    $this->error(__('No rows were updated'));
                 }
             }
             $this->error(__('Parameter %s can not be empty', ''));

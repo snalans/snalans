@@ -14,6 +14,7 @@ return [
     'Name'                => '商品名称',
     'Price'               => '单价',
     'Number'              => '数量',
+    'Rate'                => '手续费',
     'Amount'              => '总金额',
     'Status'              => '状态',
     'Note'                => '备注',

@@ -32,5 +32,5 @@ return [
     'Hidden'         => '拉黑',
     'Leave password blank if dont want to change' => '不修改密码请留空',
     'Valid_number'   => '有效值',
-    'Serial_umber'   => '用户编号',
+    'Serial_number'  => '用户编号',
 ];

@@ -3,7 +3,7 @@
 namespace app\api\controller;
 
 use app\common\controller\Api;
-use app\common\library\Sms as Smslib;
+use app\common\library\Isms as Smslib;
 use app\common\model\User;
 use think\Hook;
 
@@ -52,9 +52,9 @@ class Sms extends Api
                 $this->error(__('未注册'));
             }
         }
-        if (!Hook::get('sms_send')) {
-            $this->error(__('请在后台插件管理安装短信验证插件'));
-        }
+        // if (!Hook::get('sms_send')) {
+        //     $this->error(__('请在后台插件管理安装短信验证插件'));
+        // }
         $ret = Smslib::send($mobile, null, $event);
         if ($ret) {
             $this->success(__('发送成功'));
