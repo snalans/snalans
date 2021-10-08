@@ -192,6 +192,7 @@ class User extends Model
         $nest = Db::name("egg_nest_kind")->select();
         if(!empty($nest)){
             $datas = [];
+            $totals = [];
             foreach ($nest as $k => $val) {
                 if($val['default']>0){
                     for ($i=1; $i <= $val['default']; $i++) { 
@@ -201,10 +202,16 @@ class User extends Model
                         $data['nest_kind_id']   = $val['id'];
                         $data['position']       = $i;
                         $datas[] = $data;
-                    }                    
+                    }   
+                    $total = [];
+                    $total['user_id']      = $user_id;
+                    $total['nest_kind_id'] = $val['id'];  
+                    $total['number']       = $val['default'];    
+                    $totals[] = $total;      
                 }
             }
             Db::name("egg_hatch")->insertAll($datas);
+            Db::name("egg_nest")->insertAll($totals);
         }
     }
 

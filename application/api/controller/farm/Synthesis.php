@@ -6,6 +6,7 @@ use think\Db;
 
 /**
  * 蛋合成接口
+ * @ApiWeigh   (27)
  */
 class Synthesis extends Api
 {

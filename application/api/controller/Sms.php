@@ -9,6 +9,7 @@ use think\Hook;
 
 /**
  * 手机短信接口
+ * @ApiWeigh   (31)
  */
 class Sms extends Api
 {

@@ -12,6 +12,7 @@ use think\Db;
 
 /**
  * 会员接口
+ * @ApiWeigh   (26)
  */
 class User extends Api
 {
@@ -70,6 +71,7 @@ class User extends Api
 
     /**
      * 手机验证码登录
+     * @ApiInternal
      *
      * @ApiMethod (POST)
      * @param string $mobile  手机号
@@ -168,6 +170,7 @@ class User extends Api
 
     /**
      * 修改会员个人信息
+     * @ApiInternal
      *
      * @ApiMethod (POST)
      * @param string $avatar   头像地址
@@ -203,6 +206,7 @@ class User extends Api
 
     /**
      * 修改邮箱
+     * @ApiInternal
      *
      * @ApiMethod (POST)
      * @param string $email   邮箱
@@ -273,6 +277,7 @@ class User extends Api
 
     /**
      * 第三方登录
+     * @ApiInternal
      *
      * @ApiMethod (POST)
      * @param string $platform 平台名称

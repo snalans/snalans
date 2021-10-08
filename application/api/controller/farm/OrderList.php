@@ -6,6 +6,7 @@ use think\Db;
 
 /**
  * 订单接口
+ * @ApiWeigh   (28)
  */
 class OrderList extends Api
 {

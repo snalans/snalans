@@ -8,6 +8,7 @@ use think\Db;
 
 /**
  * 首页接口
+ * @ApiWeigh   (30)
  */
 class Index extends Api
 {
@@ -15,12 +16,15 @@ class Index extends Api
     protected $noNeedRight = ['*'];
 
     /**
-     * 首页
+     * 首页 白蛋兑换、彩蛋回收
      *
      */
     public function index()
     {
-        $this->success('请求成功');
+        $wh = [];
+        $wh['id'] = ['in',[1,5]];
+        $result = Db::name("egg_kind")->field(['valid_number','weigh'],true)->where($wh)->select();
+        $this->success('请求成功',$result);
     }
 
     /**

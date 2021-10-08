@@ -2,10 +2,12 @@
 namespace app\api\controller\farm;
 
 use app\common\controller\Api;
+use think\Config;
 use think\Db;
 
 /**
  * 农场接口
+ * @ApiWeigh   (29)
  */
 class Index extends Api
 {
@@ -183,6 +185,16 @@ class Index extends Api
         $rs = Db::name("egg_hatch")->where("id",$egg_hatch_id)->update($data);
         $valid_number = Db::name("egg_kind")->where("id",$result['kind_id'])->value("valid_number");
         $urs = Db::name("user")->where("id",$this->auth->id)->setInc('valid_number',$valid_number);
+        //上级发放有效值
+        $wh = [];
+        $wh['user_id'] = $this->auth->id;
+        $wh['level']   = ['<',3];
+        $plist = Db::name("membership_chain")->where($wh)->select();
+        if(!empty($plist)){
+            foreach ($plist as $key => $value) {                
+                Db::name("user")->where("id",$value['ancestral_id'])->setInc('valid_number',$valid_number);
+            }
+        }
         if($reduce_rs && $rs && $log_reduce && $urs){
             Db::commit();
             $this->success(__('Eggs were added to hatch successfully'));
@@ -222,7 +234,7 @@ class Index extends Api
             $this->error('用户不存在!');
         }
 
-        $rate = ceil($number*10/100)??0;
+        $rate = ceil($number*Config::get("site.rate_config")/100)??0;
         $wh = [];
         $wh['user_id'] = $this->auth->id;
         $wh['kind_id'] = $kind_id;

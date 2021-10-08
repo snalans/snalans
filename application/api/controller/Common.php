@@ -13,6 +13,7 @@ use think\Hook;
 
 /**
  * 公共接口
+ * @ApiWeigh   (32)
  */
 class Common extends Api
 {
