@@ -2,6 +2,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
     var Controller = {
         index: function () {
+            $(".btn-add").data("area",["800px","400px"]);
             // 初始化表格参数配置
             Table.api.init({
                 extend: {
@@ -27,11 +28,16 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     [
                         {checkbox: true},
                         {field: 'id', title: __('Id'), operate:false},
+                        {field: 'eggkind.name', title: __('Eggkind.name'), operate: 'LIKE'},
                         {field: 'name', title: __('Name'), operate: 'LIKE'},
+                        {field: 'default', title: __('Default'), operate: false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
             });
+            table.on('post-body.bs.table',function(){
+                $(".btn-editone").data("area",["800px","400px"]);
+            })
 
             // 为表格绑定事件
             Table.api.bindevent(table);

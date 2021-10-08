@@ -101,6 +101,16 @@ class Attestation extends Backend
                         $row->validateFailException(true)->validate($validate);
                     }
                     $rs = Db::name("user")->where("id",$row['user_id'])->update(['is_attestation'=>$params['is_attestation']]);
+                    if($rs && $params['is_attestation'] == 1){
+                        $data = [];
+                        $data['number'] = 10;
+                        $data['frozen'] = 10;
+                        $wh = [];
+                        $wh['user_id'] = $row['user_id'];
+                        $wh['kind_id'] = 1;
+                        $add_rs = Db::name("egg")->where($wh)->update($data);
+                        $add_log = \app\admin\model\egg\Log::saveLog($row['user_id'],1,4,'',10,"赠送体验蛋");
+                    }
                     $result = $row->allowField(true)->save($params);
                     Db::commit();
                 } catch (ValidateException $e) {

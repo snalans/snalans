@@ -153,17 +153,19 @@ class Auth
 
         $ip = request()->ip();
         $time = time();
+        $pid = Db::name("user")->where("invite_code",$extend['invite_code'])->value("id");
+        unset($extend['invite_code']);
 
         $data = [
+            'pid'      => $pid??0,
             'username' => $username,
             'password' => $password,
             'email'    => $email,
             'mobile'   => $mobile,
-            'level'    => 1,
+            'level'    => 0,
             'score'    => 0,
             'avatar'   => '',
-            'serial_umber'  => \app\common\model\User::getInviteCode(2),
-            'invite_code'   => \app\common\model\User::getInviteCode(1),
+            'serial_number'  => \app\common\model\User::getInviteCode(2),
         ];
         $params = array_merge($data, [
             'nickname'  => preg_match("/^1[3-9]{1}\d{9}$/",$username) ? substr_replace($username,'****',3,4) : $username,
@@ -182,6 +184,9 @@ class Auth
         Db::startTrans();
         try {
             $user = User::create($params, true);
+            
+            //配置默认数据
+            \app\common\model\User::defaultEggNest($user->id);
 
             $this->_user = User::get($user->id);
 
@@ -271,9 +276,9 @@ class Auth
         if ($this->_user->password == $this->getEncryptPassword($oldpassword, $this->_user->salt) || $ignoreoldpassword) {
             Db::startTrans();
             try {
-                $salt = Random::alnum();
+                $salt = $this->_user->salt;//Random::alnum();
                 $newpassword = $this->getEncryptPassword($newpassword, $salt);
-                $this->_user->save(['loginfailure' => 0, 'password' => $newpassword, 'salt' => $salt]);
+                $this->_user->save(['loginfailure' => 0, 'password' => $newpassword]);
 
                 Token::delete($this->_token);
                 //修改密码成功的事件
@@ -287,6 +292,36 @@ class Auth
             return true;
         } else {
             $this->setError('Password is incorrect');
+            return false;
+        }
+    }
+
+    /**
+     * 修改支付密码
+     * @param string $newpassword       新密码
+     * @param string $oldpassword       旧密码
+     * @param bool   $ignoreoldpassword 忽略旧密码
+     * @return boolean
+     */
+    public function changepay($newpassword, $oldpassword = '', $ignoreoldpassword = false)
+    {
+        if (!$this->_logined) {
+            $this->setError('You are not logged in');
+            return false;
+        }
+        //判断旧密码是否正确
+        if ($this->_user->paypwd == $this->getEncryptPassword($oldpassword, $this->_user->salt) || $ignoreoldpassword) {
+            try {
+                $newpassword = $this->getEncryptPassword($newpassword, $this->_user->salt);
+                $this->_user->save(['paypwd' => $newpassword]);
+
+            } catch (Exception $e) {
+                $this->setError($e->getMessage());
+                return false;
+            }
+            return true;
+        } else {
+            $this->setError('Payment password is incorrect');
             return false;
         }
     }

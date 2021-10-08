@@ -33,6 +33,10 @@ class NestKind extends Model
 
 
 
+    public function eggkind()
+    {
+        return $this->belongsTo('app\admin\model\egg\Kind', 'kind_id', 'id', [], 'LEFT')->setEagerlyType(0);
+    }
 
 
 

@@ -157,16 +157,56 @@ class User extends Model
      */
     public static function getInviteCode($type=1)
     {
-        if($type){
+        if($type==1){
             $code = Random::alnum(6);
             $result = Db::name("user")->where("invite_code",$code)->find();
         }else{
             $code = Random::alnum(8);
-            $result = Db::name("user")->where("serial_umber",$code)->find();
+            $result = Db::name("user")->where("serial_number",$code)->find();
         }
         if($result){
             return self::getInviteCode($type);
         }
         return $code;
     }
+
+    /**
+     * 生成默认的蛋和窝数据
+     * @param int $user_id 会员id
+     * @return boole
+     */
+    public static function defaultEggNest($user_id=0)
+    {
+        $result = Db::name("egg_kind")->select();
+        if(!empty($result)){
+            $datas = [];
+            foreach ($result as $key => $value) {
+                $data = [];
+                $data['user_id'] = $user_id;
+                $data['kind_id'] = $value['id'];
+                $datas[] = $data;
+            }
+            Db::name("egg")->insertAll($datas);
+        }
+
+        $nest = Db::name("egg_nest_kind")->select();
+        if(!empty($nest)){
+            $datas = [];
+            foreach ($nest as $k => $val) {
+                if($val['default']>0){
+                    for ($i=1; $i <= $val['default']; $i++) { 
+                        $data = [];
+                        $data['user_id']        = $user_id;
+                        $data['kind_id']        = $val['kind_id'];
+                        $data['nest_kind_id']   = $val['id'];
+                        $data['position']       = $i;
+                        $datas[] = $data;
+                    }                    
+                }
+            }
+            Db::name("egg_hatch")->insertAll($datas);
+        }
+    }
+
+
 }

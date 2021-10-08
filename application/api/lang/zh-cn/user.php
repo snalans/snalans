@@ -18,6 +18,7 @@ return [
     'Email is incorrect'                    => '邮箱不正确',
     'Account is locked'                     => '账户已经被锁定',
     'Password is incorrect'                 => '密码不正确',
+    'Payment password is incorrect'         => '支付密码不正确',
     'Account is incorrect'                  => '账户不正确',
     'Account not exist'                     => '账户不存在',
     'Account can not be empty'              => '账户不能为空',
@@ -35,6 +36,7 @@ return [
     'Change password failure'               => '修改密码失败',
     'Change password successful'            => '修改密码成功',
     'Reset password successful'             => '重置密码成功',
+    'Reset payment password successful'     => '重置支付密码成功',
     'Invalid invitation code, please check' => '邀请码无效，请检查',
     'Id_card is incorrect'                  => '身份证不正确',
 ];

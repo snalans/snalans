@@ -2,7 +2,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
     var Controller = {
         index: function () {
-            $(".btn-add").data("area",["400px","400px"]);
             // 初始化表格参数配置
             Table.api.init({
                 extend: {
@@ -29,13 +28,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {checkbox: true},
                         {field: 'id', title: __('Id'), operate:false},
                         {field: 'name', title: __('Name'), operate: 'LIKE'},
+                        {field: 'image', title: __('Image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
+                        {field: 'valid_number', title: __('Valid_number'), operate: false},
+                        {field: 'point', title: __('Point'), operate: false},
+                        {field: 'price', title: __('Price'), operate: false},
+                        {field: 'unit', title: __('Unit'), operate: false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
             });
-            table.on('post-body.bs.table',function(){
-                $(".btn-editone").data("area",["400px","400px"]);
-            })
 
             // 为表格绑定事件
             Table.api.bindevent(table);

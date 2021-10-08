@@ -33,15 +33,15 @@ class User extends Api
      * 
      * @ApiReturnParams   (name="avatar", type="string", description="头像")
      * @ApiReturnParams   (name="nickname", type="string", description="昵称")
-     * @ApiReturnParams   (name="serial_umber", type="string", description="会员编号")
      * @ApiReturnParams   (name="mobile", type="string", description="手机号")
+     * @ApiReturnParams   (name="serial_number", type="string", description="会员编号或邀请码")
      * @ApiReturnParams   (name="level", type="integer", description="等级")
-     * @ApiReturnParams   (name="score", type="integer", description="有效值")
-     * @ApiReturnParams   (name="invite_code", type="string", description="邀请码")
+     * @ApiReturnParams   (name="score", type="integer", description="积分")
+     * @ApiReturnParams   (name="valid_number", type="integer", description="有效值")
      */
     public function index()
     {
-        $result = Db::name("user")->field("avatar,nickname,serial_umber,mobile,level,score,invite_code")->where("id",$this->auth->id)->find();
+        $result = Db::name("user")->field("avatar,nickname,serial_number,mobile,valid_number,level,score")->where("id",$this->auth->id)->find();
         $this->success('', $result);
     }
 
@@ -111,15 +111,15 @@ class User extends Api
      * 注册会员
      *
      * @ApiMethod (POST)
-     * @param string $username   手机号
+     * @param string $mobile   手机号
      * @param string $password 密码
      * @param string $invite_code    邀请码
      * @param string $code     验证码
      */
     public function register()
     {
-        $username = $this->request->post('username');
-        $mobile = $username;
+        $mobile = $this->request->post('mobile');
+        $username = $mobile;
         $password = $this->request->post('password');
         $invite_code = $this->request->post('invite_code');
         $email = $this->request->post('email');
@@ -144,7 +144,7 @@ class User extends Api
         if (!$ret) {
             $this->error(__('Captcha is incorrect'));
         }
-        $ret = $this->auth->register($username, $password, $email, $mobile, ['invite_code'=>$invite_code]);
+        $ret = $this->auth->register($username, $password, $email, $mobile, ['invite'=>$invite_code]);
         if ($ret) {
             $data = ['userinfo' => $this->auth->getUserinfo()];
             $this->success(__('Sign up successful'), $data);
@@ -313,7 +313,7 @@ class User extends Api
      */
     public function resetpwd()
     {
-        $type = $this->request->post("type");
+        $type = $this->request->post("type",'mobile');
         $mobile = $this->request->post("mobile");
         $email = $this->request->post("email");
         $newpassword = $this->request->post("newpassword");
@@ -356,6 +356,60 @@ class User extends Api
         } else {
             $this->error($this->auth->getError());
         }
+    }
+
+
+    /**
+     * 重置支付密码
+     *
+     * @ApiMethod (POST)
+     * @param string $mobile      手机号
+     * @param string $newpassword 新密码
+     * @param string $captcha     验证码
+     */
+    public function resetpay()
+    {
+        $mobile = $this->request->post("mobile");
+        $newpassword = $this->request->post("newpassword");
+        $captcha = $this->request->post("captcha");
+        if (!$newpassword || !$captcha) {
+            $this->error(__('Invalid parameters'));
+        }
+
+        if (!Validate::regex($mobile, "^1\d{10}$")) {
+            $this->error(__('Mobile is incorrect'));
+        }
+        $user = \app\common\model\User::getByMobile($mobile);
+        if (!$user) {
+            $this->error(__('User not found'));
+        }
+        $ret = Sms::check($mobile, $captcha, 'resetpay');
+        if (!$ret) {
+            $this->error(__('Captcha is incorrect'));
+        }
+        Sms::flush($mobile, 'resetpay');
+        
+        $ret = $this->auth->changepay($newpassword, '', true);
+        if ($ret) {
+            $this->success(__('Reset payment password successful'));
+        } else {
+            $this->error($this->auth->getError());
+        }
+    }
+
+    /**
+     * 获取直推列表
+     *
+     * @ApiMethod (POST)
+     * @ApiReturnParams   (name="page", type="int", description="页码")
+     * @ApiReturnParams   (name="per_page", type="int", description="数量")
+     */
+    public function getChildInfo()
+    {
+        $list = Db::name("user")->field("serial_number,level")
+                ->where("pid",$this->auth->id)
+                ->paginate($per_page??10);
+        $this->success('',$list);
     }
 
     /**

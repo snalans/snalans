@@ -19,8 +19,8 @@ class Sms extends Api
      * 发送验证码
      *
      * @ApiMethod (POST)
-     * @param string $mobile 手机号
-     * @param string $event 事件名称
+     * @ApiParams   (name="mobile", type="string", description="手机号")
+     * @ApiParams   (name="event", type="string", description="事件名称 默认注册：register 修改登录密码： resetpwd 修改支付密码： resetpay")
      */
     public function send()
     {

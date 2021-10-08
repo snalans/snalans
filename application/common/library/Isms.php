@@ -60,6 +60,8 @@ class Isms
         $log_msg = '【蛋孵鸡,鸡生蛋】';
         if($event=='resetpwd'){                
             $log_msg .= '您申请重置登录密码，验证码：'.$code.'。';
+        }else if($event=='resetpay'){                
+            $log_msg .= '您申请重置支付密码，验证码：'.$code.'。';
         }else if($event=='login'){                
             $log_msg .= '您申请登录，验证码：'.$code.'。';
         }else if($event=='register'){                
