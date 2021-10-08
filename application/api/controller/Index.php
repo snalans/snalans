@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 use app\common\controller\Api;
+use think\Config;
 use think\Db;
 
 /**
@@ -40,5 +41,17 @@ class Index extends Api
                     ->order("weigh","DESC")
                     ->select();
         $this->success('请求成功',$result);
+    }
+
+    /**
+     * 获取下载app地址
+     * 
+     * @ApiMethod (GET)
+     */
+    public function getUrl()
+    {
+        $data['adroid'] = Config::get("site.android_url");
+        $data['ios']    = Config::get("site.ios_url");
+        $this->success('请求成功',$data);
     }
 }

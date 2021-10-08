@@ -25,6 +25,7 @@ return array (
     'basic' => 'Basic',
     'email' => 'Email',
     'dictionary' => 'Dictionary',
+    'egg' => 'Egg',
     'user' => 'User',
     'example' => 'Example',
   ),
@@ -42,4 +43,7 @@ return array (
     'custom' => 'Custom',
   ),
   'is_google' => '1',
+  'rate_config' => '10',
+  'android_url' => 'https://egg.snalans.com/adroid',
+  'ios_url' => 'https://egg.snalans.com/ios',
 );

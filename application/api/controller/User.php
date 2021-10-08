@@ -479,4 +479,44 @@ class User extends Api
         }
         $this->error("执行失败");
     }
+
+
+    /**
+     * 获取蛋日志列表
+     *
+     * @ApiMethod (GET)
+     * @ApiParams   (name="page", type="int", description="页码")
+     * @ApiParams   (name="per_page", type="int", description="数量")
+     * 
+     * @ApiReturnParams   (name="type", type="string", description="类型名称")
+     * @ApiReturnParams   (name="name", type="string", description="蛋名称")
+     * @ApiReturnParams   (name="number", type="int", description="数量")
+     * @ApiReturnParams   (name="note", type="string", description="说明")
+     * @ApiReturnParams   (name="createtime", type="string", description="创建时间")
+     */
+    public function getEggLog()
+    {
+        $page           = $this->request->get("page",1);
+        $per_page       = $this->request->get("per_page",10);
+        $type_arr = [
+            '0' => "农场",
+            '1' => "订单",
+            '2' => "互转",
+            '3' => "合成",
+            '4' => "管理员操作",
+            '9' => "手续费",
+        ];
+        $list = Db::name("egg_log")->alias("l")
+                ->field("l.type,k.name,l.number,l.note,l.createtime")
+                ->join("egg_kind k","k.id=l.kind_id","LEFT")
+                ->where("l.user_id",$this->auth->id)
+                ->order("l.createtime","DESC")
+                ->paginate($per_page??10)->each(function($item) use($type_arr){
+                    $item['type'] = $type_arr[$item['type']];
+                    $item['createtime'] = date("Y-m-d H:i",$item['createtime']);
+                    return $item;
+                });
+        $this->success('',$list);
+    }
+
 }

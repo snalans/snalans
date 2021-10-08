@@ -71,7 +71,6 @@ class Order extends Backend
                     }
                     $number = 0;
                     $log_rate = true;
-                    $wh = [];
                     if($params['status'] == 1){
                         $note = "管理员：".$this->auth->username." 审核通过. ".$params['note'];
                         $number = $row['number'];
@@ -83,6 +82,7 @@ class Order extends Backend
 
                         $log_rate = \app\admin\model\egg\Log::saveLog($user_id,$row['kind_id'],9,$row['order_sn'],$row['rate'],$note." 返还手续费");
                     }
+                    $wh = [];
                     $wh['user_id'] = $user_id;
                     $wh['kind_id'] = $row['kind_id'];
                     $rs = Db::name("egg")->where($wh)->setInc('number',$number);
