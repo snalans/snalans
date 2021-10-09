@@ -17,6 +17,14 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
             var table = $("#table");
 
+            //在普通搜索渲染后
+            table.on('post-common-search.bs.table', function (event, table) {
+                var form = $("form", table.$commonsearch);
+                $("input[name='month']", form).addClass("selectpage").data("source", "egg/log/getMonth").data("primaryKey", "id").data("field", "name");
+                Form.events.cxselect(form);
+                Form.events.selectpage(form);
+            });
+
             // 初始化表格
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
@@ -27,12 +35,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     [
                         {checkbox: true},
                         {field: 'id', title: __('Id'), operate:false},
+                        {field: 'month', title: __('Month'), visible:false},
                         {field: 'user_id', title: __('User_id')},
                         {field: 'user.serial_number', title: __('User.serial_number'), operate: 'LIKE'},
                         {field: 'user.username', title: __('User.username'), operate: 'LIKE'},
                         {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
-                        {field: 'eggkind.name', title: __('Eggkind.name'), operate: 'LIKE'},
-                        {field: 'type', title: __('Type'), formatter: Table.api.formatter.normal, searchList: {0: '农场', 1: '订单', 2: '互转', 3: '合成', 4: '管理员操作', 9: '手续费'}},
+                        {field: 'eggkind.name', title: __('Eggkind.name'), operate: false},
+                        {field: 'type', title: __('Type'), formatter: Table.api.formatter.normal, searchList: {0: '农场', 1: '订单', 2: '互转', 3: '合成', 4: '管理员操作', 5: '积分兑换', 9: '手续费'}},
                         {field: 'order_sn', title: __('Order_sn'), operate: 'LIKE'},
                         {field: 'number', title: __('Number'), operate: false},
                         {field: 'note', title: __('Note'), operate: false},

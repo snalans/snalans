@@ -51,28 +51,64 @@ class Log extends Backend
             if ($this->request->request('keyField')) {
                 return $this->selectpage();
             }
-            list($where, $sort, $order, $offset, $limit) = $this->buildparams();
-
-            $list = $this->model
-                    ->with(['user','eggkind'])
-                    ->where($where)
-                    ->order($sort, $order)
-                    ->paginate($limit);
-            $rate = 0;        
-            foreach ($list as $row) {
-                
-                $row->getRelation('user')->visible(['serial_number','username','mobile']);
-				$row->getRelation('eggkind')->visible(['name']);
-                if($row['type'] == 9){
-                    $rate += $row['number']; 
-                }
+            $filter = json_decode($this->request->get('filter'),true);
+            $op = json_decode($this->request->get('op'),true);
+            $table = "egg_log_".date("Y_m");
+            if(isset($filter['month'])){
+                $table = "egg_log_".date("Y_m",strtotime($filter['month']));
+                unset($filter['month']);
+                unset($op['month']);
+                $this->request->get(['filter'=>json_encode($filter)]);
+                $this->request->get(['filter'=>json_encode($op)]);
             }
-            $total_rate = $this->model->where("type",9)->sum("number");
-            $result = array("total" => $list->total(), "rows" => $list->items(),"extend"=>['total_rate'=>abs($total_rate),'rate'=>abs($rate)]);
 
-            return json($result);
+            list($where, $sort, $order, $offset, $limit) = $this->buildparams();
+            try{
+                $list = $this->model->name($table)
+                        ->with(['user','eggkind'])
+                        ->where($where)
+                        ->order($sort, $order)
+                        ->paginate($limit);
+                $rate = 0;        
+                foreach ($list as $row) {
+                    
+                    $row->getRelation('user')->visible(['serial_number','username','mobile']);
+    				$row->getRelation('eggkind')->visible(['name']);
+                    if($row['type'] == 9){
+                        $rate += $row['number']; 
+                    }
+                }
+                $total_rate = $this->model->name($table)->where("type",9)->sum("number");
+                $result = array("total" => $list->total(), "rows" => $list->items(),"extend"=>['total_rate'=>abs($total_rate),'rate'=>abs($rate)]);
+                return json($result);
+            } catch (\Exception $e) {
+                $result = array("total" => 0, "rows" => [],"extend"=>['total_rate'=>0,'rate'=>0]);
+                return json($result);
+            }  
+            
         }
         return $this->view->fetch();
+    }
+
+
+    /**
+     * 查看
+     */
+    public function getMonth()
+    {
+        $data = [];
+        $data['list'][] = [
+            'id'    => date("Y-m"),
+            'name'  => date("Y-m"),
+        ];
+        for ($i=1; $i < 12; $i++) { 
+            $data['list'][] = [
+                'id'   => date("Y-m",strtotime("- $i month")),
+                'name' => date("Y-m",strtotime("- $i month")),
+            ];
+        }
+        $data['total'] = 12;
+        return json($data);
     }
 
 }

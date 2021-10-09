@@ -175,12 +175,12 @@ class Isms
             'src'       => self::$user, 
             'pwd'       => self::$password, 
             'ServiceID' => 'SEND', //固定，不需要改变
-            'dest'      => $mobile, // 你的目的号码【收短信的电话号码】, 必须有值
+            'dest'      => "86".$mobile, // 你的目的号码【收短信的电话号码】, 必须有值
             'sender'    => '', // 你的原号码,可空【大部分国家原号码带不过去，只有少数国家支持透传，所有一般为空】
             'codec'     => '8', // 编码方式， 与msg中encodeHexStr 对应
             'msg'       => self::encodeHexStr($content) // 编码短信内容
         ];
-        $result = '2';//Http::post(self::$uri,$data);
+        $result = 2;//Http::post(self::$uri,$data);
         Log::write($result." >> ".$content,'sms');
         return strpos($result,'-') === true ? false : true;
     }

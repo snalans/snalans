@@ -130,8 +130,8 @@ class User extends Api
             $this->error(__('Invalid parameters'));
         }
         $wh = [];
-        $wh['status']       = 'normal';
-        $wh['invite_code']  = $invite_code;
+        $wh['status']           = 'normal';
+        $wh['serial_number']    = $invite_code;
         $result = Db::name("user")->where($wh)->find();
         if(empty($result) || empty($invite_code)){
             $this->error(__('Invalid invitation code, please check'));
@@ -146,7 +146,7 @@ class User extends Api
         if (!$ret) {
             $this->error(__('Captcha is incorrect'));
         }
-        $ret = $this->auth->register($username, $password, $email, $mobile, ['invite'=>$invite_code]);
+        $ret = $this->auth->register($username, $password, $email, $mobile, ['invite_code'=>$invite_code]);
         if ($ret) {
             $data = ['userinfo' => $this->auth->getUserinfo()];
             $this->success(__('Sign up successful'), $data);
@@ -490,6 +490,7 @@ class User extends Api
      * 获取蛋日志列表
      *
      * @ApiMethod (GET)
+     * @ApiParams   (name="date", type="int", description="日期 2021-10")
      * @ApiParams   (name="page", type="int", description="页码")
      * @ApiParams   (name="per_page", type="int", description="数量")
      * 
@@ -501,22 +502,26 @@ class User extends Api
      */
     public function getEggLog()
     {
+        $month          = $this->request->get("month","");
         $page           = $this->request->get("page",1);
-        $per_page       = $this->request->get("per_page",10);
+        $per_page       = $this->request->get("per_page",15);
         $type_arr = [
             '0' => "农场",
             '1' => "订单",
             '2' => "互转",
             '3' => "合成",
             '4' => "管理员操作",
+            '5' => "积分兑换",
             '9' => "手续费",
         ];
-        $list = Db::name("egg_log")->alias("l")
+
+        $table = empty($month)?"egg_log_".date("Y_m"):"egg_log_".date("Y_m",strtotime($date));
+        $list = Db::name($table)->alias("l")
                 ->field("l.type,k.name,l.number,l.note,l.createtime")
                 ->join("egg_kind k","k.id=l.kind_id","LEFT")
                 ->where("l.user_id",$this->auth->id)
                 ->order("l.createtime","DESC")
-                ->paginate($per_page??10)->each(function($item) use($type_arr){
+                ->paginate($per_page)->each(function($item) use($type_arr){
                     $item['type'] = $type_arr[$item['type']];
                     $item['createtime'] = date("Y-m-d H:i",$item['createtime']);
                     return $item;

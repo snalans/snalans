@@ -51,32 +51,37 @@ class Synthesis extends Api
         }
         
         Db::startTrans();
-        $rs = true;
-        $log_dec = true;
-        foreach ($config as $key => $value) {            
+        try {
+            $rs = true;
+            $log_dec = true;
+            foreach ($config as $key => $value) {            
+                $wh = [];
+                $wh['user_id'] = $this->auth->id;
+                $wh['kind_id'] = $value['ch_kind_id'];
+                $rs = Db::name("egg")->where($wh)->setDec('number',($value['number']*$number));
+                $log_dec = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['ch_kind_id'],'type'=>3,'order_sn'=>'','number'=>-($value['number']*$number),'note'=>"合成扣减",'createtime'=>time()]);
+                if(!$rs || !$log_dec){
+                    break;
+                }
+            }
+
             $wh = [];
             $wh['user_id'] = $this->auth->id;
-            $wh['kind_id'] = $value['ch_kind_id'];
-            $rs = Db::name("egg")->where($wh)->setDec('number',($value['number']*$number));
-            $log_dec = \app\admin\model\egg\Log::saveLog($this->auth->id,$value['ch_kind_id'],3,'',-($value['number']*$number),"合成扣减");
-            if(!$rs || !$log_dec){
-                break;
-            }
-        }
+            $wh['kind_id'] = $kind_id;
+            $add_rs = Db::name("egg")->where($wh)->setInc('number',$number); 
+            $log_add = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>3,'order_sn'=>'','number'=>$number,'note'=>"合成获得",'createtime'=>time()]);
 
-        $wh = [];
-        $wh['user_id'] = $this->auth->id;
-        $wh['kind_id'] = $kind_id;
-        $add_rs = Db::name("egg")->where($wh)->setInc('number',$number); 
-        $log_add = \app\admin\model\egg\Log::saveLog($this->auth->id,$kind_id,3,'',$number,"合成获得");
-
-        if($rs && $log_dec && $add_rs && $log_add){
-            Db::commit();
-            $this->success('合成成功!');
-        }else{
+            if($rs && $log_dec && $add_rs && $log_add){
+                Db::commit();
+                $this->success('合成成功!');
+            }else{
+                Db::rollback();
+                $this->error('合成失败,请重试!');
+            }   
+        } catch (\Exception $e) {
             Db::rollback();
-            $this->error('合成失败,请重试!');
-        }       
+            $this->error($e->getMessage());
+        }    
     }
 
 }

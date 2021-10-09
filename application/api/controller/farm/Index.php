@@ -13,7 +13,7 @@ class Index extends Api
 {
     protected $noNeedLogin = [];
     protected $noNeedRight = '*';
-    public    $alldate = 3600*24;   //签到周期
+    public    $alldate = 30;   //签到周期
 
     public function _initialize()
     {
@@ -91,12 +91,12 @@ class Index extends Api
             $wh['kind_id'] = $result['kind_id'];
             $total = Db::name("egg")->field("kind_id,number,frozen")->where($wh)->find();
             if($total['number'] <= 0){
-                $this->error('数量不够!');
+                $this->error(__('Insufficient quantity'));
             }else{
                 $this->hatchEgg($egg_hatch_id,$total);
             }
         }else{
-            $this->eheckCycle($result);
+            $this->checkCycle($result);
         }
     }
 
@@ -104,60 +104,62 @@ class Index extends Api
      * 判断周期,进行孵化与喂养
      * @ApiInternal
      */
-    public function eheckCycle($egg=[])
+    public function checkCycle($egg=[])
     {
-        $result = Db::name("egg_hatch_config")->where("kind_id",$egg['kind_id'])->find();
-        $msg        = '';
-        $rs         = false;
-        $add_rs     = true;
-        $log_add    = true;
-        Db::startTrans();
-        if(time() >= ($egg['uptime'] + $this->alldate)){
-            $data = [];
-            $data['hatch_num']  = $egg['hatch_num']+1;
-            $data['uptime']     = time();
-            if($egg['shape'] == 0){
-                if($egg['hatch_num'] >= $result['hatch_cycle']){
-                    $data['shape']  = 1;
-                }
-            }else {
-                if($data['is_reap'] = 1){
-                    $kind_id = $egg['kind_id'] == 4?5:$egg['kind_id'];
-                    $wh = [];
-                    $wh['user_id'] = $this->auth->id;
-                    $wh['kind_id'] = $kind_id;
-                    $add_rs = Db::name("egg")->where($wh)->setInc('number');
-                    $log_add = \app\admin\model\egg\Log::saveLog($this->auth->id,$kind_id,0,'',1,"喂养获得");
-                    $data['is_reap'] = 0;
-                }else{                    
-                    $reap = $data['hatch_num']-$result['hatch_cycle']-$result['raw_cycle'];
-                    if(($reap%$result['raw_cycle']) == 0){
-                        $data['is_reap'] = 1;
+        Db::transaction(function() use($egg){
+            $result = Db::name("egg_hatch_config")->where("kind_id",$egg['kind_id'])->find();
+            $msg = '';
+            $rs = true;
+            $rs_number = true;
+            $rs_egg_log = true;
+            if(time() >= ($egg['uptime'] + $this->alldate)){
+                $data = [];
+                $data['hatch_num']  = $egg['hatch_num']+1;
+                $data['uptime']     = time();
+                if($egg['shape'] == 0){
+                    if($egg['hatch_num'] >= $result['hatch_cycle']){
+                        $data['shape']  = 1;
+                    }
+                }else {
+                    if($egg['is_reap'] == 1){
+                        $kind_id = $egg['kind_id'] == 4?5:$egg['kind_id'];
+                        $wh = [];
+                        $wh['user_id'] = $this->auth->id;
+                        $wh['kind_id'] = $kind_id;
+                        $rs_number = Db::name("egg")->where($wh)->setInc('number');
+                        $rs_egg_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>0,'order_sn'=>'','number'=>1,'note'=>"喂养获得",'createtime'=>time()]);
+                        $data['is_reap'] = 0;
+                    }else{                    
+                        $reap = $data['hatch_num']-$result['hatch_cycle']-$result['raw_cycle'];
+                        if($reap >= 0 && ($reap % $result['raw_cycle']) == 0){
+                            $data['is_reap'] = 1;
+                        }
+                    }
+                    if($egg['shape'] == 1){
+                        $data['shape']  = 2;
                     }
                 }
-                if($egg['shape'] == 1){
-                    $data['shape']  = 2;
+                if($data['hatch_num'] > $result['grow_cycle']){
+                    $data['status']     = 1;
+                    $rs = Db::name("egg_hatch")->where("id",$egg['id'])->update($data);
+                    $msg = __('Feeding finished');
+                }else{                
+                    $rs = Db::name("egg_hatch")->where("id",$egg['id'])->update($data);
                 }
+                $msg = $rs?__('Successful hatching'):__('Incubation failed, please try again');
+            }else{
+                $msg = __('Already hatching');
             }
-            if($data['hatch_num'] > $result['grow_cycle']){
-                $data['status']     = 1;
-                $rs = Db::name("egg_hatch")->where("id",$egg['id'])->update($data);
-                $msg = "喂养完毕";
-            }else{                
-                $rs = Db::name("egg_hatch")->where("id",$egg['id'])->update($data);
+            
+            if($rs && $rs_number && $rs_egg_log){
+                Db::commit();
+                $this->success($msg); 
+            }else{
+                Db::rollback();
+                $this->error($msg);
             }
-            $msg = $rs?"孵化成功":"孵化失败,请重试.";
-        }else{
-            $msg = "已经在孵化中...";
-        }
+        });
 
-        if($rs && $add_rs && $log_add){
-            Db::commit();
-            $this->success($msg);
-        }else{
-            Db::rollback();
-            $this->error($msg);
-        }
     }
 
     /**
@@ -165,43 +167,47 @@ class Index extends Api
      * @ApiInternal
      */
     public function hatchEgg($egg_hatch_id=0,$result=[])
-    {
-        Db::startTrans();
-        $wh = [];
-        $wh['user_id'] = $this->auth->id;
-        $wh['kind_id'] = $result['kind_id'];
-        $reduce_rs = Db::name("egg")->where($wh)->setDec('number');
-        if($result['kind_id'] == 1 && $result['frozen'] > 0){
-            Db::name("egg")->where($wh)->setDec('frozen');
-        }
-        $log_reduce = \app\admin\model\egg\Log::saveLog($this->auth->id,$result['kind_id'],0,'',-1,"农场进行孵化");
-        $data = [];
-        $data['status']     = 0;
-        $data['hatch_num']  = 1;
-        $data['shape']      = 0;
-        $data['is_reap']    = 0;
-        $data['uptime']     = time();
-        $data['createtime'] = time();
-        $rs = Db::name("egg_hatch")->where("id",$egg_hatch_id)->update($data);
-        $valid_number = Db::name("egg_kind")->where("id",$result['kind_id'])->value("valid_number");
-        $urs = Db::name("user")->where("id",$this->auth->id)->setInc('valid_number',$valid_number);
-        //上级发放有效值
-        $wh = [];
-        $wh['user_id'] = $this->auth->id;
-        $wh['level']   = ['<',3];
-        $plist = Db::name("membership_chain")->where($wh)->select();
-        if(!empty($plist)){
-            foreach ($plist as $key => $value) {                
-                Db::name("user")->where("id",$value['ancestral_id'])->setInc('valid_number',$valid_number);
+    {        
+        Db::transaction(function() use($egg_hatch_id,$result){
+            $rs_frozen = true;
+            $wh = [];
+            $wh['user_id'] = $this->auth->id;
+            $wh['kind_id'] = $result['kind_id'];
+            $reduce_rs = Db::name("egg")->where($wh)->setDec('number');
+            if($result['kind_id'] == 1 && $result['frozen'] > 0){
+                $rs_frozen = Db::name("egg")->where($wh)->setDec('frozen');
             }
-        }
-        if($reduce_rs && $rs && $log_reduce && $urs){
-            Db::commit();
-            $this->success(__('Eggs were added to hatch successfully'));
-        }else{
-            Db::rollback();
-            $this->error(__('Failed to add eggs for hatching, please try again'));
-        }
+            //写入日志
+            $rs_egg_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$result['kind_id'],'type'=>0,'order_sn'=>'','number'=>-1,'note'=>"农场进行孵化",'createtime'=>time()]);
+            $data = [];
+            $data['status']     = 0;
+            $data['hatch_num']  = 1;
+            $data['shape']      = 0;
+            $data['is_reap']    = 0;
+            $data['uptime']     = time();
+            $data['createtime'] = time();
+            $rs_hatch = Db::name("egg_hatch")->where("id",$egg_hatch_id)->update($data);
+
+            $valid_number = Db::name("egg_kind")->where("id",$result['kind_id'])->value("valid_number");
+            $rs_valid = Db::name("user")->where("id",$this->auth->id)->setInc('valid_number',$valid_number);
+            //上级发放有效值
+            $wh = [];
+            $wh['user_id'] = $this->auth->id;
+            $wh['level']   = ['<',3];
+            $plist = Db::name("membership_chain")->where($wh)->select();
+            if(!empty($plist)){
+                foreach ($plist as $key => $value) {                
+                    Db::name("user")->where("id",$value['ancestral_id'])->setInc('valid_number',$valid_number);
+                }
+            }            
+            if($reduce_rs && $rs_frozen && $rs_egg_log && $rs_hatch && $rs_valid){
+                Db::commit();
+                $this->success(__('Eggs were added to hatch successfully'));
+            }else{
+                Db::rollback();
+                $this->error(__('Failed to add eggs for hatching, please try again'));
+            }
+        });
     } 
 
     /**
@@ -231,7 +237,7 @@ class Index extends Api
         $wh['status']       = 'normal';
         $user_id = Db::name("user")->where($wh)->value("id");
         if(empty($user_id)){
-            $this->error('用户不存在!');
+            $this->error(__('User does not exist!'));
         }
 
         $rate = ceil($number*Config::get("site.rate_config")/100)??0;
@@ -244,24 +250,34 @@ class Index extends Api
         }
         $log_rate = true;
         Db::startTrans();
-        $reduce_rs = Db::name("egg")->where($wh)->setDec('number',($number+$rate));
-        $log_reduce = \app\admin\model\egg\Log::saveLog($this->auth->id,$kind_id,2,'',-$number,"转账给用户编号：".$serial_number." 减少");
-        if($rate>0){
-            $log_rate = \app\admin\model\egg\Log::saveLog($this->auth->id,$kind_id,9,'',-$rate,"转账给用户编号：".$serial_number." 手续费");
-        }
+        try {
+            $reduce_rs = Db::name("egg")->where($wh)->setDec('number',($number+$rate));
 
-        $wh = [];
-        $wh['user_id'] = $user_id;
-        $wh['kind_id'] = $kind_id;
-        $add_rs = Db::name("egg")->where($wh)->setInc('number',$number);
-        $log_add = \app\admin\model\egg\Log::saveLog($user_id,$kind_id,2,'',$number,"用户编号：".$this->auth->serial_number." 转账获得");
-        if($reduce_rs && $log_reduce && $log_rate && $add_rs && $log_add){
-            Db::commit();
-            $this->success('转账成功');
-        }else{
+            //写入日志
+            $log_reduce = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>2,'order_sn'=>'','number'=>-$number,'note'=>"转账给用户编号：".$serial_number." 减少",'createtime'=>time()]);
+            
+            if($rate>0){
+                //写入日志
+                $log_rate = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>9,'order_sn'=>'','number'=>-$rate,'note'=>"转账给用户编号：".$serial_number." 手续费",'createtime'=>time()]);
+            }
+
+            $wh = [];
+            $wh['user_id'] = $user_id;
+            $wh['kind_id'] = $kind_id;
+            $add_rs = Db::name("egg")->where($wh)->setInc('number',$number);
+            //写入日志
+            $log_add = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$kind_id,'type'=>2,'order_sn'=>'','number'=>$number,'note'=>"用户编号：".$this->auth->serial_number." 转账获得",'createtime'=>time()]);
+            if($reduce_rs && $log_reduce && $log_rate && $add_rs && $log_add){
+                Db::commit();
+                $this->success(__('Transfer succeeded'));
+            }else{
+                Db::rollback();
+                $this->error(__('Transfer failed, please try again'));
+            }
+        } catch (\Exception $e) {
             Db::rollback();
-            $this->error('转账失败,请重试！');
-        }
+            $this->error($e->getMessage());
+        }    
     }
 
 }

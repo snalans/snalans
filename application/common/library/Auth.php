@@ -153,7 +153,7 @@ class Auth
 
         $ip = request()->ip();
         $time = time();
-        $pid = Db::name("user")->where("invite_code",$extend['invite_code'])->value("id");
+        $pid = Db::name("user")->where("serial_number",$extend['invite_code'])->value("id");
         unset($extend['invite_code']);
 
         $data = [
@@ -188,7 +188,7 @@ class Auth
             //配置默认数据
             \app\common\model\User::defaultEggNest($user->id);
             //会员绑定上级注册成功更新会员关系链
-            \app\common\model\MembershipChain::update_user_chain($user->id, $pid);
+            // \app\common\model\MembershipChain::update_user_chain($user->id, $pid);
 
             $this->_user = User::get($user->id);
 

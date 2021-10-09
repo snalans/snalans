@@ -171,27 +171,32 @@ class OrderList extends Api
         } 
 
         Db::startTrans();
-        $rs_add = true;
-        $log_add = true;   
-        $wh = [];
-        $wh['order_sn']     = $order_sn;
-        $wh['status']       = 2;
-        $wh['sell_user_id'] = $this->auth->id;
-        $rs = Db::name("egg_order")->where($wh)->update(['status'=>$status,'note'=>$note]);
-        if($status == 1){
-            $result = Db::name("egg_order")->field("buy_user_id,kind_id,number")->where("order_sn",$order_sn)->find();
+        try {
+            $rs_add = true;
+            $log_add = true;   
             $wh = [];
-            $wh['user_id'] = $result['buy_user_id'];
-            $wh['kind_id'] = $result['kind_id'];
-            $rs_add = Db::name("egg")->where($wh)->setInc('number',$result['number']);
-            $log_add = \app\admin\model\egg\Log::saveLog($result['buy_user_id'],$result['kind_id'],1,$order_sn,$result['number'],"订单成交");
-        }
-        if($rs && $rs_add && $log_add){
-            Db::commit();
-            $this->success('确认成功');
-        }else{
+            $wh['order_sn']     = $order_sn;
+            $wh['status']       = 2;
+            $wh['sell_user_id'] = $this->auth->id;
+            $rs = Db::name("egg_order")->where($wh)->update(['status'=>$status,'note'=>$note]);
+            if($status == 1){
+                $result = Db::name("egg_order")->field("buy_user_id,kind_id,number")->where("order_sn",$order_sn)->find();
+                $wh = [];
+                $wh['user_id'] = $result['buy_user_id'];
+                $wh['kind_id'] = $result['kind_id'];
+                $rs_add = Db::name("egg")->where($wh)->setInc('number',$result['number']);
+                $log_add = \app\admin\model\egg\Log::saveLog($result['buy_user_id'],$result['kind_id'],1,$order_sn,$result['number'],"订单成交");
+            }
+            if($rs && $rs_add && $log_add){
+                Db::commit();
+                $this->success('确认成功');
+            }else{
+                Db::rollback();
+                $this->error("操作失败,请重试。");
+            }
+        } catch (\Exception $e) {
             Db::rollback();
-            $this->error("操作失败,请重试。");
+            $this->error($e->getMessage());
         }
     }
 }
