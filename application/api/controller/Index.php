@@ -86,25 +86,20 @@ class Index extends Api
         try {
             $before = $this->auth->score;
             $after = $this->auth->score - $score;
-            $rs_score = Db::name("user")->where("id",$this->auth->id)->update(['score'=>$after]);  
+            Db::name("user")->where("id",$this->auth->id)->update(['score'=>$after]);  
 
             $wh = [];
             $wh['user_id']      = $this->auth->id;
             $wh['kind_id']      = $kind_id;
-            $rs_number = Db::name("egg")->where($wh)->setInc("number",$number);
+            Db::name("egg")->where($wh)->setInc("number",$number);
             //写入日志
-            $rs_egg_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>5,'order_sn'=>'','number'=>$number,'note'=>"积分兑换",'createtime'=>time()]);
-            $rs_score_log = Db::name("user_score_log")->insert(['user_id' => $this->auth->id, 'score' => $score, 'before' => $before, 'after' => $after, 'memo' => "积分兑换"]);
-            if($rs_score && $rs_number && $rs_egg_log && $rs_score_log){
-                Db::commit();
-                $this->success(__('Exchange successful'));   
-            }else{
-                Db::rollback();
-                $this->error(__('Exchange failure, please try again'));   
-            }
+            Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>5,'order_sn'=>'','number'=>$number,'note'=>"积分兑换",'createtime'=>time()]);
+            Db::name("user_score_log")->insert(['user_id' => $this->auth->id, 'score' => $score, 'before' => $before, 'after' => $after, 'memo' => "积分兑换"]);
+            Db::commit();
         } catch (\Exception $e) {
             Db::rollback();
             $this->error($e->getMessage());
-        }    
+        }   
+        $this->success(__('Exchange successful'));    
     }
 }

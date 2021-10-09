@@ -52,36 +52,26 @@ class Synthesis extends Api
         
         Db::startTrans();
         try {
-            $rs = true;
-            $log_dec = true;
             foreach ($config as $key => $value) {            
                 $wh = [];
                 $wh['user_id'] = $this->auth->id;
                 $wh['kind_id'] = $value['ch_kind_id'];
-                $rs = Db::name("egg")->where($wh)->setDec('number',($value['number']*$number));
-                $log_dec = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['ch_kind_id'],'type'=>3,'order_sn'=>'','number'=>-($value['number']*$number),'note'=>"合成扣减",'createtime'=>time()]);
-                if(!$rs || !$log_dec){
-                    break;
-                }
+                Db::name("egg")->where($wh)->setDec('number',($value['number']*$number));
+                Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['ch_kind_id'],'type'=>3,'order_sn'=>'','number'=>-($value['number']*$number),'note'=>"合成扣减",'createtime'=>time()]);
             }
 
             $wh = [];
             $wh['user_id'] = $this->auth->id;
             $wh['kind_id'] = $kind_id;
-            $add_rs = Db::name("egg")->where($wh)->setInc('number',$number); 
-            $log_add = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>3,'order_sn'=>'','number'=>$number,'note'=>"合成获得",'createtime'=>time()]);
+            Db::name("egg")->where($wh)->setInc('number',$number); 
+            Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>3,'order_sn'=>'','number'=>$number,'note'=>"合成获得",'createtime'=>time()]);
 
-            if($rs && $log_dec && $add_rs && $log_add){
-                Db::commit();
-                $this->success('合成成功!');
-            }else{
-                Db::rollback();
-                $this->error('合成失败,请重试!');
-            }   
+            Db::commit();
         } catch (\Exception $e) {
             Db::rollback();
             $this->error($e->getMessage());
-        }    
+        }   
+        $this->success('合成成功!'); 
     }
 
 }

@@ -29,7 +29,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'id', title: __('Id'), operate:false},
                         {field: 'user_id', title: __('User_id')},
                         {field: 'user.serial_number', title: __('User.serial_number'), operate: 'LIKE'},
-                        {field: 'user.username', title: __('User.username'), operate: 'LIKE'},
                         {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
                         {field: 'eggnestkind.name', title: __('Eggnestkind.name'), operate: false},
                         {field: 'eggkind.name', title: __('Eggkind.name'), operate: false},
@@ -40,7 +39,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'position', title: __('Position'), operate:false},
                         {field: 'uptime', title: __('Uptime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
-                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
             });
