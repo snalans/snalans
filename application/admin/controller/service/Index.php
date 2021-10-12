@@ -43,7 +43,7 @@ class Index extends Backend
         $data['nickname']       = $result['nickname'];
         $data['avatar']         = $result['avatar'] ? cdnurl($result['avatar'], true) : letter_avatar($result['nickname']);
         $data['group']          = 1;
-        $data['socket_server']  = '127.0.0.1:8282';
+        $data['socket_server']  = 'egg.snalans.com/ws';
         $this->view->assign("uinfo",json_encode($data));
         $this->view->assign("status",1);
         $this->view->assign("word",[]);
