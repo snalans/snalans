@@ -43,6 +43,7 @@ class User extends Api
     public function index()
     {
         $result = Db::name("user")->field("avatar,nickname,serial_number,mobile,valid_number,level,score")->where("id",$this->auth->id)->find();
+        $result['avatar'] = $result['avatar'] ?  cdnurl($result['avatar'], true) : letter_avatar($result['nickname']);
         $this->success('', $result);
     }
 
