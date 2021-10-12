@@ -2,17 +2,16 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
     var Controller = {
         index: function () {
-            $(".btn-add").data("area",["800px","400px"]);
             // 初始化表格参数配置
             Table.api.init({
                 extend: {
-                    index_url: 'egg/compound_config/index' + location.search,
-                    add_url: 'egg/compound_config/add',
-                    edit_url: 'egg/compound_config/edit',
-                    del_url: 'egg/compound_config/del',
-                    multi_url: 'egg/compound_config/multi',
-                    import_url: 'egg/compound_config/import',
-                    table: 'egg_compound_config',
+                    index_url: 'egg/number_log/index' + location.search,
+                    add_url: 'egg/number_log/add',
+                    edit_url: 'egg/number_log/edit',
+                    del_url: 'egg/number_log/del',
+                    multi_url: 'egg/number_log/multi',
+                    import_url: 'egg/number_log/import',
+                    table: 'egg_valid_number_log',
                 }
             });
 
@@ -28,17 +27,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     [
                         {checkbox: true},
                         {field: 'id', title: __('Id'), operate:false},
-                        {field: 'eggkind.name', title: __('Eggkind.name'), operate: 'LIKE'},
-                        {field: 'white_number', title: __('White_number'), operate:false},
-                        {field: 'silver_number', title: __('Silver_number'), operate:false},
-                        {field: 'gold_number', title: __('Gold_number'), operate:false},
-                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                        {field: 'user_id', title: __('User_id')},
+                        {field: 'user.serial_number', title: __('User.serial_number'), operate: 'LIKE'},
+                        {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
+                        {field: 'origin_user_id', title: __('Origin_user_id')},
+                        {field: 'number', title: __('Number')},
+                        {field: 'add_time', title: __('Add_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                     ]
                 ]
             });
-            table.on('post-body.bs.table',function(){
-                $(".btn-editone").data("area",["800px","400px"]);
-            })
 
             // 为表格绑定事件
             Table.api.bindevent(table);

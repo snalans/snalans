@@ -406,15 +406,17 @@ class User extends Api
     /**
      * 获取直推列表
      *
-     * @ApiMethod (POST)
-     * @ApiReturnParams   (name="page", type="int", description="页码")
-     * @ApiReturnParams   (name="per_page", type="int", description="数量")
+     * @ApiMethod (GET)
+     * @ApiParams   (name="page", type="int", description="页码")
+     * @ApiParams   (name="per_page", type="int", description="数量")
      */
     public function getChildInfo()
     {
+        $page       = $this->request->get("page",1);
+        $per_page   = $this->request->get("per_page",15);
         $list = Db::name("user")->field("serial_number,level")
                 ->where("pid",$this->auth->id)
-                ->paginate($per_page??10);
+                ->paginate($per_page);
         $this->success('',$list);
     }
 

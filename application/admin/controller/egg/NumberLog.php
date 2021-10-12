@@ -5,23 +5,23 @@ namespace app\admin\controller\egg;
 use app\common\controller\Backend;
 
 /**
- * //蛋合成配置
+ * 有效值日志
  *
  * @icon fa fa-circle-o
  */
-class CompoundConfig extends Backend
+class NumberLog extends Backend
 {
     
     /**
-     * CompoundConfig模型对象
-     * @var \app\admin\model\egg\CompoundConfig
+     * NumberLog模型对象
+     * @var \app\admin\model\egg\NumberLog
      */
     protected $model = null;
 
     public function _initialize()
     {
         parent::_initialize();
-        $this->model = new \app\admin\model\egg\CompoundConfig;
+        $this->model = new \app\admin\model\egg\NumberLog;
 
     }
 
@@ -54,14 +54,14 @@ class CompoundConfig extends Backend
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
 
             $list = $this->model
-                    ->with(['eggkind'])
+                    ->with(['user'])
                     ->where($where)
                     ->order($sort, $order)
                     ->paginate($limit);
 
             foreach ($list as $row) {
                 
-                $row->getRelation('eggkind')->visible(['name']);
+                $row->getRelation('user')->visible(['serial_number','mobile']);
             }
 
             $result = array("total" => $list->total(), "rows" => $list->items());

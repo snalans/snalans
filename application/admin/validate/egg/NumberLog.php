@@ -4,7 +4,7 @@ namespace app\admin\validate\egg;
 
 use think\Validate;
 
-class CompoundConfig extends Validate
+class NumberLog extends Validate
 {
     /**
      * 验证规则
