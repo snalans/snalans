@@ -27,11 +27,11 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     [
                         {checkbox: true},
                         {field: 'id', title: __('Id'), operate:false},
-                        {field: 'user_id', title: __('User_id')},
+                        {field: 'user_id', title: __('User_id'), operate:false},
                         {field: 'user.serial_number', title: __('User.serial_number'), operate: 'LIKE'},
                         {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
                         {field: 'origin_user_id', title: __('Origin_user_id')},
-                        {field: 'number', title: __('Number')},
+                        {field: 'number', title: __('Number'), operate:false},
                         {field: 'add_time', title: __('Add_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                     ]
                 ]
