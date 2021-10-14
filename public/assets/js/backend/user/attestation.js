@@ -37,8 +37,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'remark', title: __('Remark'), operate: false,},
                         {field: 'operate', title: __('Operate'), table: table,buttons: [
                             {name: 'edit', text: '审核', title: '审核', icon: 'fa fa-star', classname: 'btn btn-xs btn-primary btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url
-                                ,hidden:function(row){
-                                    if(row.user.is_attestation == 1){ 
+                                ,visible:function(row){
+                                    if(row.user.is_attestation == 2){ 
                                         return true; 
                                     }
                                 },

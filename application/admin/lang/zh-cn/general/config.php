@@ -81,4 +81,5 @@ return [
     'Rate config'                 => '蛋交易手续费(%)',
     'Android url'                 => '安卓apk下载地址',
     'Ios url'                     => '苹果下载地址',
+    'App version'                 => 'app版本号',
 ];

@@ -180,7 +180,7 @@ class Isms
             'codec'     => '8', // 编码方式， 与msg中encodeHexStr 对应
             'msg'       => self::encodeHexStr($content) // 编码短信内容
         ];
-        $result = Http::post(self::$uri,$data);
+        $result = 1;//Http::post(self::$uri,$data);
         Log::write($result." >> ".$content,'sms');
         return strpos($result,'-') === true ? false : true;
     }
