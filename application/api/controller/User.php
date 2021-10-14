@@ -53,14 +53,33 @@ class User extends Api
      * @ApiMethod (POST)
      * @param string $account  账号
      * @param string $password 密码
+     * @param string $captcha  验证码（/index.php?s=/captcha）
+     * 
+     * @ApiReturnParams   (name="serial_number", type="string", description="用户编号")
+     * @ApiReturnParams   (name="nickname", type="string", description="昵称")
+     * @ApiReturnParams   (name="mobile", type="string", description="手机号")
+     * @ApiReturnParams   (name="avatar", type="string", description="头像")
+     * @ApiReturnParams   (name="token", type="string", description="Token")
+     * @ApiReturnParams   (name="user_id", type="string", description="用户id")
+     * @ApiReturnParams   (name="createtime", type="int", description="创建时间")
+     * @ApiReturnParams   (name="expiretime", type="int", description="过期时间")
+     * @ApiReturnParams   (name="expires_in", type="int", description="过期秒数")
      */
     public function login()
     {
-        $account = $this->request->post('account');
+        $account  = $this->request->post('account');
         $password = $this->request->post('password');
+        $captcha  = $this->request->post('captcha');
         if (!$account || !$password) {
             $this->error(__('Invalid parameters'));
         }
+        $rule['captcha'] = 'require|captcha';
+        $data['captcha'] = $captcha;
+        $validate = new Validate($rule, [], ['captcha' => __('Captcha')]);
+        $result = $validate->check($data);
+        if (!$result) {
+            $this->error($validate->getError());
+        }        
         $ret = $this->auth->login($account, $password);
         if ($ret) {
             $data = ['userinfo' => $this->auth->getUserinfo()];

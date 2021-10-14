@@ -40,4 +40,5 @@ return [
     'Invalid invitation code, please check' => '邀请码无效，请检查',
     'Id_card is incorrect'                  => '身份证不正确',
     'Reset payment password successful'     => '重置支付密码成功',
+    'Captcha'                               => '验证码',
 ];

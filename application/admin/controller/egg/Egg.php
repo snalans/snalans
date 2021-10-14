@@ -110,9 +110,15 @@ class Egg extends Backend
                     }
                     $params['number'] = $new_number;
                     $note = "管理员：".$this->auth->username." ".$params['note'];
-                    $logrs = \app\admin\model\egg\Log::saveLog($row['user_id'],$row['kind_id'],4,'',$params['change_number'],$note);
                     $result = $row->allowField(true)->save($params);
-                    Db::commit();
+                    $log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$row['user_id'],'kind_id'=>$row['kind_id'],'type'=>4,'order_sn'=>'','number'=>$params['change_number'],'note'=>$note,'createtime'=>time()]);
+                    if ($result !== false && $log) {
+                        Db::commit();
+                        $this->success();
+                    } else {
+                        Db::rollback();
+                        $this->error(__('No rows were updated'));
+                    }
                 } catch (ValidateException $e) {
                     Db::rollback();
                     $this->error($e->getMessage());
@@ -122,11 +128,6 @@ class Egg extends Backend
                 } catch (Exception $e) {
                     Db::rollback();
                     $this->error($e->getMessage());
-                }
-                if ($result !== false) {
-                    $this->success();
-                } else {
-                    $this->error(__('No rows were updated'));
                 }
             }
             $this->error(__('Parameter %s can not be empty', ''));

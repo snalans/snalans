@@ -46,4 +46,5 @@ return array (
   'rate_config' => '10',
   'android_url' => 'https://egg.snalans.com/adroid',
   'ios_url' => 'https://egg.snalans.com/ios',
+  'app_version' => '1',
 );

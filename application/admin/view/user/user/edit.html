@@ -1,99 +1,22 @@
 <form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
-    
+    {:token()}
     <div class="form-group">
-        <label for="c-avatar" class="control-label col-xs-12 col-sm-3">{:__('Avatar')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <img src="{$row.avatar}">
+        <label for="mobile" class="control-label col-xs-12 col-sm-2">{:__('Mobile')}:</label>
+        <div class="col-xs-12 col-sm-7">
+            <span class="form-control" disabled="true">{$row.mobile|htmlentities}</span>
         </div>
     </div>
     <div class="form-group">
-        <label for="c-username" class="control-label col-xs-12 col-sm-3">{:__('Username')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <span class="form-control">{$row.username|htmlentities}</span>
+        <label for="password" class="control-label col-xs-12 col-sm-2">{:__('Password')}:</label>
+        <div class="col-xs-12 col-sm-7">
+            <input type="password" class="form-control" id="password" name="row[password]" autocomplete="new-password" value="" data-rule="password" />
         </div>
     </div>
-    <div class="form-group">
-        <label for="c-mobile" class="control-label col-xs-12 col-sm-3">{:__('Mobile')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <span class="form-control">{$row.mobile|htmlentities}</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="c-level" class="control-label col-xs-12 col-sm-3">{:__('Level')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <span class="form-control">{$row.level|htmlentities}</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="c-gender" class="control-label col-xs-12 col-sm-3">{:__('Gender')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            {:build_radios('row[gender]', ['1'=>__('Male'), '0'=>__('Female')], $row['gender'])}
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="c-birthday" class="control-label col-xs-12 col-sm-3">{:__('Birthday')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <span class="form-control">{$row.birthday|htmlentities}</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="c-money" class="control-label col-xs-12 col-sm-3">{:__('Money')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <span class="form-control">{$row.money|htmlentities}</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="c-score" class="control-label col-xs-12 col-sm-3">{:__('Score')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <span class="form-control">{$row.score|htmlentities}</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="c-successions" class="control-label col-xs-12 col-sm-3">{:__('Successions')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <span class="form-control">{$row.successions|htmlentities}</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="c-maxsuccessions" class="control-label col-xs-12 col-sm-3">{:__('Maxsuccessions')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <span class="form-control">{$row.maxsuccessions|htmlentities}</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="c-prevtime" class="control-label col-xs-12 col-sm-3">{:__('Prevtime')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <span class="form-control">{:date("Y-m-d H:i",$row.prevtime)}</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="c-logintime" class="control-label col-xs-12 col-sm-3">{:__('Logintime')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <span class="form-control">{:date("Y-m-d H:i",$row.logintime)}</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="c-loginip" class="control-label col-xs-12 col-sm-3">{:__('Loginip')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <span class="form-control">{$row.loginip|htmlentities}</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="c-loginfailure" class="control-label col-xs-12 col-sm-3">{:__('Loginfailure')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <span class="form-control">{$row.loginfailure|htmlentities}</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="c-joinip" class="control-label col-xs-12 col-sm-3">{:__('Joinip')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <span class="form-control">{$row.joinip|htmlentities}</span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="c-jointime" class="control-label col-xs-12 col-sm-3">{:__('Jointime')}:</label>
-        <div class="col-xs-12 col-sm-4">
-            <span class="form-control">{:date("Y-m-d H:i",$row.jointime)}</span>
+    <div class="form-group hidden layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-7">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
         </div>
     </div>
 </form>

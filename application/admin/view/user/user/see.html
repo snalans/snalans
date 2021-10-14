@@ -1,0 +1,93 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+    
+    <div class="form-group">
+        <label for="c-avatar" class="control-label col-xs-12 col-sm-3">{:__('Avatar')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <img src="{$row.avatar}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-username" class="control-label col-xs-12 col-sm-3">{:__('Username')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{$row.username|htmlentities}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-mobile" class="control-label col-xs-12 col-sm-3">{:__('Mobile')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{$row.mobile|htmlentities}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-level" class="control-label col-xs-12 col-sm-3">{:__('Level')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{$row.level|htmlentities}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-gender" class="control-label col-xs-12 col-sm-3">{:__('Gender')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            {:build_radios('row[gender]', ['1'=>__('Male'), '0'=>__('Female')], $row['gender'])}
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-valid_number" class="control-label col-xs-12 col-sm-3">{:__('Valid_number')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{$row.valid_number|htmlentities}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-score" class="control-label col-xs-12 col-sm-3">{:__('Score')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{$row.score|htmlentities}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-successions" class="control-label col-xs-12 col-sm-3">{:__('Successions')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{$row.successions|htmlentities}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-maxsuccessions" class="control-label col-xs-12 col-sm-3">{:__('Maxsuccessions')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{$row.maxsuccessions|htmlentities}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-prevtime" class="control-label col-xs-12 col-sm-3">{:__('Prevtime')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{:date("Y-m-d H:i",$row.prevtime)}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-logintime" class="control-label col-xs-12 col-sm-3">{:__('Logintime')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{:date("Y-m-d H:i",$row.logintime)}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-loginip" class="control-label col-xs-12 col-sm-3">{:__('Loginip')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{$row.loginip|htmlentities}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-loginfailure" class="control-label col-xs-12 col-sm-3">{:__('Loginfailure')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{$row.loginfailure|htmlentities}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-joinip" class="control-label col-xs-12 col-sm-3">{:__('Joinip')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{$row.joinip|htmlentities}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-jointime" class="control-label col-xs-12 col-sm-3">{:__('Jointime')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{:date("Y-m-d H:i",$row.jointime)}</span>
+        </div>
+    </div>
+</form>

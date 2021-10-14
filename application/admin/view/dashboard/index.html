@@ -157,6 +157,10 @@
     #statistics .panel h5 {
         font-size: 13px;
     }
+    .btn-font{
+        color: #FFFFFF;
+        padding-right: 20px;
+    }
 </style>
 <div class="panel panel-default panel-intro">
     <div class="panel-heading">
@@ -204,6 +208,41 @@
                             <div class="sm-st-info">
                                 <span>{$totaladmin}</span>
                                 {:__('Total admin')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="text-align:center;">
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="sm-st clearfix">
+                            <div class="sm-st-info">
+                                {:__('今日产白蛋')}
+                                <span>{$egg1}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="sm-st clearfix">
+                            <div class="sm-st-info">
+                                {:__('今日产铜蛋')}
+                                <span>{$egg2}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="sm-st clearfix">
+                            <div class="sm-st-info">
+                                {:__('今日产银蛋')}
+                                <span>{$egg3}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="sm-st clearfix">
+                            <div class="sm-st-info">
+                                {:__('今日产金蛋')}
+                                <span>{$egg4}</span>
                             </div>
                         </div>
                     </div>
@@ -292,17 +331,15 @@
                             <div class="panel-body">
                                 <div class="panel-title">
                                     <span class="label label-primary pull-right">{:__('Real time')}</span>
-                                    <h5>{:__('Category count')}</h5>
+                                    <h5>白蛋排行榜</h5>
                                 </div>
                                 <div class="panel-content">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <h1 class="no-margins">{$totalcategory}</h1>
-                                            <div class="font-bold"><i class="fa fa-magic"></i>
-                                                <small>{:__('Category count tips')}</small>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {volist name="egglist1" id="vo"}
+                                    <p>                                        
+                                        <span>手机号： <a href="{:url('egg/egg/index',['user.mobile'=>$vo.mobile])}" class="btn-font btn-dialog">{$vo.mobile}</a></span>
+                                        <span>数量：{$vo.number} </span>
+                                    </p>
+                                    {/volist}
                                 </div>
                             </div>
                         </div>
@@ -312,23 +349,15 @@
                             <div class="panel-body">
                                 <div class="ibox-title">
                                     <span class="label label-primary pull-right">{:__('Real time')}</span>
-                                    <h5>{:__('Database count')}</h5>
+                                    <h5>铜蛋排行榜</h5>
                                 </div>
                                 <div class="ibox-content">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h1 class="no-margins">{$dbtablenums}</h1>
-                                            <div class="font-bold"><i class="fa fa-database"></i>
-                                                <small>{:__('Database table nums')}</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h1 class="no-margins">{$dbsize|format_bytes=###,'',0}</h1>
-                                            <div class="font-bold"><i class="fa fa-filter"></i>
-                                                <small>{:__('Database size')}</small>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {volist name="egglist2" id="vo"}
+                                    <p>                                        
+                                        <span>手机号： <a href="{:url('egg/egg/index',['user.mobile'=>$vo.mobile])}" class="btn-font btn-dialog">{$vo.mobile}</a></span>
+                                        <span>数量：{$vo.number} </span>
+                                    </p>
+                                    {/volist}
                                 </div>
                             </div>
                         </div>
@@ -339,24 +368,15 @@
                             <div class="panel-body">
                                 <div class="ibox-title">
                                     <span class="label label-primary pull-right">{:__('Real time')}</span>
-                                    <h5>{:__('Attachment count')}</h5>
+                                    <h5>银蛋排行榜</h5>
                                 </div>
                                 <div class="ibox-content">
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h1 class="no-margins">{$attachmentnums}</h1>
-                                            <div class="font-bold"><i class="fa fa-files-o"></i>
-                                                <small>{:__('Attachment nums')}</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h1 class="no-margins">{$attachmentsize|format_bytes=###,'',0}</h1>
-                                            <div class="font-bold"><i class="fa fa-filter"></i>
-                                                <small>{:__('Attachment size')}</small>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {volist name="egglist3" id="vo"}
+                                    <p>                                        
+                                        <span>手机号： <a href="{:url('egg/egg/index',['user.mobile'=>$vo.mobile])}" class="btn-font btn-dialog">{$vo.mobile}</a></span>
+                                        <span>数量：{$vo.number} </span>
+                                    </p>
+                                    {/volist}
                                 </div>
                             </div>
                         </div>
@@ -366,24 +386,15 @@
                             <div class="panel-body">
                                 <div class="ibox-title">
                                     <span class="label label-primary pull-right">{:__('Real time')}</span>
-                                    <h5>{:__('Picture count')}</h5>
+                                    <h5>金蛋排行榜</h5>
                                 </div>
                                 <div class="ibox-content">
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h1 class="no-margins">{$picturenums}</h1>
-                                            <div class="font-bold"><i class="fa fa-picture-o"></i>
-                                                <small>{:__('Picture nums')}</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h1 class="no-margins">{$picturesize|format_bytes=###,'',0}</h1>
-                                            <div class="font-bold"><i class="fa fa-filter"></i>
-                                                <small>{:__('Picture size')}</small>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {volist name="egglist4" id="vo"}
+                                    <p>                                        
+                                        <span>手机号： <a href="{:url('egg/egg/index',['user.mobile'=>$vo.mobile])}" class="btn-font btn-dialog">{$vo.mobile}</a></span>
+                                        <span>数量：{$vo.number} </span>
+                                    </p>
+                                    {/volist}
                                 </div>
                             </div>
                         </div>

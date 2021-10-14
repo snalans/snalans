@@ -51,11 +51,15 @@ class Index extends Api
      * 获取下载app地址
      * 
      * @ApiMethod (GET)
+     * @ApiReturnParams   (name="adroid", type="string", description="安卓下载地址")
+     * @ApiReturnParams   (name="ios", type="string", description="苹果下载地址")
+     * @ApiReturnParams   (name="app_version", type="string", description="app版本号")
      */
     public function getUrl()
     {
         $data['adroid'] = Config::get("site.android_url");
         $data['ios']    = Config::get("site.ios_url");
+        $data['app_version']    = Config::get("site.app_version");
         $this->success('success',$data);
     }
 
@@ -83,23 +87,24 @@ class Index extends Api
         }
 
         Db::startTrans();
-        try {
-            $before = $this->auth->score;
-            $after = $this->auth->score - $score;
-            Db::name("user")->where("id",$this->auth->id)->update(['score'=>$after]);  
+        $before = $this->auth->score;
+        $after = $this->auth->score - $score;
+        $score_rs = Db::name("user")->where("id",$this->auth->id)->update(['score'=>$after]);  
 
-            $wh = [];
-            $wh['user_id']      = $this->auth->id;
-            $wh['kind_id']      = $kind_id;
-            Db::name("egg")->where($wh)->setInc("number",$number);
-            //写入日志
-            Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>5,'order_sn'=>'','number'=>$number,'note'=>"积分兑换",'createtime'=>time()]);
-            Db::name("user_score_log")->insert(['user_id' => $this->auth->id, 'score' => $score, 'before' => $before, 'after' => $after, 'memo' => "积分兑换"]);
+        $wh = [];
+        $wh['user_id']      = $this->auth->id;
+        $wh['kind_id']      = $kind_id;
+        $num_rs = Db::name("egg")->where($wh)->setInc("number",$number);
+        //写入日志
+        $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>5,'order_sn'=>'','number'=>$number,'note'=>"积分兑换",'createtime'=>time()]);
+        $score_log = Db::name("user_score_log")->insert(['user_id' => $this->auth->id, 'score' => $score, 'before' => $before, 'after' => $after, 'memo' => "积分兑换"]);
+        if($score_rs && $num_rs && $log_rs && $score_log){
             Db::commit();
-        } catch (\Exception $e) {
+            $this->success(__('Exchange successful'));    
+        }else{
             Db::rollback();
-            $this->error($e->getMessage());
-        }   
-        $this->success(__('Exchange successful'));    
+            $this->error(__('Exchange failure, please try again'));    
+        }
     }
+    
 }

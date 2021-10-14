@@ -45,7 +45,17 @@ class Dashboard extends Backend
         }
 
         $dbTableList = Db::query("SHOW TABLE STATUS");
+
+        $egg = Db::name("egg_log_".date("Y_m"))
+                    ->whereTime('createtime', 'd')
+                    ->where("number",">",0)
+                    ->group("kind_id")
+                    ->column("kind_id,sum(number)");
         $this->view->assign([
+            'egg1'            => isset($egg['1'])?$egg['1']:0,
+            'egg2'            => isset($egg['2'])?$egg['2']:0,
+            'egg3'            => isset($egg['3'])?$egg['3']:0,
+            'egg4'            => isset($egg['4'])?$egg['4']:0,
             'totaluser'       => User::count(),
             'totaladdon'      => count(get_addon_list()),
             'totaladmin'      => Admin::count(),
@@ -68,6 +78,38 @@ class Dashboard extends Backend
 
         $this->assignconfig('column', array_keys($userlist));
         $this->assignconfig('userdata', array_values($userlist));
+        $egglist1 = Db::name("egg")->alias("e")
+                    ->field("u.mobile,e.number")
+                    ->join("user u","u.id=e.user_id","LEFT")
+                    ->where(['e.kind_id'=>1,'u.status'=>'normal'])
+                    ->order(['e.number'=>'desc'])
+                    ->limit(5)
+                    ->select();
+        $egglist2 = Db::name("egg")->alias("e")
+                    ->field("u.mobile,e.number")
+                    ->join("user u","u.id=e.user_id","LEFT")
+                    ->where(['e.kind_id'=>2,'u.status'=>'normal'])
+                    ->order(['e.number'=>'desc'])
+                    ->limit(5)
+                    ->select();
+        $egglist3 = Db::name("egg")->alias("e")
+                    ->field("u.mobile,e.number")
+                    ->join("user u","u.id=e.user_id","LEFT")
+                    ->where(['e.kind_id'=>3,'u.status'=>'normal'])
+                    ->order(['e.number'=>'desc'])
+                    ->limit(5)
+                    ->select();
+        $egglist4 = Db::name("egg")->alias("e")
+                    ->field("u.mobile,e.number")
+                    ->join("user u","u.id=e.user_id","LEFT")
+                    ->where(['e.kind_id'=>4,'u.status'=>'normal'])
+                    ->order(['e.number'=>'desc'])
+                    ->limit(5)
+                    ->select();
+        $this->view->assign("egglist1",$egglist1);
+        $this->view->assign("egglist2",$egglist2);
+        $this->view->assign("egglist3",$egglist3);
+        $this->view->assign("egglist4",$egglist4);
 
         return $this->view->fetch();
     }
