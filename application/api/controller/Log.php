@@ -42,4 +42,28 @@ class Log extends Api
                 ->paginate($per_page);
         $this->success('',$list);
     }
+
+    /**
+     * 获取积分日志
+     * 
+     * @ApiMethod (GET)
+     * @ApiParams   (name="page", type="int", description="页码")
+     * @ApiParams   (name="per_page", type="int", description="数量")
+     * 
+     * @ApiReturnParams   (name="score", type="int", description="变更积分")
+     * @ApiReturnParams   (name="before", type="int", description="变更前积分")
+     * @ApiReturnParams   (name="after", type="int", description="变更后积分")
+     * @ApiReturnParams   (name="memo", type="string", description="备注")
+     * @ApiReturnParams   (name="createtime", type="string", description="创建时间")
+     */
+    public function getScoreLog()
+    {
+        $page       = $this->request->get("page",1);
+        $per_page   = $this->request->get("per_page",15);
+        $list = Db::name("user_score_log")->alias("l")
+                ->field("l.before,l.score,l.after,l.memo,FROM_UNIXTIME(l.createtime,'%Y-%m-%d %H:%i') as createtime")
+                ->where("l.user_id",$this->auth->id)
+                ->paginate($per_page);
+        $this->success('',$list);
+    }
 }
