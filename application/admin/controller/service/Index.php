@@ -39,11 +39,12 @@ class Index extends Backend
     {
         $result = Db::name("admin")->field("id,nickname,avatar")->where("id",$this->auth->id)->find();
         $data = [];
-        $data['id']             = "kefu_".$result['id'];
+        $data['id']             = "kefu".$result['id'];
         $data['nickname']       = $result['nickname'];
         $data['avatar']         = $result['avatar'] ? cdnurl($result['avatar'], true) : letter_avatar($result['nickname']);
         $data['group']          = 1;
         $data['socket_server']  = 'egg.snalans.com/ws';
+        // $data['socket_server']  = '127.0.0.1:8282';//'egg.snalans.com/ws';
         $this->view->assign("uinfo",json_encode($data));
         $this->view->assign("status",1);
         $this->view->assign("word",[]);

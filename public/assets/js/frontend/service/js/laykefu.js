@@ -333,9 +333,6 @@ function addUser(data) {
         $("#f-user").val(name);
         $("#f-ip").val(ip);
 
-        $.getJSON('/service/index/getCity', {ip: ip}, function(res){
-            $("#f-area").val(res.data);
-        });
     }
 
     getChatLog(data.id, 1);
@@ -372,9 +369,6 @@ function checkUser() {
         // 右侧展示详情
         $("#f-user").val(name);
         $("#f-ip").val(ip);
-        $.getJSON('/service/index/getCity', {ip: ip}, function(res){
-            $("#f-area").val(res.data);
-        });
 
         getChatLog(uid, 1);
 
