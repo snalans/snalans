@@ -523,7 +523,7 @@ class User extends Api
      */
     public function getChargeInfo()
     {
-        $result = Db::name("egg_charge_code")->field(['id','user_id','add_time'],true)->where("user_id",$this->auth->id)->select();
+        $result = Db::name("egg_charge_code")->field(['user_id','add_time'],true)->where("user_id",$this->auth->id)->select();
         $this->success('',$result);
     }
 
