@@ -275,7 +275,15 @@
                                                                     <span class="label label-success pull-right noneedlogin">登</span>
                                                             </span>
                         </a>
-                                                <a href="javascript:;" data-id="29" class="list-group-item">获取蛋日志列表                            <span class="tag">
+                                                <a href="javascript:;" data-id="29" class="list-group-item">获取收款信息                            <span class="tag">
+                                                                    <span class="label label-success pull-right noneedlogin">登</span>
+                                                            </span>
+                        </a>
+                                                <a href="javascript:;" data-id="30" class="list-group-item">保存收款信息                            <span class="tag">
+                                                                    <span class="label label-success pull-right noneedlogin">登</span>
+                                                            </span>
+                        </a>
+                                                <a href="javascript:;" data-id="31" class="list-group-item">获取蛋日志列表                            <span class="tag">
                                                                     <span class="label label-success pull-right noneedlogin">登</span>
                                                             </span>
                         </a>
@@ -4198,7 +4206,7 @@
                                 <div class="panel panel-default">
                     <div class="panel-heading" id="heading-27">
                         <h4 class="panel-title">
-                            <span class="label label-primary">POST</span>
+                            <span class="label label-success">GET</span>
                             <a data-toggle="collapse" data-parent="#accordion27" href="#collapseOne27"> 获取认证信息 <span class="text-muted">/api/user/getAttestationInfo</span></a>
                         </h4>
                     </div>
@@ -4264,7 +4272,7 @@
                                                 </div>
                                                 </div>
                                                 <div class="panel-body">
-                                                    <form enctype="application/x-www-form-urlencoded" role="form" action="/api/user/getAttestationInfo" method="POST" name="form27" id="form27">
+                                                    <form enctype="application/x-www-form-urlencoded" role="form" action="/api/user/getAttestationInfo" method="GET" name="form27" id="form27">
                                                                                                                 <div class="form-group">
                                                             无
                                                         </div>
@@ -4538,7 +4546,7 @@
                     <div class="panel-heading" id="heading-29">
                         <h4 class="panel-title">
                             <span class="label label-success">GET</span>
-                            <a data-toggle="collapse" data-parent="#accordion29" href="#collapseOne29"> 获取蛋日志列表 <span class="text-muted">/api/user/getEggLog</span></a>
+                            <a data-toggle="collapse" data-parent="#accordion29" href="#collapseOne29"> 获取收款信息 <span class="text-muted">/api/user/getChargeInfo</span></a>
                         </h4>
                     </div>
                     <div id="collapseOne29" class="panel-collapse collapse">
@@ -4555,6 +4563,295 @@
                             <div class="tab-content">
 
                                 <div class="tab-pane active" id="info29">
+                                    <div class="well">
+                                        获取收款信息                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>权限</strong></div>
+                                        <div class="panel-body">
+                                            <table class="table table-hover">
+                                                <tbody>
+                                                <tr>
+                                                    <td>登录</td>
+                                                    <td>是</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>鉴权</td>
+                                                    <td>否</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>Headers</strong></div>
+                                        <div class="panel-body">
+                                                                                        无
+                                                                                    </div>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>参数</strong></div>
+                                        <div class="panel-body">
+                                                                                        无
+                                                                                    </div>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>正文</strong></div>
+                                        <div class="panel-body">
+                                            无                                        </div>
+                                    </div>
+                                </div><!-- #info -->
+
+                                <div class="tab-pane" id="sandbox29">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                                                                        <div class="panel panel-default">
+                                                <div class="panel-heading"><strong>参数</strong>
+                                                <div class="pull-right">
+                                                    <a href="javascript:" class="btn btn-xs btn-info btn-append">追加</a>
+                                                </div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <form enctype="application/x-www-form-urlencoded" role="form" action="/api/user/getChargeInfo" method="GET" name="form29" id="form29">
+                                                                                                                <div class="form-group">
+                                                            无
+                                                        </div>
+                                                                                                                <div class="form-group form-group-submit">
+                                                            <button type="submit" class="btn btn-success send" rel="29">提交</button>
+                                                            <button type="reset" class="btn btn-info" rel="29">重置</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading"><strong>响应输出</strong></div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12" style="overflow-x:auto">
+                                                            <pre id="response_headers29"></pre>
+                                                            <pre id="response29"></pre>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading"><strong>返回参数</strong></div>
+                                                <div class="panel-body">
+                                                                                                        <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>名称</th>
+                                                                <th>类型</th>
+                                                                <th>描述</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                                                                                        <tr>
+                                                                <td>type</td>
+                                                                <td>string</td>
+                                                                <td>类型 1=支付宝 2=微信 3=钱包</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>account</td>
+                                                                <td>string</td>
+                                                                <td>账号</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>image</td>
+                                                                <td>string</td>
+                                                                <td>收款二维码</td>
+                                                            </tr>
+                                                                                                                    </tbody>
+                                                    </table>
+                                                                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- #sandbox -->
+
+                                <div class="tab-pane" id="sample29">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <pre id="sample_response29">无</pre>
+                                        </div>
+                                    </div>
+                                </div><!-- #sample -->
+
+                            </div><!-- .tab-content -->
+                        </div>
+                    </div>
+                </div>
+                                <div class="panel panel-default">
+                    <div class="panel-heading" id="heading-30">
+                        <h4 class="panel-title">
+                            <span class="label label-primary">POST</span>
+                            <a data-toggle="collapse" data-parent="#accordion30" href="#collapseOne30"> 保存收款信息 <span class="text-muted">/api/user/saveChargeInfo</span></a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne30" class="panel-collapse collapse">
+                        <div class="panel-body">
+
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" id="doctab30">
+                                <li class="active"><a href="#info30" data-toggle="tab">基础信息</a></li>
+                                <li><a href="#sandbox30" data-toggle="tab">在线测试</a></li>
+                                <li><a href="#sample30" data-toggle="tab">返回示例</a></li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+
+                                <div class="tab-pane active" id="info30">
+                                    <div class="well">
+                                        保存收款信息                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>权限</strong></div>
+                                        <div class="panel-body">
+                                            <table class="table table-hover">
+                                                <tbody>
+                                                <tr>
+                                                    <td>登录</td>
+                                                    <td>是</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>鉴权</td>
+                                                    <td>否</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>Headers</strong></div>
+                                        <div class="panel-body">
+                                                                                        无
+                                                                                    </div>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>参数</strong></div>
+                                        <div class="panel-body">
+                                                                                        <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>名称</th>
+                                                        <th>类型</th>
+                                                        <th>必选</th>
+                                                        <th>描述</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                        <tr>
+                                                        <td>type</td>
+                                                        <td>string</td>
+                                                        <td>是</td>
+                                                        <td>类型 1=支付宝 2=微信 3=钱包</td>
+                                                    </tr>
+                                                                                                        <tr>
+                                                        <td>account</td>
+                                                        <td>string</td>
+                                                        <td>是</td>
+                                                        <td>账号</td>
+                                                    </tr>
+                                                                                                        <tr>
+                                                        <td>image</td>
+                                                        <td>string</td>
+                                                        <td>是</td>
+                                                        <td>收款二维码</td>
+                                                    </tr>
+                                                                                                    </tbody>
+                                            </table>
+                                                                                    </div>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>正文</strong></div>
+                                        <div class="panel-body">
+                                            无                                        </div>
+                                    </div>
+                                </div><!-- #info -->
+
+                                <div class="tab-pane" id="sandbox30">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                                                                        <div class="panel panel-default">
+                                                <div class="panel-heading"><strong>参数</strong>
+                                                <div class="pull-right">
+                                                    <a href="javascript:" class="btn btn-xs btn-info btn-append">追加</a>
+                                                </div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <form enctype="application/x-www-form-urlencoded" role="form" action="/api/user/saveChargeInfo" method="POST" name="form30" id="form30">
+                                                                                                                <div class="form-group">
+                                                            <label class="control-label" for="type">type</label>
+                                                            <input type="string" class="form-control input-sm" id="type" required placeholder="类型 1=支付宝 2=微信 3=钱包" name="type">
+                                                        </div>
+                                                                                                                <div class="form-group">
+                                                            <label class="control-label" for="account">account</label>
+                                                            <input type="string" class="form-control input-sm" id="account" required placeholder="账号" name="account">
+                                                        </div>
+                                                                                                                <div class="form-group">
+                                                            <label class="control-label" for="image">image</label>
+                                                            <input type="string" class="form-control input-sm" id="image" required placeholder="收款二维码" name="image">
+                                                        </div>
+                                                                                                                <div class="form-group form-group-submit">
+                                                            <button type="submit" class="btn btn-success send" rel="30">提交</button>
+                                                            <button type="reset" class="btn btn-info" rel="30">重置</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading"><strong>响应输出</strong></div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12" style="overflow-x:auto">
+                                                            <pre id="response_headers30"></pre>
+                                                            <pre id="response30"></pre>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading"><strong>返回参数</strong></div>
+                                                <div class="panel-body">
+                                                                                                        无
+                                                                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- #sandbox -->
+
+                                <div class="tab-pane" id="sample30">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <pre id="sample_response30">无</pre>
+                                        </div>
+                                    </div>
+                                </div><!-- #sample -->
+
+                            </div><!-- .tab-content -->
+                        </div>
+                    </div>
+                </div>
+                                <div class="panel panel-default">
+                    <div class="panel-heading" id="heading-31">
+                        <h4 class="panel-title">
+                            <span class="label label-success">GET</span>
+                            <a data-toggle="collapse" data-parent="#accordion31" href="#collapseOne31"> 获取蛋日志列表 <span class="text-muted">/api/user/getEggLog</span></a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne31" class="panel-collapse collapse">
+                        <div class="panel-body">
+
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" id="doctab31">
+                                <li class="active"><a href="#info31" data-toggle="tab">基础信息</a></li>
+                                <li><a href="#sandbox31" data-toggle="tab">在线测试</a></li>
+                                <li><a href="#sample31" data-toggle="tab">返回示例</a></li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+
+                                <div class="tab-pane active" id="info31">
                                     <div class="well">
                                         获取蛋日志列表                                    </div>
                                     <div class="panel panel-default">
@@ -4622,7 +4919,7 @@
                                     </div>
                                 </div><!-- #info -->
 
-                                <div class="tab-pane" id="sandbox29">
+                                <div class="tab-pane" id="sandbox31">
                                     <div class="row">
                                         <div class="col-md-12">
                                                                                         <div class="panel panel-default">
@@ -4632,7 +4929,7 @@
                                                 </div>
                                                 </div>
                                                 <div class="panel-body">
-                                                    <form enctype="application/x-www-form-urlencoded" role="form" action="/api/user/getEggLog" method="GET" name="form29" id="form29">
+                                                    <form enctype="application/x-www-form-urlencoded" role="form" action="/api/user/getEggLog" method="GET" name="form31" id="form31">
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="date">date</label>
                                                             <input type="int" class="form-control input-sm" id="date" required placeholder="日期 2021-10" name="date">
@@ -4646,8 +4943,8 @@
                                                             <input type="int" class="form-control input-sm" id="per_page" required placeholder="数量" name="per_page">
                                                         </div>
                                                                                                                 <div class="form-group form-group-submit">
-                                                            <button type="submit" class="btn btn-success send" rel="29">提交</button>
-                                                            <button type="reset" class="btn btn-info" rel="29">重置</button>
+                                                            <button type="submit" class="btn btn-success send" rel="31">提交</button>
+                                                            <button type="reset" class="btn btn-info" rel="31">重置</button>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -4657,8 +4954,8 @@
                                                 <div class="panel-body">
                                                     <div class="row">
                                                         <div class="col-md-12" style="overflow-x:auto">
-                                                            <pre id="response_headers29"></pre>
-                                                            <pre id="response29"></pre>
+                                                            <pre id="response_headers31"></pre>
+                                                            <pre id="response31"></pre>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -4708,10 +5005,10 @@
                                     </div>
                                 </div><!-- #sandbox -->
 
-                                <div class="tab-pane" id="sample29">
+                                <div class="tab-pane" id="sample31">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <pre id="sample_response29">无</pre>
+                                            <pre id="sample_response31">无</pre>
                                         </div>
                                     </div>
                                 </div><!-- #sample -->
@@ -4957,7 +5254,7 @@
 
                 </div>
                 <div class="col-md-6" align="right">
-                    Generated on 2021-10-15 10:59:40 <a href="./" target="_blank">农场</a>
+                    Generated on 2021-10-17 13:40:20 <a href="./" target="_blank">农场</a>
                 </div>
             </div>
 

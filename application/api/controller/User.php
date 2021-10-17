@@ -447,7 +447,7 @@ class User extends Api
     /**
      * 获取认证信息
      *
-     * @ApiMethod (POST)
+     * @ApiMethod (GET)
      * @ApiReturnParams   (name="name", type="string", description="姓名")
      * @ApiReturnParams   (name="id_card", type="string", description="身份证号")
      * @ApiReturnParams   (name="front_img", type="string", description="正面照")
@@ -512,6 +512,59 @@ class User extends Api
         $this->error("执行失败");
     }
 
+
+    /**
+     * 获取收款信息
+     *
+     * @ApiMethod (GET)
+     * @ApiReturnParams   (name="type", type="string", description="类型 1=支付宝 2=微信 3=钱包")
+     * @ApiReturnParams   (name="account", type="string", description="账号")
+     * @ApiReturnParams   (name="image", type="string", description="收款二维码")
+     */
+    public function getChargeInfo()
+    {
+        $result = Db::name("egg_charge_code")->field(['id','user_id','add_time'],true)->where("user_id",$this->auth->id)->select();
+        $this->success('',$result);
+    }
+
+    /**
+     * 保存收款信息
+     *
+     * @ApiMethod (POST)
+     * @ApiParams   (name="type", type="string",required=true, description="类型 1=支付宝 2=微信 3=钱包")
+     * @ApiParams   (name="account", type="string",required=true, description="账号")
+     * @ApiParams   (name="image", type="string",required=true, description="收款二维码")
+     */
+    public function saveChargeInfo()
+    {
+        $type           = $this->request->post("type","1");
+        $account        = $this->request->post("account","");
+        $image          = $this->request->post("image","");
+
+        if (empty($account)) {
+            $this->error("参数有误");
+        }
+        $wh = [];
+        $wh['user_id']      = $this->auth->id;
+        $wh['type']         = $type;
+        $result = Db::name("egg_charge_code")->where($wh)->find();
+        if($result){
+            $this->error("已经添加过,如需修改联系管理员");
+        }else{            
+            $data = [];
+            $data['user_id']      = $this->auth->id;
+            $data['type']         = $type;
+            $data['account']      = $account;
+            $data['image']        = $image;
+            $data['add_time']     = time();
+            $result = Db::name("egg_charge_code")->insert($data);
+            if($result){
+                $this->success("添加成功");
+            }else{
+                $this->error("保存失败,请重试");
+            }
+        }        
+    }
 
     /**
      * 获取蛋日志列表
