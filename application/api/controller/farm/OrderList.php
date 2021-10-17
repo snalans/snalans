@@ -24,7 +24,7 @@ class OrderList extends Api
      *
      * @ApiMethod (GET)
      * @ApiParams   (name="type", type="integer", description="买卖类型默认： 1=买 2=卖")
-     * @ApiParams   (name="status", type="integer", description="状态默认：9=全部 0=待付款 1=完成 2=待确认 3=申诉 4=无效 ")
+     * @ApiParams   (name="status", type="integer", description="状态默认：9=全部 0=待付款 1=完成 2=待确认 3=申诉 4=无效（撤单） 5=挂单  6退款")
      * @ApiParams   (name="page", type="integer", description="页码")
      * @ApiParams   (name="per_page", type="integer", description="数量")
      * 
@@ -33,7 +33,7 @@ class OrderList extends Api
      * @ApiReturnParams   (name="price", type="integer", description="单价")
      * @ApiReturnParams   (name="number", type="integer", description="数量")
      * @ApiReturnParams   (name="amount", type="integer", description="总价")
-     * @ApiReturnParams   (name="status", type="integer", description="状态 0=待付款 1=完成 2=待确认 3=申诉 4=无效")
+     * @ApiReturnParams   (name="status", type="integer", description="状态 0=待付款 1=完成 2=待确认 3=申诉 4=无效（撤单） 5=挂单  6退款")
      * @ApiReturnParams   (name="createtime", type="integer", description="创建时间")
      */
     public function getOrderList()
