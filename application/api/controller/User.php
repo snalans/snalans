@@ -73,13 +73,10 @@ class User extends Api
         if (!$account || !$password) {
             $this->error(__('Invalid parameters'));
         }
-        $rule['captcha'] = 'require|captcha';
-        $data['captcha'] = $captcha;
-        $validate = new Validate($rule, [], ['captcha' => __('Captcha')]);
-        $result = $validate->check($data);
-        if (!$result) {
-            $this->error($validate->getError());
-        }        
+        $data['captcha'] = $captcha;   
+        $this->validate($data,[
+            'captcha|验证码'=>'required|captcha'
+        ]);
         $ret = $this->auth->login($account, $password);
         if ($ret) {
             $data = ['userinfo' => $this->auth->getUserinfo()];
