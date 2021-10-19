@@ -3,7 +3,7 @@
 namespace app\api\controller;
 
 use app\common\controller\Api;
-use app\common\library\Isms as Smslib;
+use app\common\library\Hsms as Smslib;
 use app\common\model\User;
 use think\Hook;
 

@@ -28,6 +28,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {checkbox: true},
                         {field: 'id', title: __('Id'), operate: false},
                         {field: 'name', title: __('Name'), operate: 'LIKE'},
+                        {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {0: '关闭', 1: '开启'}}, 
                         {field: 'weigh', title: __('Weigh'), operate: false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
