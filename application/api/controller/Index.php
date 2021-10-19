@@ -12,8 +12,26 @@ use think\Db;
  */
 class Index extends Api
 {
-    protected $noNeedLogin = ['index','getNewsType','getNews','getNewsDetail','getUrl'];
+    protected $noNeedLogin = ['init','index','getNewsType','getNews','getNewsDetail','getUrl'];
     protected $noNeedRight = ['*'];
+
+
+    /**
+     * 加载初始化
+     * @ApiReturnParams   (name="is_agreement", type="int", description="是否开启协议 1=是 2=否")
+     * @ApiReturnParams   (name="adroid", type="string", description="安卓下载地址")
+     * @ApiReturnParams   (name="ios", type="string", description="苹果下载地址")
+     * @ApiReturnParams   (name="app_version", type="string", description="app版本号")
+     */
+    public function init()
+    {
+        $data = [];
+        $data['adroid']         = Config::get("site.android_url");
+        $data['ios']            = Config::get("site.ios_url");
+        $data['is_agreement']   = Config::get("site.is_agreement");
+        $data['app_version']    = Config::get("site.app_version");
+        $this->success('', $data);
+    }
 
     /**
      * 首页 白蛋兑换、彩蛋回收
@@ -104,21 +122,6 @@ class Index extends Api
         $this->success('success',$result);
     }
 
-    /**
-     * 获取下载app地址
-     * 
-     * @ApiMethod (GET)
-     * @ApiReturnParams   (name="adroid", type="string", description="安卓下载地址")
-     * @ApiReturnParams   (name="ios", type="string", description="苹果下载地址")
-     * @ApiReturnParams   (name="app_version", type="string", description="app版本号")
-     */
-    public function getUrl()
-    {
-        $data['adroid'] = Config::get("site.android_url");
-        $data['ios']    = Config::get("site.ios_url");
-        $data['app_version']    = Config::get("site.app_version");
-        $this->success('success',$data);
-    }
 
     /**
      * 积分兑换

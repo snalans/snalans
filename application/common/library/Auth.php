@@ -188,7 +188,8 @@ class Auth
             //配置默认数据
             \app\common\model\User::defaultEggNest($user->id);
             //会员绑定上级注册成功更新会员关系链
-            \app\common\model\MembershipChain::update_user_chain($user->id, $pid);
+            // $membershipChain = new \app\common\model\MembershipChain();
+            // $membershipChain->update_user_chain($user->id, $pid);
 
             $this->_user = User::get($user->id);
 
