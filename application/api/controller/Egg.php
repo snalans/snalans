@@ -230,7 +230,7 @@ class Egg extends Api
         $order_data['kind_id'] = $kind_id;
         $order_data['price'] = $price;
         $order_data['number'] = $number;
-        $order_data['rate'] = ceil($number/10);;
+        $order_data['rate'] = ceil($number*Config::get('rate_config')/100);
         $order_data['amount'] = $price * $number;
         $order_data['status'] = 5;
         $order_data['createtime'] = time();
