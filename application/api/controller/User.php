@@ -53,7 +53,7 @@ class User extends Api
      * @ApiMethod (POST)
      * @param string $account  账号
      * @param string $password 密码
-     * @param string $captcha  验证码（/index.php?s=/captcha）
+     * @param string $captcha  验证码（/captcha.html）
      * 
      * @ApiReturnParams   (name="serial_number", type="string", description="用户编号")
      * @ApiReturnParams   (name="nickname", type="string", description="昵称")
@@ -429,6 +429,7 @@ class User extends Api
      * @ApiParams   (name="page", type="int", description="页码")
      * @ApiParams   (name="per_page", type="int", description="数量")
      * 
+     * @ApiReturnParams   (name="avatar", type="string", description="用户头像")
      * @ApiReturnParams   (name="serial_number", type="string", description="用户编号")
      * @ApiReturnParams   (name="title", type="string", description="等级名称")
      */
@@ -437,10 +438,14 @@ class User extends Api
         $page       = $this->request->get("page",1);
         $per_page   = $this->request->get("per_page",15);
         $list = Db::name("user")->alias("u")
-                ->field("u.serial_number,l.title")
+                ->field("u.avatar,u.nickname,u.serial_number,l.title")
                 ->join("user_level_config l","l.level=u.level","LEFT")
                 ->where("u.pid",$this->auth->id)
-                ->paginate($per_page);
+                ->paginate($per_page)->each(function($item){
+                    $item['avatar'] = $item['avatar']? cdnurl($result['avatar'], true) : letter_avatar($item['nickname']);
+                    unset($item['nickname']);
+                    return $item;
+                });
         $this->success('',$list);
     }
 
@@ -501,11 +506,13 @@ class User extends Api
             $params['user_id']    = $this->auth->id;
             $result = Db::name("egg_attestation")->insert($params);
             if($result){                
+                Db::name("user")->where("id",$this->auth->id)->update(['is_attestation'=>2]);
                 $this->success("添加成功");
             }
         }else{
             $result = Db::name("egg_attestation")->where("user_id",$this->auth->id)->update($params);
             if($result){                
+                Db::name("user")->where("id",$this->auth->id)->update(['is_attestation'=>2]);
                 $this->success("更新成功");
             }
         }

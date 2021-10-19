@@ -12,7 +12,7 @@ use think\Db;
  */
 class Index extends Api
 {
-    protected $noNeedLogin = ['index','getNews','getUrl'];
+    protected $noNeedLogin = ['index','getNewsType','getNews','getNewsDetail','getUrl'];
     protected $noNeedRight = ['*'];
 
     /**
@@ -28,22 +28,79 @@ class Index extends Api
     }
 
     /**
-     * banner和文章
+     * 文章分类
      *
      * @ApiMethod (GET)
-     * @param string $type  类型 1=banner 2=公告
+     * @ApiParams   (name="type_id", type="int", description="类型 1=轮播 2=公告 3=协议")
+     * 
+     * @ApiReturnParams   (name="name", type="string", description="名称")
+     * @ApiReturnParams   (name="status", type="int", description="状态 1=开启 0=关闭")
+     * @ApiReturnParams   (name="weigh", type="int", description="权重")
+     */
+    public function getNewsType()
+    {
+        $type_id = $this->request->get('type_id',3);
+
+        $result = Db::name("egg_news_type")->where("id",$type_id)->find();
+        $this->success('success',$result);
+    }
+
+    /**
+     * 文章列表
+     *
+     * @ApiMethod (GET)
+     * @ApiParams   (name="type_id", type="int", description="类型 1=轮播 2=公告 3=协议")
+     * 
+     * @ApiReturnParams   (name="id", type="string", description="文章id")
+     * @ApiReturnParams   (name="title", type="int", description="标题")
+     * @ApiReturnParams   (name="description", type="int", description="描述")
+     * @ApiReturnParams   (name="image", type="int", description="图片")
+     * @ApiReturnParams   (name="url", type="int", description="跳转地址")
      */
     public function getNews()
     {
-        $type = $this->request->get('type');
+        $type_id = $this->request->get('type_id',1);
         $wh = [];
         $wh['status']       = 1;
-        $wh['news_type_id'] = $type;
+        $wh['news_type_id'] = $type_id;
         $result = Db::name("egg_news")
-                    ->field(['news_type_id','weigh','status','add_time'],true)
+                    ->field("id,title,description,image,url")
                     ->where($wh)
                     ->order("weigh","DESC")
                     ->select();
+        $this->success('success',$result);
+    }
+
+    /**
+     * 文章详情
+     *
+     * @ApiMethod (GET)
+     * @ApiParams   (name="id", type="int", description="文章id")
+     * @ApiParams   (name="title", type="string", description="标题")
+     * 
+     * @ApiReturnParams   (name="id", type="string", description="文章id")
+     * @ApiReturnParams   (name="title", type="string", description="标题")
+     * @ApiReturnParams   (name="description", type="string", description="描述")
+     * @ApiReturnParams   (name="image", type="string", description="图片")
+     * @ApiReturnParams   (name="url", type="string", description="跳转地址")
+     * @ApiReturnParams   (name="content", type="string", description="内容")
+     * @ApiReturnParams   (name="add_time", type="string", description="添加时间")
+     */
+    public function getNewsDetail()
+    {
+        $id = $this->request->get('id',"");
+        $title = $this->request->get('title',"");
+        $wh = [];
+        if(empty($id)){
+            $wh['id'] = $id;
+        }
+        if(empty($title)){
+            $wh['title'] = $title;
+        }        
+        $result = Db::name("egg_news")->where($wh)->find();
+        if(!empty($result)){
+            $result['add_time'] = date("Y-m-d H:i:s",$result['add_time']);
+        }
         $this->success('success',$result);
     }
 
