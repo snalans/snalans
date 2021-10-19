@@ -447,7 +447,7 @@ class Team extends Api
                         $re1 = Db::name("user_score_log")->insert($log);
 
                         if($res==false || $re==false || $re1==false){
-                            $is_rollback = false;git
+                            $is_rollback = false;
                         }
                     }
                 }
