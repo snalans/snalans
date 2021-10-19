@@ -4,7 +4,7 @@ return array (
   'name' => '农场',
   'beian' => '',
   'cdnurl' => '',
-  'version' => '1.0.1',
+  'version' => '1.0.2',
   'timezone' => 'Asia/Shanghai',
   'forbiddenip' => '',
   'languages' => 
@@ -47,4 +47,8 @@ return array (
   'android_url' => 'https://egg.snalans.com/adroid',
   'ios_url' => 'https://egg.snalans.com/ios',
   'app_version' => '1',
+  'valid_time' => '1',
+  'confirm_time' => '1',
+  'site_rate_config' => '0.7',
+  'is_agreement' => '0',
 );

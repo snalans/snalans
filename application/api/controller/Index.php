@@ -18,7 +18,7 @@ class Index extends Api
 
     /**
      * 加载初始化
-     * @ApiReturnParams   (name="is_agreement", type="int", description="是否开启协议 1=是 2=否")
+     * @ApiReturnParams   (name="is_agreement", type="int", description="是否开启协议 1=开启 0=关闭")
      * @ApiReturnParams   (name="adroid", type="string", description="安卓下载地址")
      * @ApiReturnParams   (name="ios", type="string", description="苹果下载地址")
      * @ApiReturnParams   (name="app_version", type="string", description="app版本号")
