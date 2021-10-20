@@ -4,7 +4,7 @@ namespace app\common\model;
 use think\Db;
 use think\Model;
 
-class MembershipChain extends Common
+class MembershipChain extends Model
 {
     /**
      *新增会员关系链
@@ -34,7 +34,7 @@ class MembershipChain extends Common
 
         }
 
-        $this->inserts($ancestral_arr);
+        $this->insertAll($ancestral_arr);
 //        if(!$GLOBALS['db']->insert_id()){
 //            logger::write('用户'.$user_id.'关系链更新失败');
 //        }
@@ -47,7 +47,7 @@ class MembershipChain extends Common
      *会员注册的时候调用更新会员关系链
      */
     function update_user_chain($user_id, $pid){
-        
+
         $above['user_id'] = $user_id;
         $above['level'] = 0;
         $above['ancestral_id'] = 0;
@@ -55,10 +55,10 @@ class MembershipChain extends Common
 
         $userid_arr = $this->query("select user_id, ancestral_id, `level` from ".config('database.prefix')."membership_chain WHERE ancestral_id =".$user_id."  order by level asc ");
         $where = [];
-        $where[] = ['user_id', 'eq', $user_id];
-        $where[] = ['ancestral_id', 'eq', 0];
-        $have_ancestral = $this->field('id')->where($where)->find();
+        $where['user_id'] = $user_id;
+        $where['ancestral_id'] = 0;
 
+        $have_ancestral = $this->field('id')->where($where)->find();
         if($have_ancestral['id'] >0){
             $re =$this->syn_user_chain($user_id, $pid);
             if($re){
