@@ -82,4 +82,8 @@ return [
     'Android url'                 => '安卓apk下载地址',
     'Ios url'                     => '苹果下载地址',
     'App version'                 => 'app版本号',
+    'Valid time'                  => '多少小时内不能撤回',
+    'Confirm time'                => '多少小时后订单自动确认',
+    'Site rate config'            => '团队分红手续费积分发放比例',
+    'Is agreement'                => '是否开启协议',
 ];
