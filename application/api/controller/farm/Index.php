@@ -36,6 +36,7 @@ class Index extends Api
      * @ApiReturnParams   (name="position", type="string", description="窝位置")
      * @ApiReturnParams   (name="shape", type="integer", description="形态 0=蛋 2=鸡")
      * @ApiReturnParams   (name="is_reap", type="integer", description="是否获得 0=否 1=收获")
+     * @ApiReturnParams   (name="seconds", type="integer", description="剩余时间（秒）")
      */
     public function index()
     {
@@ -68,6 +69,8 @@ class Index extends Api
                 if($value['shape'] == 1){
                     $nest_list[$key]['shape'] = time() > ($value['uptime']+$this->alldate)?0:2;
                 }
+                $seconds = $value['uptime'] + $this->alldate - time();
+                $nest_list[$key]['seconds'] = $seconds<=0 ? 0 : $seconds;
             }
         }
         $data['nest_list'] = $nest_list;
@@ -126,7 +129,7 @@ class Index extends Api
                 }
                 $rs = Db::name("egg_hatch")->where("id",$egg['id'])->update($data);
                 if($rs){
-                    $this->success(__('Successful incubation')); 
+                    $this->success(__('Successful incubation'),['seconds'=>$this->alldate]); 
                 }else{
                     $this->error(__('Incubation failed, please try again')); 
                 }
@@ -151,7 +154,7 @@ class Index extends Api
                     $rs = Db::name("egg_hatch")->where("id",$egg['id'])->update($data);
                     if($inc_number && $add_log && $rs){
                         Db::commit();
-                        $this->success($flag?__('Feeding finished'):__('Harvest success')); 
+                        $this->success($flag?__('Feeding finished'):__('Harvest success'),['seconds'=>$this->alldate]); 
                     }else{
                         Db::rollback();
                         $this->error(__('Harvest and feeding failed, please try again')); 
@@ -163,14 +166,15 @@ class Index extends Api
                     }
                     $rs = Db::name("egg_hatch")->where("id",$egg['id'])->update($data);
                     if($rs){
-                        $this->success(__('Feeding success')); 
+                        $this->success(__('Feeding success'),['seconds'=>$this->alldate]); 
                     }else{
                         $this->error(__('Feeding failed, please try again')); 
                     }
                 }
             }
         }else{
-            $this->error($egg['shape']==0?__('Already in incubation'):__('Already fed')); 
+            $seconds = $egg['uptime'] + $this->alldate - time();
+            $this->error($egg['shape']==0?__('Already in incubation'):__('Already fed'),['seconds'=>$seconds<=0?0:$seconds]); 
         }
     }
 
@@ -218,7 +222,7 @@ class Index extends Api
         }
         if($reduce_rs && $reduce_log && $hatch_rs){
             Db::commit();
-            $this->success(__('Eggs were added to hatch successfully'));
+            $this->success(__('Eggs were added to hatch successfully'),['seconds'=>$this->alldate]);
         }else{
             Db::rollback();
             $this->error(__('Failed to add eggs for hatching, please try again'));
