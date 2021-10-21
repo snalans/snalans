@@ -18,7 +18,7 @@ class Index extends Api
 
     /**
      * 加载初始化
-     * @ApiReturnParams   (name="egg_info", type="string", description="蛋的信息")
+     * @ApiReturnParams   (name="egg_info", type="string", description="蛋的信息 name:蛋名称 image：蛋图片 ch_image:小鸡图片")
      * @ApiReturnParams   (name="is_agreement", type="int", description="是否开启协议 1=开启 0=关闭")
      * @ApiReturnParams   (name="adroid", type="string", description="安卓下载地址")
      * @ApiReturnParams   (name="ios", type="string", description="苹果下载地址")
@@ -27,7 +27,7 @@ class Index extends Api
     public function init()
     {
         $data = [];
-        $data['egg_info']       = Db::name("egg_kind")->field("id,name,image")->select();
+        $data['egg_info']       = Db::name("egg_kind")->field("id,name,image,ch_image")->select();
         $data['adroid']         = Config::get("site.android_url");
         $data['ios']            = Config::get("site.ios_url");
         $data['is_agreement']   = Config::get("site.is_agreement");
