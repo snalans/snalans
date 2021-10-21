@@ -5,11 +5,17 @@ namespace app\api\controller;
 use app\common\controller\Api;
 use fast\Random;
 use think\config;
+use think\Db;
 
+/**
+ * 农贸市场接口
+ */
 class Egg extends Api
 {
-    /*
-     * 蛋收盘价格表，定时器每个小时整点运行
+    protected $noNeedLogin = ['hours_price','market_automatic_confirm','hours'];
+    protected $noNeedRight = '*';
+    /**
+     * 蛋收盘价格表（定时器每个小时整点运行）
      */
     public function hours_price(){
         $kind_where = [];
@@ -21,11 +27,17 @@ class Egg extends Api
         if(count($egg_kind)>0){
             foreach ($egg_kind as $k=>$v ){
                 //时间段最后一笔交易单价，如果为0的话就去配置蛋的价格
-                $order_where = [];
-                $order_where[] = ['kind_id', 'eq', $v['id']];
-                $order_where[] = ['status', 'eq', 1];
-                $order_where[] = ['pay_time', 'lt', time()];
-                $order_where[] = ['pay_time', 'gt', time()-60*60];
+                $order_where = array(
+                    'kind_id'=>array('eq',$v['id']),
+                    'status'=>array('eq',1),
+                    'pay_time'=>array('lt',time()),
+                    'pay_time'=>array('gt',time()-60*60),
+                );
+//                $order_where = [];
+//                $order_where[] = ['kind_id', 'eq', $v['id']];
+//                $order_where[] = ['status', 'eq', 1];
+//                $order_where[] = ['pay_time', 'lt', time()];
+//                $order_where[] = ['pay_time', 'gt', time()-60*60];
                 $order = Db::name('egg_order')->field('price')->where($order_where)->order("pay_time desc")->find();
                 if($order){
                     $price = $order['price'];
@@ -45,12 +57,13 @@ class Egg extends Api
         }
     }
 
-    /*
+    /**
      * 农贸市场
      */
     public function market_index(){
-        $kind_where = [];
-        $kind_where[] = ['id', 'lt', 5];
+        $kind_where = array(
+            'id'=>array('lt',5)
+        );
         $egg_kind = Db::name("egg_kind")
             ->field("id,name")
             ->where($kind_where)
@@ -59,7 +72,7 @@ class Egg extends Api
         if(count($egg_kind)>0) {
             foreach ($egg_kind as $k => $v) {
                 $hours_where = [];
-                $hours_where[] = ['kind_id', 'eq', $v['id']];
+                $hours_where['kind_id'] = $v['id'];
                 $list = Db::name("egg_hours_price")
                     ->field("price,hours,kind_id")
                     ->where($hours_where)
@@ -71,7 +84,7 @@ class Egg extends Api
         $this->success('查询成功',$egg_kind);
     }
 
-    public function hours($list)
+    public function hours($list=array())
     {
         $data = [];
         for ($x=0; $x<=23; $x++) {
@@ -85,43 +98,60 @@ class Egg extends Api
                 $data[] = $data1;
             }
         }
-        foreach ($data as &$lv){
-            foreach ($list as &$v){
-                if($lv['hours'] == $v['hours']){
-                    $lv['price'] = $v['price'];
+        if(count($list)>0){
+            foreach ($data as &$lv){
+                foreach ($list as &$v){
+                    if($lv['hours'] == $v['hours']){
+                        $lv['price'] = $v['price'];
+                    }
                 }
             }
         }
         return $data;
     }
 
-    /*
+    /**
      * 交易大厅
+     *
+     * @ApiMethod (Get)
+     * @ApiParams   (name="buy_serial_umber", type="integer", description="会员编号")
+     * @ApiParams   (name="kind_id", type="integer", description="蛋分类id")
+     * @ApiParams   (name="page", type="integer", description="页码")
+     * @ApiParams   (name="per_page", type="integer", description="分页数量")
+     *
+     * @ApiReturnParams   (name="buy_serial_umber", type="integer", description="会员编号")
+     * @ApiReturnParams   (name="number", type="integer", description="数量")
+     * @ApiReturnParams   (name="price", type="integer", description="价格")
+     * @ApiReturnParams   (name="status", type="integer", description="状态默认：9=全部 0=待付款 1=完成 2=待确认 3=申诉 4=无效（撤单） 5=挂单  6退款")
+     * @ApiReturnParams   (name="order_sn", type="integer", description="订单编号")
      */
     public function market_hall()
     {
         $buy_serial_umber = $this->request->get("buy_serial_umber",0);//会员编号
-        $kind_id = $this->request->get("kind_id",1);//会员编号
+        $kind_id = $this->request->get("kind_id",1);//蛋分类id
         $page  = $this->request->get("page",1);
         $limit = $this->request->get("per_page",10);
 
         $user_id  = $this->auth->id;
         //自己的挂单
-        $where = [];
-        $where[] = ['buy_user_id', 'eq', $user_id];
-        $where[] = ['kind_id', 'eq', $kind_id];
-        $where[] = ['status', 'in', [0,2,3,5]];
+        $where = array(
+            'buy_user_id'=>array('eq',$user_id),
+            'kind_id'=>array('eq',$kind_id),
+            'status'=>array('neq',1),
+            'status'=>array('neq',6),
+        );
+
         $my_order = Db::name("egg_order")
-            ->field("id,buy_serial_umber,name,price,number,status,order_sn")
+            ->field("id,buy_serial_umber,name,price,number,status,order_sn,createtime")
             ->where($where)
             ->find();
 
-
         //挂单状态且没有超过有效期可以撤回
-        if(count($my_order)>0 && $my_order['status']==5){
+        if(!empty($my_order) && $my_order['status']==5){
+
             //时间过期
             $valid_time = 0;
-            $valid_time   = Config::get('valid_time') * 60 * 60;
+            $valid_time   = Config::get('site.valid_time') * 60 * 60;
             $end_time = $valid_time + $my_order['createtime'];
             if($end_time>time()){
                 $my_order['is_cancel'] = 0;
@@ -131,15 +161,23 @@ class Egg extends Api
         }
 
         //别人挂单
-        $order_where = [];
-        $order_where[] = ['buy_user_id', 'neq', $user_id];
-        $order_where[] = ['kind_id', 'eq', $kind_id];
-        $order_where[] = ['status', 'eq', 0];
         if($buy_serial_umber>0){
-            $order_where[] = ['buy_serial_umber', 'eq', $buy_serial_umber ];
+            $order_where = array(
+                'buy_user_id'=>array('neq',$user_id),
+                'kind_id'=>array('eq',$kind_id),
+                'status'=>array('eq',0),
+                'buy_serial_umber'=>array('eq',$buy_serial_umber)
+            );
+        }else{
+            $order_where = array(
+                'buy_user_id'=>array('neq',$user_id),
+                'kind_id'=>array('eq',$kind_id),
+                'status'=>array('eq',0)
+            );
         }
+
         $order = Db::name("egg_order")
-            ->field("id,buy_serial_umber,name,price,status")
+            ->field("id,buy_serial_umber,name,price,status,order_sn")
             ->where($order_where)
             ->order('price asc')
             ->page($page, $limit)
@@ -159,22 +197,27 @@ class Egg extends Api
         $this->success('查询成功',$list);
     }
 
-    /*
+    /**
      * 挂单
+     *
+     * @ApiMethod (Post)
+     * @ApiParams   (name="kind_id", type="integer", description="蛋分类id")
+     * @ApiParams   (name="price", type="integer", description="价格")
+     * @ApiParams   (name="number", type="integer", description="数量")
      */
     public function market_buy()
     {
         $user_id  = $this->auth->id;
-        $kind_id  = $this->request->get("kind_id",0);
-        $price  = $this->request->get("price",0);
-        $number = $this->request->get("number",0);
+        $kind_id  = $this->request->post("kind_id",0);
+        $price  = $this->request->post("price",0);
+        $number = $this->request->post("number",0);
 
         if($kind_id<=0 || $kind_id>4){
             $this->error("请选择有效的蛋种类！");
         }
 
         $egg_name = Db::name("egg_kind")
-            ->where('kind_id',$kind_id)
+            ->where('id',$kind_id)
             ->value('name');
 
         if($number==0){
@@ -182,10 +225,12 @@ class Egg extends Api
         }
 
         //挂单数量
-        $where = [];
-        $where[] = ['buy_user_id', 'eq', $user_id];
-        $where[] = ['kind_id', 'eq', $kind_id];
-        $where[] = ['status', 'in', [0,2,3]];
+        $where = array(
+            'buy_user_id'=>array('eq',$user_id),
+            'kind_id'=>array('eq',$kind_id),
+            'status'=>array('in',[0,2,3])
+        );
+
         $count = Db::name("egg_order")
             ->field("id,buy_serial_umber,name,price,number,status")
             ->where($where)
@@ -195,7 +240,7 @@ class Egg extends Api
         }
 
         //蛋基础价格
-        $egg_order  = Db::name("egg_order")
+        $egg_price_config  = Db::name("egg_price_config")
             ->where('kind_id',$kind_id)
             ->find();
 
@@ -203,19 +248,20 @@ class Egg extends Api
             $this->error("请输入有效的蛋价格");
         }
 
-        if($egg_order['price']>$price || $egg_order['max_price']<$price){
-            $this->error("蛋价格范围是".$egg_order['price'].'元-'.$egg_order['max_price'].'元');
+        if($egg_price_config['price']>$price || $egg_price_config['max_price']<$price){
+            $this->error("蛋价格范围是".$egg_price_config['price'].'元-'.$egg_price_config['max_price'].'元');
         }
 
         $u_where = [];
-        $u_where[] = ['status','eq','normal'];
-        $u_where[] = ['is_attestation','eq',1];
+        $u_where['id'] = $user_id;
+        $u_where['status'] = 'normal';
+        $u_where['is_attestation'] = 1;
         $user_info = Db::name("user")
             ->field("id,serial_number,mobile")
             ->where($u_where)
             ->find();
 
-        if(count($user_info)==0){
+        if(empty($user_info)){
             $this->error("账号无效或者未认证");
         }
 
@@ -230,7 +276,7 @@ class Egg extends Api
         $order_data['kind_id'] = $kind_id;
         $order_data['price'] = $price;
         $order_data['number'] = $number;
-        $order_data['rate'] = ceil($number*Config::get('rate_config')/100);
+        $order_data['rate'] = ceil($number*Config::get('site.rate_config')/100);
         $order_data['amount'] = $price * $number;
         $order_data['status'] = 5;
         $order_data['createtime'] = time();
@@ -244,18 +290,21 @@ class Egg extends Api
         }
     }
 
-    /*
+    /**
      * 撤单
+     *
+     * @ApiMethod (Post)
+     * @ApiParams   (name="order_sn", type="integer", description="订单编号")
      */
     public function market_cancel()
     {
         $user_id  = $this->auth->id;
-        $order_sn  = $this->request->get("order_sn",0);
+        $order_sn  = $this->request->post("order_sn",0);
 
         //订单
         $where = [];
-        $where[] = ['order_sn','eq',$order_sn];
-        $where[] = ['buy_user_id','eq',$user_id];
+        $where['order_sn'] = $order_sn;
+        $where['buy_user_id'] = $user_id;
         $order = Db::name("egg_order")
             ->field("*")
             ->where($where)
@@ -267,11 +316,11 @@ class Egg extends Api
 
         //时间过期
         $valid_time = 0;
-        $valid_time   = Config::get('valid_time') * 60 * 60;
+        $valid_time   = Config::get('site.valid_time') * 60 * 60;
         $end_time = $valid_time + $order['createtime'];
 
         if($end_time>time()){
-            $this->error(Config::get('valid_time')."小时内不能撤单");
+            $this->error(Config::get('site.valid_time')."小时内不能撤单");
         }
 
         //更新订单
@@ -285,13 +334,16 @@ class Egg extends Api
         }
     }
 
-    /*
+    /**
     * 出售
+     *
+     * @ApiMethod (Post)
+     * @ApiParams   (name="order_sn", type="integer", description="订单编号")
     */
     public function market_sale()
     {
         $user_id  = $this->auth->id;
-        $order_sn  = $this->request->get("order_sn",0);
+        $order_sn  = $this->request->post("order_sn",0);
 
         //订单
         $order = Db::name("egg_order")
@@ -299,13 +351,13 @@ class Egg extends Api
             ->where('order_sn',$order_sn)
             ->find();
 
-        if(count($order)== 0 || $order['status']!=5 || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0){
+        if(empty($order) || $order['status']!=5 || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0){
             $this->error("无效订单");
         }
 
         $egg_where = [];
-        $egg_where[] = ['user_id','eq',$user_id];
-        $egg_where[] = ['kind_id','eq',$order_sn['kind_id']];
+        $egg_where['user_id'] = $user_id;
+        $egg_where['kind_id'] = $order['kind_id'];
         $egg_num = Db::name("egg")->where($egg_where)->value('number');
 
         //蛋数量不够
@@ -315,14 +367,15 @@ class Egg extends Api
         }
 
         $u_where = [];
-        $u_where[] = ['status','eq','normal'];
-        $u_where[] = ['is_attestation','eq',1];
+        $u_where['status'] = 'normal';
+        $u_where['is_attestation'] = 1;
+        $u_where['id'] = $user_id;
         $user_info = Db::name("user")
             ->field("id,serial_number,mobile")
             ->where($u_where)
             ->find();
 
-        if(count($user_info)==0){
+        if(empty($user_info)){
             $this->error("账号无效或者未认证");
         }
 
@@ -337,14 +390,15 @@ class Egg extends Api
             $re = Db::name("egg_order")->where('order_sn',$order_sn)->data($data)->update();
 
             //扣除蛋
-            $egg_where = [];
-            $egg_where[] = ['user_id','eq',$user_id];
-            $egg_where[] = ['kind_id','eq',$order_sn['kind_id']];
-            $egg_where[] = ['number', 'egt', $total_egg];
+            $egg_where = array(
+                'user_id'=>array('eq',$user_id),
+                'kind_id'=>array('eq',$order['kind_id']),
+                'number'=>array('egt',$total_egg)
+            );
             $add_rs = Db::name("egg")->where($egg_where)->dec('number',$total_egg)->update();
 
             //蛋日志
-            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$order_sn['kind_id'],1,$order_sn,$total_egg,"农场市场挂单");
+            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$order['kind_id'],1,$order_sn,$total_egg,"农场市场挂单");
             if ($re == false || $add_rs == false ||  $log_add == false) {
                 DB::rollback();
                 $this->error("出售失败");
@@ -362,15 +416,20 @@ class Egg extends Api
         }
     }
 
-    /*
+    /**
     * 打款凭证
+     *
+     * @ApiMethod (Post)
+     * @ApiParams   (name="order_sn", type="integer", description="订单编号")
+     * @ApiParams   (name="pay_img", type="integer", description="凭证")
+     * @ApiParams   (name="type", type="integer", description="类型 1=支付宝 2=微信 3=钱包")
     */
     public function market_pay()
     {
         $user_id  = $this->auth->id;
-        $order_sn  = $this->request->get("order_sn",0);
-        $pay_img  = $this->request->get("pay_img",'');
-        $type  = $this->request->get("type",1);//类型 1=支付宝 2=微信 3=钱包
+        $order_sn  = $this->request->post("order_sn",0);
+        $pay_img  = $this->request->post("pay_img",'');
+        $type  = $this->request->post("type",1);//类型 1=支付宝 2=微信 3=钱包
 
         if(empty($pay_img)){
             $this->error("请上传付款凭证！");
@@ -378,9 +437,9 @@ class Egg extends Api
 
         //订单
         $order_where = [];
-        $order_where[] = ['order_sn','eq',$order_sn];
-        $order_where[] = ['buy_user_id','eq',$user_id];
-        $order_where[] = ['status','eq',0];
+        $order_where['order_sn'] = $order_sn;
+        $order_where['buy_user_id'] = $user_id;
+        $order_where['status'] = 0;
         $order = Db::name("egg_order")
             ->field("*")
             ->where($order_where)
@@ -392,13 +451,13 @@ class Egg extends Api
 
         //卖家支付信息
         $where = [];
-        $where[] = ['user_id','eq',$order['sell_user_id']];
-        $where[] = ['type','eq',$type];
+        $where['user_id'] = $order['sell_user_id'];
+        $where['type'] = $type;
         $charge_code = Db::name("egg_charge_code")
             ->field("*")
             ->where($where)
             ->find();
-        if(count($charge_code)==0){
+        if(empty($charge_code)){
             $this->error("请选择付款方式");
         }
 
@@ -413,69 +472,96 @@ class Egg extends Api
         if ($re == true){
             //通知卖家
 
-            $this->success("确认支付成功");
+            $this->success("上传凭证成功，等待卖家确认支付");
         }else{
-            $this->error('确认支付失败');
+            $this->error('上传凭证失败');
         }
     }
 
-    /*
+    /**
     * 卖家确认支付
+     *
+     * @ApiMethod (Post)
+     * @ApiParams   (name="order_sn", type="integer", description="订单编号")
     */
     public function market_confirm()
     {
         $user_id  = $this->auth->id;
-        $order_sn  = $this->request->get("order_sn",0);
+        $order_sn  = $this->request->post("order_sn",0);
 
         //订单
         $order_where = [];
-        $order_where[] = ['order_sn','eq',$order_sn];
-        $order_where[] = ['sell_user_id','eq',$user_id];
-        $order_where[] = ['status','eq',2];
+        $order_where['order_sn'] = $order_sn;
+        $order_where['sell_user_id'] = $user_id;
+        $order_where['status'] = 2;
         $order = Db::name("egg_order")
             ->field("*")
             ->where($order_where)
             ->find();
 
-        if(count($order)== 0  || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0){
+        if(empty($order)  || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0){
             $this->error("无效订单");
         }
+        DB::startTrans();
+        try{
+            //更新订单
+            $data =array();
+            $data['status'] = 1;
+            $re = Db::name("egg_order")->where('order_sn',$order_sn)->data($data)->update();
 
-        //更新订单
-        $data =array();
-        $data['status'] = 1;
-        $re = Db::name("egg_order")->where('order_sn',$order_sn)->data($data)->update();
-        if ($re == true){
-            $this->success("确认支付成功");
-        }else{
-            $this->error('确认支付失败');
+            //蛋给买家
+            $egg_where = array(
+                'user_id'=>array('eq',$order['buy_user_id']),
+                'kind_id'=>array('eq',$order['kind_id']),
+            );
+            $add_rs = Db::name("egg")->where($egg_where)->inc('number',$order['number'])->update();
+
+            //蛋日志
+            $log_add = \app\admin\model\egg\Log::saveLog($order['buy_user_id'],$order['kind_id'],1,$order_sn,$order['number'],"农场市场卖家确认支付");
+            if ($re == false || $add_rs == false ||  $log_add == false) {
+                DB::rollback();
+                $this->error("确认支付失败");
+            } else {
+                DB::commit();
+                //通知买家
+
+                $this->success('确认支付成功');
+            }
+        }//end try
+        catch(\Exception $e)
+        {
+            DB::rollback();
+            $this->error($e->getMessage());
         }
-
     }
 
-    /*
+    /**
     * 卖家申诉
+     *
+     * @ApiMethod (Post)
+     * @ApiParams   (name="order_sn", type="integer", description="订单编号")
+     * @ApiParams   (name="reason", type="integer", description="申诉理由")
     */
     public function market_appeal()
     {
         $user_id  = $this->auth->id;
-        $order_sn  = $this->request->get("order_sn",0);
-        $note  = $this->request->get("reason",'');
+        $order_sn  = $this->request->post("order_sn",0);
+        $note  = $this->request->post("reason",'');
 
         if(empty($note)){
             $this->error("请填写申诉理由！");
         }
         //订单
         $order_where = [];
-        $order_where[] = ['order_sn','eq',$order_sn];
-        $order_where[] = ['sell_user_id','eq',$user_id];
-        $order_where[] = ['status','eq',2];
+        $order_where['order_sn'] = $order_sn;
+        $order_where['sell_user_id'] = $user_id;
+        $order_where['status'] = 2;
         $order = Db::name("egg_order")
             ->field("*")
             ->where($order_where)
             ->find();
 
-        if(count($order)== 0  || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0){
+        if(empty($order)  || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0){
             $this->error("无效订单");
         }
 
@@ -491,8 +577,11 @@ class Egg extends Api
         }
     }
 
-    /*
+    /**
     * 订单详情
+     *
+     * @ApiMethod (Get)
+     * @ApiParams   (name="order_sn", type="integer", description="订单编号")
     */
     public function market_order_detail()
     {
@@ -500,19 +589,17 @@ class Egg extends Api
         $order_sn  = $this->request->get("order_sn",0);
         //订单
         $order_where = [];
-        $order_where[] = ['order_sn','eq',$order_sn];
-        $order_where[] = ['sell_user_id','eq',$user_id];
+        $order_where['order_sn'] = $order_sn;
         $order = Db::name("egg_order")
             ->field("*")
             ->where($order_where)
             ->find();
-
-        if(count($order)== 0  || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0 ){
-            $this->error("无效订单");
+        if(empty($order) || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0 ){
+            $this->error("无效订单22");
         }
 
         if($order['sell_user_id'] !=$user_id && $order['buy_user_id'] !=$user_id){
-            $this->error("无效订单");
+            $this->error("无效订单11");
         }
 
         //是否是卖家
@@ -536,13 +623,13 @@ class Egg extends Api
         $this->success('查询成功',$order);
     }
 
-    /*
+    /**
     * 卖家自动确认订单
     */
     public function market_automatic_confirm(){
         //超时待确认的订单
         $confirm_time = 0;
-        $confirm_time   = Config::get('confirm_time') * 60 * 60;
+        $confirm_time   = Config::get('site.confirm_time') * 60 * 60;
         $time_out = time() - $confirm_time;
         //订单
         $order_where = [];

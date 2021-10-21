@@ -20,11 +20,11 @@ return [
     // 数据库名
     'database'        => Env::get('database.database', 'egg'),
     // 用户名
-    'username'        => Env::get('database.username', 'root'),
+    'username'        => Env::get('database.username', 'egg'),
     // 密码
-    'password'        => Env::get('database.password', 'root'),
+    'password'        => Env::get('database.password', 'CjMSk4f4eYCLTJrh'),
     // 端口
-    'hostport'        => Env::get('database.hostport', '3306'),
+    'hostport'        => Env::get('database.hostport', ''),
     // 连接dsn
     'dsn'             => '',
     // 数据库连接参数

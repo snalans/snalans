@@ -5,14 +5,18 @@ namespace app\api\controller;
 use app\common\controller\Api;
 use fast\Random;
 use think\config;
-
+/**
+ * 团队分红接口
+ */
 class Team extends Api
 {
-    /*
-     * 变更链农场主等级,农场主等级只升不降
-     * $user_id 用户id
-     * $valid_number 有效值
-     * $level 农场主等级
+    protected $noNeedLogin = ['bonus_commission', 'bonus_commission_data','bonus_commission_issue'];
+    protected $noNeedRight = '*';
+    /**
+     * 变更链农场主等级(农场主等级只升不降)
+     *
+     * @ApiMethod (POST)
+     * @ApiParams   (name="user_id", type="integer", description="用户id")
      */
     public function update_vip($user_id){
         $user_info = Db::name("user")
@@ -43,8 +47,8 @@ class Team extends Api
                         foreach ($egg_give as $k=>$v){
                             //增加蛋
                             $wh = [];
-                            $wh[] = ['user_id', 'eq', $user_id];
-                            $wh[] = ['kind_id', 'eq', $v['kind_id']];
+                            $wh['user_id'] =  $user_id;
+                            $wh['kind_id'] = $v['kind_id'];
                             $add_rs = Db::name("egg")->where($wh)->inc('number',$v['number'])->update();;
 
                             //蛋日志
@@ -61,8 +65,8 @@ class Team extends Api
                         foreach ($egg_nest_give as $kk=>$vv) {
                             //增加窝
                             $nest_where = [];
-                            $nest_where[] = ['user_id', 'eq', $user_id];
-                            $nest_where[] = ['nest_kind_id', 'eq', $vv['nest_kind_id']];
+                            $nest_where['user_id'] = $user_id;
+                            $nest_where['nest_kind_id'] = $vv['nest_kind_id'];
                             $add_rs = Db::name("egg_nest")->where($nest_where)->inc('number', $vv['number']);
 
                             //窝日志
@@ -86,13 +90,17 @@ class Team extends Api
 
     }
 
-    /*
-     * 输出用户农场主等级
-     * $user_id 用户id
-     * $level 用户目前等级
-     * $p_num 直推数量
-     * $team_num 团队数量
-     * $valid_number 有效值
+    /**
+     * 用户农场主等级
+     *
+     * @ApiMethod (POST)
+     * @ApiParams   (name="user_id", type="integer", description="用户id")
+     * @ApiParams   (name="level", type="integer", description="用户目前等级")
+     * @ApiParams   (name="p_num", type="integer", description="直推数量")
+     * @ApiParams   (name="team_num", type="integer", description="团队数量")
+     * @ApiParams   (name="valid_number", type="integer", description="有效值")
+     *
+     * @ApiReturnParams   (name="level", type="integer", description="用户最终等级")
      */
     public function vip($user_id,$level,$p_num = 0,$team_num = 0,$valid_number){
         $where = [];
@@ -104,11 +112,12 @@ class Team extends Api
             foreach ($config_bonus as $ke => $val) {
                 if($p_num>=$val['number'] && $team_num>=$val['team_number'] && $valid_number>=$val['valid_number']){
                     //直推农场主数量
-                    $u_where = [];
-                    $u_where[] = ['level', 'egt', $val['level']];
-                    $u_where[] = ['pid', 'eq', $user_id];
-                    $u_where[] = ['status','eq','normal'];
-                    $u_where[] = ['is_attestation','eq',1];
+                    $u_where = array(
+                        'level'=>array('egt',$val['level']),
+                        'pid'=>array('eq',$user_id),
+                        'status'=>array('eq','normal'),
+                        'is_attestation'=>array('eq',1)
+                    );
                     $user_number = Db::name("user")->where($u_where)->count();
                     if ($val['user_number']>=$user_number){
                         //会员等级直推蛋购买
@@ -120,10 +129,11 @@ class Team extends Api
                                 //直推有多少人购买该种类的蛋
                                 $id_array = Db::name('user')->field('id')->where(array('pid'=>$user_id))->select();
                                 $ids = array_column($id_array, 'id');
-                                $order_where = [];
-                                $order_where[] = ['buy_user_id', 'in', $ids];
-                                $order_where[] = ['kind_id', 'eq', $v['kind_id']];
-                                $order_where[] = ['status', 'eq', 1];
+                                $order_where = array(
+                                    'buy_user_id'=>array('in',$ids),
+                                    'kind_id'=>array('eq',$v['kind_id']),
+                                    'status'=>array('eq',1)
+                                );
                                 $people = Db::name('egg_order')->where($order_where)->count('DISTINCT buy_user_id');
 
                                 if($people < $v['user_number'] ){
@@ -146,7 +156,9 @@ class Team extends Api
         return $level;
     }
 
-    //农场主分红数据
+    /**
+     * 农场主分红数据
+     */
     public function bonus_commission(){
 
         $where = [];
@@ -159,14 +171,15 @@ class Team extends Api
         }
 
         //统计昨天发放的分红奖励总积分
-        $fee_rate  = Config::get('site_rate_config');
+        $fee_rate  = Config::get('site.fee_rate')/100;
 
         $total_score = 0; //总的手续费积分
         $total_price = 0; //蛋总价
         $white_price = 0; //白蛋收盘价
 
-        $kind_where = [];
-        $kind_where[] = ['id', 'lt', 5];
+        $kind_where = array(
+            'id'=>array('lt',5)
+        );
         $egg_kind = Db::name("egg_kind")
             ->where($kind_where)
             ->order('id asc')
@@ -175,20 +188,22 @@ class Team extends Api
         if(count($egg_kind)>0){
             foreach ($egg_kind as $ki=>$vi ){
                 //蛋数量
-                $fee_where = [];
-                $fee_where[] = ['createtime', 'egt', strtotime(date("Y-m-d",strtotime("-1 day")))];
-                $fee_where[] = ['createtime', 'lt', strtotime(date("Y-m-d"))];
-                $fee_where[] = ['type', 'eq', 9];
-                $fee_where[] = ['kind_id', 'eq', $vi['id']];
+                $fee_where = array(
+                    'createtime'=>array('egt',strtotime(date("Y-m-d",strtotime("-1 day")))),
+                    'createtime'=>array('lt',strtotime(date("Y-m-d"))),
+                    'type'=>array('eq',9),
+                    'kind_id'=>array('eq',$vi['id'])
+                );
                 $total_number = Db::name("egg_log")
                     ->where($fee_where)
                     ->sum('number');
 
                 //蛋收盘价
-                $hours_where = [];
-                $hours_where[] = ['kind_id', 'eq', $vi['id']];
-                $hours_where[] = ['day', 'eq', date("Y-m-d")];
-                $hours_where[] = ['hours', 'eq', '00-00'];
+                $hours_where = array(
+                    'day'=>array('eq',date("Y-m-d")),
+                    'hours'=>array('eq','00-00'),
+                    'kind_id'=>array('eq',$vi['id'])
+                );
                 $price = Db::name("egg_hours_price")
                     ->where($hours_where)
                     ->value('price');
@@ -205,16 +220,19 @@ class Team extends Api
         $bonus_score = $total_score * $fee_rate;//分红奖励总积分
 
         //农场主等级分红配置
-        $bonus_where = [];
-        $bonus_where[] = ['level', 'gt', 0];
+        $bonus_where = array(
+            'level'=>array('gt',0)
+        );
         $config_bonus = Db::name("team_config")
             ->where($bonus_where)
             ->select();
         //农场主等级列表
-        $where = [];
-        $where[] = ['level','egt',1];
-        $where[] = ['status','eq','normal'];
-        $where[] = ['is_attestation','eq',1];
+        $where = array(
+            'level'=>array('egt',1),
+            'status'=>array('eq','normal'),
+            'is_attestation'=>array('eq',1)
+        );
+
         $total_user_count =Db::name("user")
             ->field('id,level')
             ->where($where)
@@ -233,10 +251,12 @@ class Team extends Api
                 $statistics_bonus = array();
                 $trade_vip = array();
                 foreach($config_bonus as $k=>$v) {
-                    $where = [];
-                    $where[] = ['level','eq',$v['level']];
-                    $where[] = ['status','eq','normal'];
-                    $where[] = ['is_attestation','eq',1];
+                    $where = array(
+                        'level'=>array('eq',$v['level']),
+                        'status'=>array('eq','normal'),
+                        'is_attestation'=>array('eq',1)
+                    );
+
                     $user_list = Db::name("user")
                         ->field('id,level')
                         ->where($where)
@@ -309,7 +329,9 @@ class Team extends Api
         }
     }
 
-    //农场主分红数据插入
+    /**
+     * 农场主分红数据插入
+     */
     public function bonus_commission_data(){
         $lock = Cache::get("commission_data");
         if($lock){
@@ -318,10 +340,11 @@ class Team extends Api
         }
         Cache::set("commission_data",'locked',1);
 
-        $where = [];
-        $where[] = ['is_update', 'eq', 0];
-        $where[] = ['total_num', 'gt', 0];
-        $where[] = ['add_time', 'eq', date("Y-m-d")];
+        $where = array(
+            'is_update'=>array('eq',0),
+            'total_num'=>array('gt',0),
+            'add_time'=>array('eq',date("Y-m-d"))
+        );
         $vip_info = Db::name("team_vip")
             ->field('*')
             ->where($where)
@@ -340,9 +363,10 @@ class Team extends Api
                     $key = $k+1;
                     if($key>$vip_info['num'] && ($key <= $page_num)){
                         $data = array();
-                        $where = [];
-                        $where[] = ['level','eq',$vip_info['lv']];
-                        $where[] = ['add_time','eq',date("Y-m-d")];
+                        $where = array(
+                            'level'=>array('eq',$vip_info['lv']),
+                            'add_time'=>array('eq',date("Y-m-d"))
+                        );
                         $statistics_info = Db::name("team_statistics")
                             ->field('*')
                             ->where($where)
@@ -407,7 +431,9 @@ class Team extends Api
 
     }
 
-    //农场主分红发放
+    /**
+     * 农场主分红发放
+     */
     public function bonus_commission_issue(){
         $lock = Cache::get("commission_issue");
         if($lock){
@@ -415,8 +441,9 @@ class Team extends Api
             return $result;
         }
         Cache::set("commission_issue",'locked',1);
+
         $where = [];
-        $where[] = ['is_issue', 'eq', 0];
+        $where['is_issue'] =  0;
         //$where[] = ['money', 'gt', 0];
         $commission_list = Db::name("team_bonus")
             ->field('*')
@@ -431,7 +458,7 @@ class Team extends Api
                 foreach ($commission_list as $k => $v) {
                     if($v['score']>0){
                         $asset_where = [];
-                        $asset_where[] = ['user_id', 'eq', $v['user_id']];
+                        $asset_where['user_id'] = $v['user_id'];
                         $before_score = Db::name("user")->where($asset_where)->value('score'); //变更前积分
                         $res = Db::name("user")->where($asset_where)->inc('score', $v['score'])->update();
                         $re = Db::name("team_bonus")->where(array('id' => $v['id']))->data(array('is_issue' => 1, 'pay_time' => time()))->update();
