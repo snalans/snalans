@@ -595,11 +595,11 @@ class Egg extends Api
             ->where($order_where)
             ->find();
         if(empty($order) || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0 ){
-            $this->error("无效订单22");
+            $this->error("无效订单");
         }
 
         if($order['sell_user_id'] !=$user_id && $order['buy_user_id'] !=$user_id){
-            $this->error("无效订单11");
+            $this->error("无效订单");
         }
 
         //是否是卖家
