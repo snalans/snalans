@@ -363,7 +363,7 @@ class Egg extends Api
         //蛋数量不够
         $total_egg = $order['number'] + $order['rate'];
         if($total_egg>$egg_num){
-            $this->error("您的蛋数量不足",$total_egg.'个！');
+            $this->error("您的蛋数量不足".$total_egg.'个！');
         }
 
         $u_where = [];
@@ -666,5 +666,87 @@ class Egg extends Api
             }
         }
 
+    }
+    /**
+     * 彩蛋回收
+     *
+     * @ApiMethod (Post)
+     * @ApiParams   (name="number", type="integer", description="数量")
+     */
+    public function market_sale_colour(){
+        $user_id  = $this->auth->id;
+        $kind_id  = 5;
+        $number = $this->request->post("number",1);
+        $egg_info = Db::name("egg_kind")
+            ->field('*')
+            ->where('id',$kind_id)
+            ->find();
+
+        if($number==0){
+            $this->error("请输入蛋数量！");
+        }
+
+        //挂单数量
+        $where = array(
+            'buy_user_id'=>array('eq',$user_id),
+            'kind_id'=>array('eq',$kind_id),
+            'status'=>array('in',[0,2,3])
+        );
+
+        $count = Db::name("egg_order")
+            ->field("id,buy_serial_umber,name,price,number,status")
+            ->where($where)
+            ->count();
+        if($count>0){
+            $this->error("只能有一个彩蛋回收订单！");
+        }
+
+        //判断用户是否有彩蛋
+        $egg_where = [];
+        $egg_where['user_id'] = $user_id;
+        $egg_where['kind_id'] = $kind_id;
+        $egg_num = Db::name("egg")->where($egg_where)->value('number');
+
+        //蛋数量不够
+        if($number>$egg_num){
+            $this->error("您的彩蛋数量不足".$number.'个！');
+        }
+
+        $u_where = [];
+        $u_where['id'] = $user_id;
+        $u_where['status'] = 'normal';
+        $u_where['is_attestation'] = 1;
+        $user_info = Db::name("user")
+            ->field("id,serial_number,mobile")
+            ->where($u_where)
+            ->find();
+
+        if(empty($user_info)){
+            $this->error("账号无效或者未认证");
+        }
+
+        //生成彩蛋回收订单
+        $order_data = array();
+        $order_data['order_sn'] = date("Ymdhis", time()).mt_rand(1000,9999);
+        $order_sn = $order_data['order_sn'];
+        $order_data['buy_user_id'] = $user_id;
+        $order_data['buy_serial_umber'] = $user_info['serial_number'];
+        $order_data['buy_mobile'] = $user_info['mobile'];
+        $order_data['name'] = $egg_info['name'];
+        $order_data['kind_id'] = $kind_id;
+        $order_data['price'] = $egg_info['price'];
+        $order_data['number'] = $number;
+        $order_data['rate'] = 0;
+        $order_data['amount'] = $egg_info['price'] * $number;
+        $order_data['status'] = 0;
+        $order_data['createtime'] = time();
+
+        $re = Db::name("egg_order")->insert($order_data);
+
+        if ($re == true){
+            $this->success("彩蛋回收成功，请耐心等待打款");
+        }else{
+            $this->error('彩蛋回收失败');
+        }
     }
 }
