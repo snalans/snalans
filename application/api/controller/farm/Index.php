@@ -205,8 +205,13 @@ class Index extends Api
 
         $valid_number = Db::name("egg_kind")->where("id",$result['kind_id'])->value("valid_number");
         if($valid_number){
+            //更新农场主等级，$user_id用户id，注意要在积分更新之后调用
+            $userLevelConfig = new \app\common\model\UserLevelConfig();
             $v_rs = Db::name("user")->where("id",$this->auth->id)->setInc('valid_number',$valid_number);
             $v_log = Db::name("egg_valid_number_log")->insert(['user_id'=>$this->auth->id,'origin_user_id'=>$this->auth->id,'number'=>$valid_number,'add_time'=>time()]);
+            if($v_rs){
+                $userLevelConfig->update_vip($user_id);
+            }
 
             //上级发放有效值
             $wh = [];
@@ -215,8 +220,11 @@ class Index extends Api
             $plist = Db::name("membership_chain")->where($wh)->select();
             if(!empty($plist)){
                 foreach ($plist as $key => $value) {                
-                    Db::name("user")->where("id",$value['ancestral_id'])->setInc('valid_number',$valid_number);
+                    $an_rs = Db::name("user")->where("id",$value['ancestral_id'])->setInc('valid_number',$valid_number);
                     Db::name("egg_valid_number_log")->insert(['user_id'=>$value['ancestral_id'],'origin_user_id'=>$this->auth->id,'number'=>$valid_number,'add_time'=>time()]);
+                    if($an_rs){
+                        $userLevelConfig->update_vip($user_id);
+                    }
                 }
             }            
         }
