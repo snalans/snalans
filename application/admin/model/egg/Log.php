@@ -45,7 +45,7 @@ class Log extends Model
         $data['number']     = $number;
         $data['note']       = $note;
         $data['createtime'] = time();
-        $rs = Db::name("egg_log_".date("Y-m"))->insert($data);
+        $rs = Db::name("egg_log_".date("Y_m"))->insert($data);
         return $rs;
     }
 
