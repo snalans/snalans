@@ -20,18 +20,18 @@ class Team extends Api
      * @ApiMethod (Post)
      * @ApiParams   (name="user_id", type="integer", description="用户id")
      */
-    public function vip(){
-        $user_id  = $this->request->post("user_id",0);
-        //更新农场主等级，$user_id用户id，注意要在积分更新之后调用
-        $userLevelConfig = new \app\common\model\UserLevelConfig();
-        $res = $userLevelConfig ->update_vip($user_id);
-
-        if ($res == true){
-            $this->success("更新成功");
-        }else{
-            $this->error('更新失败');
-        }
-    }
+//    public function vip(){
+//        $user_id  = $this->request->post("user_id",0);
+//        //更新农场主等级，$user_id用户id，注意要在积分更新之后调用
+//        $userLevelConfig = new \app\common\model\UserLevelConfig();
+//        $res = $userLevelConfig ->update_vip($user_id);
+//
+//        if ($res == true){
+//            $this->success("更新成功");
+//        }else{
+//            $this->error('更新失败');
+//        }
+//    }
 
     /**
      * 农场主分红数据
