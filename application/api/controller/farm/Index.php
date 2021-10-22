@@ -212,7 +212,7 @@ class Index extends Api
                 $v_rs = Db::name("user")->where("id",$this->auth->id)->setInc('valid_number',$valid_number);
                 $v_log = Db::name("egg_valid_number_log")->insert(['user_id'=>$this->auth->id,'origin_user_id'=>$this->auth->id,'number'=>$valid_number,'add_time'=>time()]);
                 if($v_rs){
-                    $userLevelConfig->update_vip($user_id);
+                    $userLevelConfig->update_vip($this->auth->id);
                 }
 
                 //上级发放有效值
