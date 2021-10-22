@@ -41,7 +41,7 @@ class Team extends Api
                     //赠送蛋
                     $egg_give = Db::name("egg_give")
                         ->field('*')
-                        ->where(['user_level_config_id'=>$level])
+                        ->where(['level'=>$level])
                         ->select();
                     if(count($egg_give)>0){
                         foreach ($egg_give as $k=>$v){
@@ -59,7 +59,7 @@ class Team extends Api
                     //赠送窝
                     $egg_nest_give = Db::name("egg_nest_give")
                         ->field('*')
-                        ->where(['user_level_config_id'=>$level])
+                        ->where(['level'=>$level])
                         ->select();
                     if(count($egg_nest_give)>0){
                         foreach ($egg_nest_give as $kk=>$vv) {
@@ -77,7 +77,7 @@ class Team extends Api
                             $data['number'] = $vv['number'];
                             $data['note'] = "农场主等级升级到".$level."级赠送";
                             $data['createtime'] = time();
-                            $rs = Db::name("egg_log")->insert($data);
+                            $rs = Db::name("egg_nest_log")->insert($data);
                         }
                     }
                 }
@@ -121,8 +121,8 @@ class Team extends Api
                     $user_number = Db::name("user")->where($u_where)->count();
                     if ($val['user_number']>=$user_number){
                         //会员等级直推蛋购买
-                        $user_level_buy = Db::name("user_level_buy")->where(['user_level_config_id'=>$val['id']])->select();
-                        $user_level_buy_number = Db::name("user_level_buy")->where(['user_level_config_id'=>$val['id']])->count();
+                        $user_level_buy = Db::name("user_level_buy")->where(['level'=>$val['level']])->select();
+                        $user_level_buy_number = Db::name("user_level_buy")->where(['level'=>$val['level']])->count();
                         if(count($user_level_buy)>0){
                             $i = 0;
                             foreach ($user_level_buy as $k => $v) {
@@ -194,7 +194,8 @@ class Team extends Api
                     'type'=>array('eq',9),
                     'kind_id'=>array('eq',$vi['id'])
                 );
-                $total_number = Db::name("egg_log")
+                $last_day = date("Y-m",strtotime("-1 day"));
+                $total_number = Db::name("egg_log_".$last_day)
                     ->where($fee_where)
                     ->sum('number');
 

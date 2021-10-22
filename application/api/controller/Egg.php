@@ -516,9 +516,13 @@ class Egg extends Api
             );
             $add_rs = Db::name("egg")->where($egg_where)->inc('number',$order['number'])->update();
 
-            //蛋日志
+            //买家获得蛋日志
             $log_add = \app\admin\model\egg\Log::saveLog($order['buy_user_id'],$order['kind_id'],1,$order_sn,$order['number'],"农场市场卖家确认支付");
-            if ($re == false || $add_rs == false ||  $log_add == false) {
+
+            //蛋手续费
+            $log_fee_add = \app\admin\model\egg\Log::saveLog($order['sell_user_id'],$order['kind_id'],9,$order_sn,$order['rate'],"农场市场交易手续费");
+
+            if ($re == false || $add_rs == false ||  $log_add == false || $log_fee_add == false) {
                 DB::rollback();
                 $this->error("确认支付失败");
             } else {
