@@ -522,7 +522,34 @@ class Egg extends Api
             //蛋手续费
             $log_fee_add = \app\admin\model\egg\Log::saveLog($order['sell_user_id'],$order['kind_id'],9,$order_sn,$order['rate'],"农场市场交易手续费");
 
-            if ($re == false || $add_rs == false ||  $log_add == false || $log_fee_add == false) {
+            //增加买家有效值
+            $egg_info = Db::name("egg_kind")
+                ->field('*')
+                ->where('id',$order['kind_id'])
+                ->find();
+            $valid_rs = true;
+            $res_vip = true;
+            $valid_log_res = true;
+            if($egg_info['valid_number']>0){
+                $valid_number = $egg_info['valid_number'] * $order['number'];
+                $valid_rs = Db::name("user")->where('id',$order['buy_user_id'])->inc('valid_number',$valid_number)->update();
+                if($valid_rs == true){
+                    $userLevelConfig = new \app\common\model\UserLevelConfig();
+                    $res_vip = $userLevelConfig ->update_vip($order['buy_user_id']);
+                }
+
+                $log = [];
+                $log['user_id'] = $v['buy_user_id'];
+                $log['origin_user_id'] = $v['sell_user_id'];
+                $log['number'] = $valid_number;
+                $log['add_time'] = $valid_number;
+                $log['type'] = 2;
+                $log['order_sn'] = $v['order_sn'];
+                $valid_log_res  = Db::name("egg_valid_number_log")->insert($log);
+            }
+
+
+            if ($re == false || $add_rs == false ||  $log_add == false || $log_fee_add == false || $valid_rs==false || $res_vip==false || $valid_log_res=false) {
                 DB::rollback();
                 $this->error("确认支付失败");
             } else {
@@ -631,6 +658,16 @@ class Egg extends Api
     * 卖家自动确认订单
     */
     public function market_automatic_confirm(){
+
+        $egg_kind = Db::name("egg_kind")
+            ->field('*')
+            ->order('id asc')
+            ->select();
+        $config_egg_kind = [];
+        foreach ($egg_kind as $key=>$value){
+            $config_egg_kind[$value['id']] = $value;
+        }
+
         //超时待确认的订单
         $confirm_time = 0;
         $confirm_time   = Config::get('site.confirm_time') * 60 * 60;
@@ -655,7 +692,44 @@ class Egg extends Api
                     $data = array();
                     $data['status'] = 1;
                     $re = Db::name("egg_order")->where('order_sn', $v['order_sn'])->data($data)->update();
-                    if ($re == false) {
+
+                    //蛋给买家
+                    $egg_where = array(
+                        'user_id'=>array('eq',$v['buy_user_id']),
+                        'kind_id'=>array('eq',$v['kind_id']),
+                    );
+                    $add_rs = Db::name("egg")->where($egg_where)->inc('number',$v['number'])->update();
+
+                    //买家获得蛋日志
+                    $log_add = \app\admin\model\egg\Log::saveLog($v['buy_user_id'],$v['kind_id'],1,$v['order_sn'],$v['number'],"农场市场卖家确认支付");
+
+                    //蛋手续费
+                    $log_fee_add = \app\admin\model\egg\Log::saveLog($v['sell_user_id'],$v['kind_id'],9,$v['order_sn'],$v['rate'],"农场市场交易手续费");
+
+                    //增加买家有效值
+                    $valid_rs = true;
+                    $res_vip = true;
+                    $valid_log_res = true;
+                    $egg_info = $config_egg_kind[$v['kind_id']];
+                    if($egg_info['valid_number']>0){
+                        $valid_number = $egg_info['valid_number'] * $v['number'];
+                        $valid_rs = Db::name("user")->where('id',$v['buy_user_id'])->inc('valid_number',$valid_number)->update();
+                        if($valid_rs == true){
+                            $userLevelConfig = new \app\common\model\UserLevelConfig();
+                            $res_vip = $userLevelConfig ->update_vip($v['buy_user_id']);
+                        }
+
+                        $log = [];
+                        $log['user_id'] = $v['buy_user_id'];
+                        $log['origin_user_id'] = $v['sell_user_id'];
+                        $log['number'] = $valid_number;
+                        $log['add_time'] = $valid_number;
+                        $log['type'] = 2;
+                        $log['order_sn'] = $v['order_sn'];
+                        $valid_log_res  = Db::name("egg_valid_number_log")->insert($log);
+                    }
+
+                    if ($re == false || $add_rs == false ||  $log_add == false || $log_fee_add == false || $valid_rs==false || $res_vip==false || $valid_log_res=false) {
                         DB::rollback();
                         $this->error("确认订单失败");
                     } else {
