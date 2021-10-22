@@ -539,12 +539,12 @@ class Egg extends Api
                 }
 
                 $log = [];
-                $log['user_id'] = $v['buy_user_id'];
-                $log['origin_user_id'] = $v['sell_user_id'];
+                $log['user_id'] = $order['buy_user_id'];
+                $log['origin_user_id'] = $order['sell_user_id'];
                 $log['number'] = $valid_number;
                 $log['add_time'] = $valid_number;
                 $log['type'] = 2;
-                $log['order_sn'] = $v['order_sn'];
+                $log['order_sn'] = $order['order_sn'];
                 $valid_log_res  = Db::name("egg_valid_number_log")->insert($log);
             }
 
