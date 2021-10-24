@@ -67,7 +67,8 @@ class Hsms
             $log_msg .= '您申请登录，验证码：'.$code.'。请不要把验证码泄漏给其他人，如非本人请勿操作。 ';
         }else if($event=='register'){                
             $log_msg .= '您申请注册会员，验证码：'.$code.'。请不要把验证码泄漏给其他人，如非本人请勿操作。 ';
-        }else{
+        }else if($event=='order'){
+            $log_msg .= '您的订单已发生变化，请登录查看。';
             return false;
         }
         $result = self::sendSms($mobile,$log_msg);
@@ -88,7 +89,7 @@ class Hsms
      */
     public static function notice($mobile, $msg = '', $template = null)
     {
-        $log_msg = '【爱运动】'.$msg;
+        $log_msg = '【【我的农场】】'.$msg;
         $result = self::sendSms($mobile,$log_msg);
         return $result ? true : false;
     }

@@ -111,10 +111,9 @@ class Index extends Api
         $id = $this->request->get('id',"");
         $title = $this->request->get('title',"");
         $wh = [];
-        if(empty($id)){
+        if(!empty($id)){
             $wh['id'] = $id;
-        }
-        if(empty($title)){
+        }else if(!empty($title)){
             $wh['title'] = $title;
         }        
         $result = Db::name("egg_news")->where($wh)->find();
