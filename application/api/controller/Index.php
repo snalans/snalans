@@ -70,6 +70,8 @@ class Index extends Api
      *
      * @ApiMethod (GET)
      * @ApiParams   (name="type_id", type="int", description="类型 1=轮播 2=公告 3=协议")
+     * @ApiParams   (name="page", type="integer", description="页码")
+     * @ApiParams   (name="per_page", type="integer", description="数量")
      * 
      * @ApiReturnParams   (name="id", type="string", description="文章id")
      * @ApiReturnParams   (name="title", type="int", description="标题")
@@ -79,7 +81,9 @@ class Index extends Api
      */
     public function getNews()
     {
-        $type_id = $this->request->get('type_id',1);
+        $type_id    = $this->request->get('type_id',1);
+        $page       = $this->request->get("page",1);        
+        $per_page   = $this->request->get("per_page",10);
         $wh = [];
         $wh['status']       = 1;
         $wh['news_type_id'] = $type_id;
@@ -87,7 +91,7 @@ class Index extends Api
                     ->field("id,title,description,image,url")
                     ->where($wh)
                     ->order("weigh","DESC")
-                    ->select();
+                    ->paginate($per_page);
         $this->success('success',$result);
     }
 
