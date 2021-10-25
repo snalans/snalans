@@ -22,17 +22,18 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pk: 'id',
                 sortName: 'id',
+                search:false,
                 columns: [
                     [
                         {checkbox: true},
-                        {field: 'id', title: __('Id')},
-                        {field: 'level', title: __('Level')},
+                        {field: 'id', title: __('Id'),operate:false},
+                        {field: 'level', title: __('Level'),operate:false},
                         {field: 'title', title: __('Title'), operate: 'LIKE'},
-                        {field: 'number', title: __('Number')},
-                        {field: 'team_number', title: __('Team_number')},
-                        {field: 'valid_number', title: __('Valid_number')},
-                        {field: 'user_level', title: __('User_level')},
-                        {field: 'user_number', title: __('User_number')},
+                        {field: 'number', title: __('Number'),operate:false},
+                        {field: 'team_number', title: __('Team_number'),operate:false},
+                        {field: 'valid_number', title: __('Valid_number'),operate:false},
+                        {field: 'user_level', title: __('User_level'),operate:false},
+                        {field: 'user_number', title: __('User_number'),operate:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]

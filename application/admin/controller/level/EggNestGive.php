@@ -55,7 +55,7 @@ class EggNestGive extends Backend
 
             $list = $this->model
                     ->with(['eggnestkind'])
-                    //->where($where)
+                    ->where($where)
                     ->order($sort, $order)
                     ->paginate($limit);
 

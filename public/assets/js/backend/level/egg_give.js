@@ -22,13 +22,14 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pk: 'id',
                 sortName: 'id',
+                search:false,
                 columns: [
                     [
                         {checkbox: true},
-                        {field: 'id', title: __('Id')},
-                        {field: 'level', title: __('Level')},
+                        {field: 'id', title: __('Id'),operate:false},
+                        {field: 'level', title: __('Level'),operate:false},
                         {field: 'kind_id', title: __('Kind_id')},
-                        {field: 'number', title: __('Number')},
+                        {field: 'number', title: __('Number'),operate:false},
                         {field: 'eggkind.name', title: __('Eggkind.name'), operate: 'LIKE'},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]

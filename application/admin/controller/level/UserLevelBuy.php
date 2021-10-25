@@ -55,7 +55,7 @@ class UserLevelBuy extends Backend
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $list = $this->model
                     ->with(['eggkind'])
-                    //->where($where)
+                    ->where($where)
                     ->order($sort, $order)
                     ->paginate($limit);
 

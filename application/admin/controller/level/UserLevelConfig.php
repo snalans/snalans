@@ -55,7 +55,7 @@ class UserLevelConfig extends Backend
 
             $list = $this->model
                     
-                    //->where($where)
+                    ->where($where)
                     ->order($sort, $order)
                     ->paginate($limit);
 
