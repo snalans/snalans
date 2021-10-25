@@ -76,8 +76,9 @@ class OrderList extends Api
      * @ApiReturnParams   (name="amount", type="string", description="总金额")
      * @ApiReturnParams   (name="sell_serial_umber", type="string", description="卖家编号")
      * @ApiReturnParams   (name="buy_serial_umber", type="string", description="买家编号")
-     * @ApiReturnParams   (name="attestation_name", type="string", description="卖家收款名称")
-     * @ApiReturnParams   (name="attestation_address", type="string", description="卖家收款地址")
+     * @ApiReturnParams   (name="attestation_type", type="string", description="类型 1=支付宝 2=微信 3=钱包")
+     * @ApiReturnParams   (name="attestation_image", type="string", description="支付图片地址")
+     * @ApiReturnParams   (name="attestation_account", type="string", description="卖家收款地址")
      * @ApiReturnParams   (name="note", type="string", description="备注")
      * @ApiReturnParams   (name="pay_time", type="string", description="付款时间")
      * @ApiReturnParams   (name="createtime", type="string", description="下单时间")
@@ -94,7 +95,7 @@ class OrderList extends Api
         $wh = [];
         $wh['order_sn'] = $order_sn;
         if($type == 1){            
-            $field = "order_sn,name,price,number,amount,sell_user_id,sell_serial_umber,attestation_name,attestation_address,status,pay_img,pay_time,note,createtime";
+            $field = "order_sn,name,price,number,amount,sell_user_id,sell_serial_umber,attestation_type,attestation_image,attestation_account,status,pay_img,pay_time,note,createtime";
 
             $wh['buy_user_id'] = $this->auth->id;
         }else{
