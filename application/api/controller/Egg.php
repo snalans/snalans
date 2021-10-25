@@ -138,6 +138,7 @@ class Egg extends Api
             'buy_user_id'=>array('eq',$user_id),
             'kind_id'=>array('eq',$kind_id),
             'status'=>array('neq',1),
+            'status'=>array('neq',4),
             'status'=>array('neq',6),
         );
 
@@ -228,7 +229,7 @@ class Egg extends Api
         $where = array(
             'buy_user_id'=>array('eq',$user_id),
             'kind_id'=>array('eq',$kind_id),
-            'status'=>array('in',[0,2,3])
+            'status'=>array('in',[0,2,3,5])
         );
 
         $count = Db::name("egg_order")
@@ -405,7 +406,7 @@ class Egg extends Api
             } else {
                 DB::commit();
                 //通知买家
-
+                \app\common\library\Hsms::send($order['buy_user_id'], '','order');
                 $this->success('出售成功，等待对方打款');
             }
         }//end try
@@ -471,7 +472,7 @@ class Egg extends Api
         $re = Db::name("egg_order")->where('order_sn',$order_sn)->data($data)->update();
         if ($re == true){
             //通知卖家
-
+            \app\common\library\Hsms::send($order['sell_user_id'], '','order');
             $this->success("上传凭证成功，等待卖家确认支付");
         }else{
             $this->error('上传凭证失败');
@@ -555,7 +556,7 @@ class Egg extends Api
             } else {
                 DB::commit();
                 //通知买家
-
+                \app\common\library\Hsms::send($order['buy_user_id'], '','order');
                 $this->success('确认支付成功');
             }
         }//end try
@@ -734,6 +735,7 @@ class Egg extends Api
                         $this->error("确认订单失败");
                     } else {
                         DB::commit();
+                        \app\common\library\Hsms::send($v['buy_user_id'], '','order');
                         continue;
                     }
                 }//end try
