@@ -18,8 +18,7 @@ class Egg extends Api
      * 蛋收盘价格表（定时器每个小时整点运行）
      */
     public function hours_price(){
-        $kind_where = [];
-        $kind_where[] = ['id', 'lt', 5];
+        $kind_where = array('id'=>array('lt',5));
         $egg_kind = Db::name("egg_kind")
             ->where($kind_where)
             ->order('id asc')
@@ -30,14 +29,8 @@ class Egg extends Api
                 $order_where = array(
                     'kind_id'=>array('eq',$v['id']),
                     'status'=>array('eq',1),
-                    'pay_time'=>array('lt',time()),
-                    'pay_time'=>array('gt',time()-60*60),
+                    'pay_time'=>array('between',[time()-60*60,time()]),
                 );
-//                $order_where = [];
-//                $order_where[] = ['kind_id', 'eq', $v['id']];
-//                $order_where[] = ['status', 'eq', 1];
-//                $order_where[] = ['pay_time', 'lt', time()];
-//                $order_where[] = ['pay_time', 'gt', time()-60*60];
                 $order = Db::name('egg_order')->field('price')->where($order_where)->order("pay_time desc")->find();
                 if($order){
                     $price = $order['price'];
