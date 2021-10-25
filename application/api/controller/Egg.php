@@ -379,6 +379,14 @@ class Egg extends Api
             $this->error("账号无效或者未认证");
         }
 
+        //卖家支付方式
+        $pay_count = Db::name("egg_charge_code")
+            ->where('user_id',$user_id)
+            ->count();
+        if($pay_count==0){
+            $this->error("请去会员中心添加支付方式");
+        }
+
         DB::startTrans();
         try{
             //更新订单
@@ -629,6 +637,7 @@ class Egg extends Api
         if(empty($order) || $order['status']!=5 || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0){
             $this->error("无效订单");
         }
+
 
         $this->success('查询成功',$order);
     }
