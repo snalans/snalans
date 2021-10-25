@@ -112,7 +112,7 @@ class OrderList extends Api
         $data['createtime'] = $data['createtime'];
 
         if($type == 1 && $data['status'] == 0){
-            $data['pay_list'] = Db::name("egg_charge_code")->field("type,account,image")->where("user_id",$data['sell_user_id'])->select();
+            $data['pay_list'] = Db::name("egg_charge_code")->field("id,type,account,image")->where("user_id",$data['sell_user_id'])->select();
         }
         $this->success('',$data);
     }
