@@ -229,7 +229,9 @@ class Egg extends Api
         $where = array(
             'buy_user_id'=>array('eq',$user_id),
             'kind_id'=>array('eq',$kind_id),
-            'status'=>array('in',[0,2,3,5])
+            'status'=>array('neq',1),
+            'status'=>array('neq',4),
+            'status'=>array('neq',6),
         );
 
         $count = Db::name("egg_order")
