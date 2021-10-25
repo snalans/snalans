@@ -75,6 +75,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Controller.api.bindevent();
         },
         pay: function () {
+            
+            $("#c-ch_category_id").data("params", function(){
+                return {custom: {'pid': $("#c-agency_id").val()}};
+            });
             Controller.api.bindevent();
         },
         edit: function () {
