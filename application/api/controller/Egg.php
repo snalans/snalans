@@ -137,9 +137,7 @@ class Egg extends Api
         $where = array(
             'buy_user_id'=>array('eq',$user_id),
             'kind_id'=>array('eq',$kind_id),
-            'status'=>array('neq',1),
-            'status'=>array('neq',4),
-            'status'=>array('neq',6),
+            'status'=>array('in',[0,2,3,5])
         );
 
         $my_order = Db::name("egg_order")
@@ -173,7 +171,7 @@ class Egg extends Api
             $order_where = array(
                 'buy_user_id'=>array('neq',$user_id),
                 'kind_id'=>array('eq',$kind_id),
-                'status'=>array('eq',0)
+                'status'=>array('eq',5)
             );
         }
 
@@ -183,6 +181,7 @@ class Egg extends Api
             ->order('price asc')
             ->page($page, $limit)
             ->select();
+
 
         $order_count = Db::name("egg_order")->where($order_where)->count();
         if($order_count>($page*$limit)){
@@ -229,9 +228,7 @@ class Egg extends Api
         $where = array(
             'buy_user_id'=>array('eq',$user_id),
             'kind_id'=>array('eq',$kind_id),
-            'status'=>array('neq',1),
-            'status'=>array('neq',4),
-            'status'=>array('neq',6),
+            'status'=>array('in',[0,2,3,5])
         );
 
         $count = Db::name("egg_order")
