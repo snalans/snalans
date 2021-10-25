@@ -176,7 +176,7 @@ class Egg extends Api
         }
 
         $order = Db::name("egg_order")
-            ->field("id,buy_serial_umber,name,price,status,order_sn,number")
+            ->field("id,buy_serial_umber,name,price,status,order_sn,number,rate")
             ->where($order_where)
             ->order('price asc')
             ->page($page, $limit)
