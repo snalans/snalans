@@ -176,7 +176,7 @@ class Egg extends Api
         }
 
         $order = Db::name("egg_order")
-            ->field("id,buy_serial_umber,name,price,status,order_sn")
+            ->field("id,buy_serial_umber,name,price,status,order_sn,number,rate")
             ->where($order_where)
             ->order('price asc')
             ->page($page, $limit)
@@ -625,31 +625,10 @@ class Egg extends Api
             ->field("*")
             ->where($order_where)
             ->find();
-        if(empty($order) || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0 ){
+
+        if(empty($order) || $order['status']!=5 || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0){
             $this->error("无效订单");
         }
-
-        if($order['sell_user_id'] !=$user_id && $order['buy_user_id'] !=$user_id){
-            $this->error("无效订单");
-        }
-
-        //是否是卖家
-        $order['is_sell'] = 0;
-        if($order['sell_user_id'] ==$user_id){
-            $order['is_sell'] = 1;
-        }
-
-        //是否是买家
-        $order['is_buy'] = 0;
-        if($order['buy_user_id'] ==$user_id){
-            $order['is_buy'] = 1;
-        }
-
-        //卖家支付方式
-        $order['pay_list'] = Db::name("egg_charge_code")
-            ->field("*")
-            ->where('user_id',$user_id)
-            ->select();
 
         $this->success('查询成功',$order);
     }
