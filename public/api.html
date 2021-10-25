@@ -2583,14 +2583,24 @@
                                                                 <td>买家编号</td>
                                                             </tr>
                                                                                                                         <tr>
-                                                                <td>attestation_name</td>
+                                                                <td>attestation_type</td>
                                                                 <td>string</td>
-                                                                <td>卖家收款名称</td>
+                                                                <td>类型 1=支付宝 2=微信 3=钱包</td>
                                                             </tr>
                                                                                                                         <tr>
-                                                                <td>attestation_address</td>
+                                                                <td>attestation_image</td>
+                                                                <td>string</td>
+                                                                <td>支付图片地址</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>attestation_account</td>
                                                                 <td>string</td>
                                                                 <td>卖家收款地址</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>kind_id</td>
+                                                                <td>int</td>
+                                                                <td>蛋类型ID</td>
                                                             </tr>
                                                                                                                         <tr>
                                                                 <td>note</td>
@@ -2708,16 +2718,10 @@
                                                         <td>订单号</td>
                                                     </tr>
                                                                                                         <tr>
-                                                        <td>attestation_name</td>
+                                                        <td>charge_code_id</td>
                                                         <td>string</td>
                                                         <td>是</td>
-                                                        <td>卖家收款名称</td>
-                                                    </tr>
-                                                                                                        <tr>
-                                                        <td>attestation_address</td>
-                                                        <td>string</td>
-                                                        <td>是</td>
-                                                        <td>卖家收款地址</td>
+                                                        <td>收款信息ID</td>
                                                     </tr>
                                                                                                         <tr>
                                                         <td>pay_img</td>
@@ -2752,12 +2756,8 @@
                                                             <input type="string" class="form-control input-sm" id="order_sn" required placeholder="订单号" name="order_sn">
                                                         </div>
                                                                                                                 <div class="form-group">
-                                                            <label class="control-label" for="attestation_name">attestation_name</label>
-                                                            <input type="string" class="form-control input-sm" id="attestation_name" required placeholder="卖家收款名称" name="attestation_name">
-                                                        </div>
-                                                                                                                <div class="form-group">
-                                                            <label class="control-label" for="attestation_address">attestation_address</label>
-                                                            <input type="string" class="form-control input-sm" id="attestation_address" required placeholder="卖家收款地址" name="attestation_address">
+                                                            <label class="control-label" for="charge_code_id">charge_code_id</label>
+                                                            <input type="string" class="form-control input-sm" id="charge_code_id" required placeholder="收款信息ID" name="charge_code_id">
                                                         </div>
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="pay_img">pay_img</label>
@@ -7830,7 +7830,7 @@
 
                 </div>
                 <div class="col-md-6" align="right">
-                    Generated on 2021-10-25 11:22:42 <a href="./" target="_blank">农场</a>
+                    Generated on 2021-10-25 14:50:23 <a href="./" target="_blank">农场</a>
                 </div>
             </div>
 

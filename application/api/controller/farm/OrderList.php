@@ -79,7 +79,7 @@ class OrderList extends Api
      * @ApiReturnParams   (name="attestation_type", type="string", description="类型 1=支付宝 2=微信 3=钱包")
      * @ApiReturnParams   (name="attestation_image", type="string", description="支付图片地址")
      * @ApiReturnParams   (name="attestation_account", type="string", description="卖家收款地址")
-     * @ApiReturnParams   (name="kind_id", type="string", description="蛋类型ID")
+     * @ApiReturnParams   (name="kind_id", type="int", description="蛋类型ID")
      * @ApiReturnParams   (name="note", type="string", description="备注")
      * @ApiReturnParams   (name="pay_time", type="string", description="付款时间")
      * @ApiReturnParams   (name="createtime", type="string", description="下单时间")
@@ -122,20 +122,33 @@ class OrderList extends Api
      *
      * @ApiMethod (POST)
      * @ApiParams   (name="order_sn", type="string", description="订单号")
-     * @ApiParams   (name="attestation_name", type="string", description="卖家收款名称")
-     * @ApiParams   (name="attestation_address", type="string", description="卖家收款地址")
+     * @ApiParams   (name="charge_code_id", type="string", description="收款信息ID")
      * @ApiParams   (name="pay_img", type="string", description="付款截图")
      */
     public function confirm()
     {
         $order_sn               = $this->request->post("order_sn","");
-        $attestation_name       = $this->request->post("attestation_name","");
-        $attestation_address    = $this->request->post("attestation_address","");
+        $charge_code_id         = $this->request->post("charge_code_id","");
         $pay_img                = $this->request->post("pay_img","");
 
+        $wh = [];
+        $wh['order_sn']     = $order_sn;
+        $wh['status']       = 0;
+        $wh['buy_user_id']  = $this->auth->id;
+        $sell_user_id = Db::name("egg_order")->where($wh)->value("sell_user_id");
+
+        $wh = [];
+        $wh['id']       = $charge_code_id;
+        $wh['user_id']  = $sell_user_id;
+        $info = Db::name("egg_charge_code")->where($wh)->find();
+        if(empty($info)){
+            $this->error("收款方式错误");
+        }
+
         $data = [];
-        $data['attestation_name']    = $attestation_name;
-        $data['attestation_address'] = $attestation_address;
+        $data['attestation_type']    = $info['type'];
+        $data['attestation_image']   = $info['image'];
+        $data['attestation_account'] = $info['account'];
         $data['pay_img']             = $pay_img;
         $data['status']              = 2;
         $data['pay_time']            = time();
