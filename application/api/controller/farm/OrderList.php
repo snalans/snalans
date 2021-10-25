@@ -22,7 +22,7 @@ class OrderList extends Api
     /**
      * 获取订单列表
      *
-     * @ApiMethod (GET)
+     * @ApiMethod (POST)
      * @ApiParams   (name="type", type="integer", description="买卖类型默认： 1=买 2=卖")
      * @ApiParams   (name="status", type="integer", description="状态默认：9=全部 0=待付款 1=完成 2=待确认 3=申诉 4=无效（撤单） 5=挂单  6退款")
      * @ApiParams   (name="page", type="integer", description="页码")
@@ -38,10 +38,10 @@ class OrderList extends Api
      */
     public function getOrderList()
     {
-        $type       = $this->request->get("type",1);
-        $status     = $this->request->get("status",9);
-        $page       = $this->request->get("page",1);        
-        $per_page   = $this->request->get("per_page",10);
+        $type       = $this->request->post("type",1);
+        $status     = $this->request->post("status",9);
+        $page       = $this->request->post("page",1);        
+        $per_page   = $this->request->post("per_page",10);
 
         $wh = [];
         if($type == 1){    
