@@ -545,7 +545,7 @@ class User extends Api
         $account        = $this->request->post("account","");
         $image          = $this->request->post("image","");
 
-        if (empty($account)) {
+        if (empty($account) || !in_array($type,[1,2,3])) {
             $this->error("参数有误");
         }
         $wh = [];
