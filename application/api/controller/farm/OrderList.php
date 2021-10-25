@@ -84,6 +84,7 @@ class OrderList extends Api
      * @ApiReturnParams   (name="pay_time", type="string", description="付款时间")
      * @ApiReturnParams   (name="createtime", type="string", description="下单时间")
      * 
+     * @ApiReturnParams   (name="id", type="integer", description="收款ID")
      * @ApiReturnParams   (name="type", type="integer", description="类型 1=支付宝 2=微信 3=钱包")
      * @ApiReturnParams   (name="account", type="string", description="账号")
      * @ApiReturnParams   (name="image", type="string", description="地址")

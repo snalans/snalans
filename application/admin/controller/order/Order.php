@@ -115,4 +115,65 @@ class Order extends Backend
         $this->view->assign("row", $row);
         return $this->view->fetch();
     }
+
+
+    /**
+     * 支付
+     */
+    public function pay($ids = null)
+    {
+        $row = $this->model->get($ids);
+        if (!$row) {
+            $this->error(__('No Results were found'));
+        }
+        $adminIds = $this->getDataLimitAdminIds();
+        if (is_array($adminIds)) {
+            if (!in_array($row[$this->dataLimitField], $adminIds)) {
+                $this->error(__('You have no permission'));
+            }
+        }
+        if ($this->request->isPost()) {
+            $params = $this->request->post("row/a");
+            if ($params) {
+                $params = $this->preExcludeFields($params);
+                if($row['status'] != 0 && $row['kind_id'] != 5){
+                    $this->error('该订单不允许操作');
+                }
+                $result = false;
+                Db::startTrans();
+                try {
+                    $log_re = true;
+                    //是否采用模型验证
+                    if ($this->modelValidate) {
+                        $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
+                        $row->validateFailException(true)->validate($validate);
+                    }
+                    $params['status'] = 2;
+                    $params['pay_time'] = time();
+                    $result = $row->allowField(true)->save($params);
+                    if ($result) {  
+                        \app\common\library\Hsms::send($row['sell_mobile'], '','order');
+                        Db::commit();                  
+                        $this->success("支付成功");
+                    } else {
+                        Db::rollback();
+                        $this->error(__('No rows were updated'));
+                    }
+                } catch (ValidateException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (PDOException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (Exception $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                }
+            }
+            $this->error(__('Parameter %s can not be empty', ''));
+        }
+        $this->view->assign("row", $row);
+        return $this->view->fetch();
+    }
 }

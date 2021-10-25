@@ -8,6 +8,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     index_url: 'order/order/index' + location.search,
                     add_url: 'order/order/add',
                     edit_url: 'order/order/edit',
+                    pay_url: 'order/order/pay',
                     del_url: 'order/order/del',
                     multi_url: 'order/order/multi',
                     import_url: 'order/order/import',
@@ -46,7 +47,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'pay_time', title: __('Pay_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'operate', title: __('Operate'), table: table,buttons: [
-                            {name: 'color', text: '去支付', title: '上传支付凭证', icon: 'fa fa-star', classname: 'btn btn-xs btn-success btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url
+                            {name: 'pay', text: '去支付', title: '上传支付凭证', icon: 'fa fa-star', classname: 'btn btn-xs btn-success btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.pay_url
                                 ,visible:function(row){
                                     if(row.status == 0 && row.kind_id==5){ 
                                         return true; 
@@ -73,7 +74,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         add: function () {
             Controller.api.bindevent();
         },
-        color: function () {
+        pay: function () {
             Controller.api.bindevent();
         },
         edit: function () {
