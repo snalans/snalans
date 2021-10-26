@@ -600,11 +600,14 @@ class User extends Api
             '9' => "手续费",
         ];
 
+        $wh = [];
+        $wh['l.user_id'] = $this->auth->id;
+        $wh['l.type']    = ['<>',4];
         $table = empty($month)?"egg_log_".date("Y_m"):"egg_log_".date("Y_m",strtotime($date));
         $list = Db::name($table)->alias("l")
                 ->field("l.type,k.name,l.number,l.note,l.createtime")
                 ->join("egg_kind k","k.id=l.kind_id","LEFT")
-                ->where("l.user_id",$this->auth->id)
+                ->where($wh)
                 ->order("l.createtime","DESC")
                 ->paginate($per_page)->each(function($item) use($type_arr){
                     $item['type'] = $type_arr[$item['type']];
