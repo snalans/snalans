@@ -135,7 +135,7 @@ class Egg extends Api
         );
 
         $my_order = Db::name("egg_order")
-            ->field("id,buy_serial_umber,name,price,number,status,order_sn,createtime")
+            ->field("id,buy_serial_umber,name,price,number,status,order_sn,createtime,buy_user_id")
             ->where($where)
             ->find();
 
@@ -170,7 +170,7 @@ class Egg extends Api
         }
 
         $order = Db::name("egg_order")
-            ->field("id,buy_serial_umber,name,price,status,order_sn,number,rate")
+            ->field("id,buy_serial_umber,name,price,status,order_sn,number,rate,buy_user_id")
             ->where($order_where)
             ->order('price asc')
             ->page($page, $limit)
@@ -624,7 +624,7 @@ class Egg extends Api
         $order_where = [];
         $order_where['order_sn'] = $order_sn;
         $order = Db::name("egg_order")
-            ->field("order_sn,buy_serial_umber,name,kind_id,price,number,rate,amount,status")
+            ->field("order_sn,buy_serial_umber,name,kind_id,price,number,rate,amount,status,buy_user_id")
             ->where($order_where)
             ->find();
 
