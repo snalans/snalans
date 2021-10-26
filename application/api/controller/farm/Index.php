@@ -60,7 +60,7 @@ class Index extends Api
                 if($value['status']==0){
                     $date = $config[$value['kind_id']] - $value['hatch_num'];
                     $hours = intval((time()-$value['uptime'])/3600);
-                    $surplus = "余".$date."天,".$hours."小时";
+                    $surplus = $date."天".$hours."小时";
                 }
                 $nest_list[$key]['surplus'] = $surplus;
                 if($value['is_reap'] == 1){
