@@ -262,6 +262,10 @@ class Index extends Api
             $this->error(__('Paypwd is incorrect'));
         }
 
+        if(!in_array($kind_id,[1,2,3])){
+            $this->error("此蛋不允许转账");
+        }
+
         $wh = [];
         $wh['serial_number'] = $serial_number;
         $wh['status']       = 'normal';
