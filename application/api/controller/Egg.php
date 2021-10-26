@@ -403,7 +403,11 @@ class Egg extends Api
 
             //蛋日志
             $log_add = \app\admin\model\egg\Log::saveLog($user_id,$order['kind_id'],1,$order_sn,$total_egg,"农场市场挂单");
-            if ($re == false || $add_rs == false ||  $log_add == false) {
+
+            //蛋手续费
+            $log_fee_add = \app\admin\model\egg\Log::saveLog($order['sell_user_id'],$order['kind_id'],9,$order['order_sn'],$order['rate'],"农场市场交易手续费");
+
+            if ($re == false || $add_rs == false ||  $log_add == false || $log_fee_add == false ) {
                 DB::rollback();
                 $this->error("出售失败");
             } else {
@@ -523,9 +527,6 @@ class Egg extends Api
             //买家获得蛋日志
             $log_add = \app\admin\model\egg\Log::saveLog($order['buy_user_id'],$order['kind_id'],1,$order_sn,$order['number'],"农场市场卖家确认支付");
 
-            //蛋手续费
-            $log_fee_add = \app\admin\model\egg\Log::saveLog($order['sell_user_id'],$order['kind_id'],9,$order_sn,$order['rate'],"农场市场交易手续费");
-
             //增加买家有效值
             $egg_info = Db::name("egg_kind")
                 ->field('*')
@@ -553,7 +554,7 @@ class Egg extends Api
             }
 
 
-            if ($re == false || $add_rs == false ||  $log_add == false || $log_fee_add == false || $valid_rs==false || $res_vip==false || $valid_log_res=false) {
+            if ($re == false || $add_rs == false ||  $log_add == false || $valid_rs==false || $res_vip==false || $valid_log_res=false) {
                 DB::rollback();
                 $this->error("确认支付失败");
             } else {
@@ -687,8 +688,6 @@ class Egg extends Api
                     //买家获得蛋日志
                     $log_add = \app\admin\model\egg\Log::saveLog($v['buy_user_id'],$v['kind_id'],1,$v['order_sn'],$v['number'],"农场市场卖家确认支付");
 
-                    //蛋手续费
-                    $log_fee_add = \app\admin\model\egg\Log::saveLog($v['sell_user_id'],$v['kind_id'],9,$v['order_sn'],$v['rate'],"农场市场交易手续费");
 
                     //增加买家有效值
                     $valid_rs = true;
@@ -713,7 +712,7 @@ class Egg extends Api
                         $valid_log_res  = Db::name("egg_valid_number_log")->insert($log);
                     }
 
-                    if ($re == false || $add_rs == false ||  $log_add == false || $log_fee_add == false || $valid_rs==false || $res_vip==false || $valid_log_res=false) {
+                    if ($re == false || $add_rs == false ||  $log_add == false  || $valid_rs==false || $res_vip==false || $valid_log_res=false) {
                         DB::rollback();
                         $this->error("确认订单失败");
                     } else {
