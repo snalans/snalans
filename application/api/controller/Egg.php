@@ -109,7 +109,7 @@ class Egg extends Api
     /**
      * 交易大厅
      *
-     * @ApiMethod (Get)
+     * @ApiMethod (Post)
      * @ApiParams   (name="buy_serial_umber", type="integer", description="会员编号")
      * @ApiParams   (name="kind_id", type="integer", description="蛋分类id")
      * @ApiParams   (name="page", type="integer", description="页码")
@@ -123,10 +123,10 @@ class Egg extends Api
      */
     public function market_hall()
     {
-        $buy_serial_umber = $this->request->get("buy_serial_umber",0);//会员编号
-        $kind_id = $this->request->get("kind_id",1);//蛋分类id
-        $page  = $this->request->get("page",1);
-        $limit = $this->request->get("per_page",10);
+        $buy_serial_umber = $this->request->post("buy_serial_umber",0);//会员编号
+        $kind_id = $this->request->post("kind_id",1);//蛋分类id
+        $page  = $this->request->post("page",1);
+        $limit = $this->request->post("per_page",10);
 
         if($kind_id<=0 || $kind_id>3){
             $this->error("请选择有效的蛋种类！");
