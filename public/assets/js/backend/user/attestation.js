@@ -34,7 +34,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'reverse_img', title: __('Reverse_img'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'hand_img', title: __('Hand_img'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'hands_img', title: __('Hands_img'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
-                        {field: 'remark', title: __('Remark'), operate: false,},
+                        {field: 'remark', title: __('Remark'), operate: false},
+                        {field: 'user.is_attestation', title: __('状态'), formatter: Table.api.formatter.normal, searchList: {0: '未认证', 1: '成功',2: '等待审核',3:'失败'}},
                         {field: 'operate', title: __('Operate'), table: table,buttons: [
                             {name: 'edit', text: '审核', title: '审核', icon: 'fa fa-star', classname: 'btn btn-xs btn-primary btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url
                                 ,visible:function(row){
