@@ -56,7 +56,7 @@ class Egg extends Api
      */
     public function market_index(){
         $kind_where = array(
-            'id'=>array('lt',5)
+            'id'=>array('lt',4)
         );
         $egg_kind = Db::name("egg_kind")
             ->field("id,name")
@@ -109,7 +109,7 @@ class Egg extends Api
     /**
      * 交易大厅
      *
-     * @ApiMethod (Get)
+     * @ApiMethod (Post)
      * @ApiParams   (name="buy_serial_umber", type="integer", description="会员编号")
      * @ApiParams   (name="kind_id", type="integer", description="蛋分类id")
      * @ApiParams   (name="page", type="integer", description="页码")
@@ -123,10 +123,14 @@ class Egg extends Api
      */
     public function market_hall()
     {
-        $buy_serial_umber = $this->request->get("buy_serial_umber",0);//会员编号
-        $kind_id = $this->request->get("kind_id",1);//蛋分类id
-        $page  = $this->request->get("page",1);
-        $limit = $this->request->get("per_page",10);
+        $buy_serial_umber = $this->request->post("buy_serial_umber",0);//会员编号
+        $kind_id = $this->request->post("kind_id",1);//蛋分类id
+        $page  = $this->request->post("page",1);
+        $limit = $this->request->post("per_page",10);
+
+        if($kind_id<=0 || $kind_id>3){
+            $this->error("请选择有效的蛋种类！");
+        }
 
         $user_id  = $this->auth->id;
         //自己的挂单
@@ -208,7 +212,7 @@ class Egg extends Api
         $price  = $this->request->post("price",0);
         $number = $this->request->post("number",0);
 
-        if($kind_id<=0 || $kind_id>4){
+        if($kind_id<=0 || $kind_id>3){
             $this->error("请选择有效的蛋种类！");
         }
 
@@ -376,8 +380,12 @@ class Egg extends Api
         }
 
         //卖家支付方式
+        $pay_where = array(
+            'user_id'=>array('eq',$user_id),
+            'type'=>array('neq',3),
+        );
         $pay_count = Db::name("egg_charge_code")
-            ->where('user_id',$user_id)
+            ->where($pay_where)
             ->count();
         if($pay_count==0){
             $this->error("请去会员中心添加支付方式");
@@ -403,7 +411,11 @@ class Egg extends Api
 
             //蛋日志
             $log_add = \app\admin\model\egg\Log::saveLog($user_id,$order['kind_id'],1,$order_sn,$total_egg,"农场市场挂单");
-            if ($re == false || $add_rs == false ||  $log_add == false) {
+
+            //蛋手续费
+            $log_fee_add = \app\admin\model\egg\Log::saveLog($order['sell_user_id'],$order['kind_id'],9,$order['order_sn'],$order['rate'],"农场市场交易手续费");
+
+            if ($re == false || $add_rs == false ||  $log_add == false || $log_fee_add == false ) {
                 DB::rollback();
                 $this->error("出售失败");
             } else {
@@ -523,9 +535,6 @@ class Egg extends Api
             //买家获得蛋日志
             $log_add = \app\admin\model\egg\Log::saveLog($order['buy_user_id'],$order['kind_id'],1,$order_sn,$order['number'],"农场市场卖家确认支付");
 
-            //蛋手续费
-            $log_fee_add = \app\admin\model\egg\Log::saveLog($order['sell_user_id'],$order['kind_id'],9,$order_sn,$order['rate'],"农场市场交易手续费");
-
             //增加买家有效值
             $egg_info = Db::name("egg_kind")
                 ->field('*')
@@ -553,7 +562,7 @@ class Egg extends Api
             }
 
 
-            if ($re == false || $add_rs == false ||  $log_add == false || $log_fee_add == false || $valid_rs==false || $res_vip==false || $valid_log_res=false) {
+            if ($re == false || $add_rs == false ||  $log_add == false || $valid_rs==false || $res_vip==false || $valid_log_res=false) {
                 DB::rollback();
                 $this->error("确认支付失败");
             } else {
@@ -687,8 +696,6 @@ class Egg extends Api
                     //买家获得蛋日志
                     $log_add = \app\admin\model\egg\Log::saveLog($v['buy_user_id'],$v['kind_id'],1,$v['order_sn'],$v['number'],"农场市场卖家确认支付");
 
-                    //蛋手续费
-                    $log_fee_add = \app\admin\model\egg\Log::saveLog($v['sell_user_id'],$v['kind_id'],9,$v['order_sn'],$v['rate'],"农场市场交易手续费");
 
                     //增加买家有效值
                     $valid_rs = true;
@@ -713,7 +720,7 @@ class Egg extends Api
                         $valid_log_res  = Db::name("egg_valid_number_log")->insert($log);
                     }
 
-                    if ($re == false || $add_rs == false ||  $log_add == false || $log_fee_add == false || $valid_rs==false || $res_vip==false || $valid_log_res=false) {
+                    if ($re == false || $add_rs == false ||  $log_add == false  || $valid_rs==false || $res_vip==false || $valid_log_res=false) {
                         DB::rollback();
                         $this->error("确认订单失败");
                     } else {
