@@ -56,7 +56,7 @@ class Egg extends Api
      */
     public function market_index(){
         $kind_where = array(
-            'id'=>array('lt',5)
+            'id'=>array('lt',4)
         );
         $egg_kind = Db::name("egg_kind")
             ->field("id,name")
@@ -127,6 +127,10 @@ class Egg extends Api
         $kind_id = $this->request->get("kind_id",1);//蛋分类id
         $page  = $this->request->get("page",1);
         $limit = $this->request->get("per_page",10);
+
+        if($kind_id<=0 || $kind_id>3){
+            $this->error("请选择有效的蛋种类！");
+        }
 
         $user_id  = $this->auth->id;
         //自己的挂单
@@ -208,7 +212,7 @@ class Egg extends Api
         $price  = $this->request->post("price",0);
         $number = $this->request->post("number",0);
 
-        if($kind_id<=0 || $kind_id>4){
+        if($kind_id<=0 || $kind_id>3){
             $this->error("请选择有效的蛋种类！");
         }
 
