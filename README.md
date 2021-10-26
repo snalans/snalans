@@ -94,4 +94,4 @@ FastAdmin遵循Apache2开源协议发布，并提供免费使用。
 
 版权所有Copyright © 2017-2020 by FastAdmin (https://www.fastadmin.net)
 
-All rights reserved。
+All rights reserved。。
