@@ -42,7 +42,7 @@ return array (
     'category2' => 'Category2',
     'custom' => 'Custom',
   ),
-  'is_google' => '1',
+  'is_google' => '0',
   'rate_config' => '10',
   'android_url' => 'https://egg.snalans.com/adroid',
   'ios_url' => 'https://egg.snalans.com/ios',
@@ -51,5 +51,6 @@ return array (
   'confirm_time' => '1',
   'fee_rate' => '70',
   'is_agreement' => '0',
-  'is_sms' => '1',
+  'is_sms' => '0',
+  'is_open' => '1',
 );

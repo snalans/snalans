@@ -42,8 +42,19 @@ class User extends Api
      */
     public function index()
     {
-        $result = Db::name("user")->field("avatar,nickname,serial_number,mobile,valid_number,level,score")->where("id",$this->auth->id)->find();
+        $result = Db::name("user")->alias("u")
+                    ->field("u.avatar,u.nickname,u.serial_number,u.mobile,u.valid_number,u.level,u.score,u.is_attestation,lc.title")
+                    ->join("user_level_config lc","lc.level=u.level","LEFT")
+                    ->where("u.id",$this->auth->id)
+                    ->find();
         $result['avatar'] = $result['avatar'] ?  cdnurl($result['avatar'], true) : letter_avatar($result['nickname']);
+
+        if($result['is_attestation']==1){
+            $result['title'] = empty($result['title'])?'农民':$result['title'];
+        }else{
+            $result['title'] = '普通用户';
+        }
+        
         $this->success('', $result);
     }
 
@@ -187,7 +198,6 @@ class User extends Api
 
     /**
      * 修改会员个人信息
-     * @ApiInternal
      *
      * @ApiMethod (POST)
      * @param string $avatar   头像地址
@@ -199,8 +209,8 @@ class User extends Api
         $user = $this->auth->getUser();
         $username = $this->request->post('username');
         $nickname = $this->request->post('nickname');
-        $bio = $this->request->post('bio');
-        $avatar = $this->request->post('avatar', '', 'trim,strip_tags,htmlspecialchars');
+        $bio      = $this->request->post('bio');
+        $avatar   = $this->request->post('avatar', '', 'trim,strip_tags,htmlspecialchars');
         if ($username) {
             $exists = \app\common\model\User::where('username', $username)->where('id', '<>', $this->auth->id)->find();
             if ($exists) {
@@ -489,7 +499,7 @@ class User extends Api
         if (!\app\common\library\Validate::check_id_card($id_card)) {
             $this->error(__('Id_card is incorrect'));
         }
-        if (!$name || !$id_card || !$front_img || !$reverse_img || !$hand_img || !$hands_img) {
+        if (!$name || !$id_card || !$front_img || !$reverse_img || !$hand_img) {
             $this->error(__('Invalid parameters'));
         }
         $params = [];
@@ -528,7 +538,10 @@ class User extends Api
      */
     public function getChargeInfo()
     {
-        $result = Db::name("egg_charge_code")->field(['user_id','add_time'],true)->where("user_id",$this->auth->id)->select();
+        $result = Db::name("egg_charge_code")
+                    ->field(['user_id','add_time'],true)
+                    ->where("user_id",$this->auth->id)
+                    ->select();
         $this->success('',$result);
     }
 
@@ -536,17 +549,23 @@ class User extends Api
      * 保存收款信息
      *
      * @ApiMethod (POST)
-     * @ApiParams   (name="type", type="string",required=true, description="类型 1=支付宝 2=微信 3=钱包")
+     * @ApiParams   (name="type", type="string",required=true, description="类型 1=支付宝 2=微信 3=钱包 4=银行卡")
+     * @ApiParams   (name="name", type="string",required=true, description="姓名")
+     * @ApiParams   (name="mobile", type="string",required=true, description="手机号")
+     * @ApiParams   (name="open_bank", type="string",required=true, description="开户行")
      * @ApiParams   (name="account", type="string",required=true, description="账号")
      * @ApiParams   (name="image", type="string",required=true, description="收款二维码")
      */
     public function saveChargeInfo()
     {
         $type           = $this->request->post("type","1");
+        $name           = $this->request->post("name","");
+        $mobile         = $this->request->post("mobile","");
+        $open_bank      = $this->request->post("open_bank","");
         $account        = $this->request->post("account","");
         $image          = $this->request->post("image","");
 
-        if (empty($account) || !in_array($type,[1,2,3])) {
+        if (empty($account) || !in_array($type,[1,2,3,4])) {
             $this->error("参数有误");
         }
         $wh = [];
@@ -559,6 +578,9 @@ class User extends Api
             $data = [];
             $data['user_id']      = $this->auth->id;
             $data['type']         = $type;
+            $data['name']         = $name;
+            $data['mobile']       = $mobile;
+            $data['open_bank']    = $open_bank;
             $data['account']      = $account;
             $data['image']        = $image;
             $data['add_time']     = time();
