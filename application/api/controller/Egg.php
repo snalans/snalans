@@ -67,6 +67,8 @@ class Egg extends Api
             foreach ($egg_kind as $k => $v) {
                 $hours_where = [];
                 $hours_where['kind_id'] = $v['id'];
+                $hours_where['day'] = date('Y-m-d',time());
+                $hours_where['hours'] =['between',['09:00','21:00']];
                 $list = Db::name("egg_hours_price")
                     ->field("price,hours,kind_id")
                     ->where($hours_where)
@@ -81,7 +83,7 @@ class Egg extends Api
     public function hours($list=array())
     {
         $data = [];
-        for ($x=0; $x<=23; $x++) {
+        for ($x=9; $x<=21; $x++) {
             if($x<10){
                 $data1['hours'] ='0'.$x.':00';
                 $data1['price'] =  '0';
