@@ -380,8 +380,12 @@ class Egg extends Api
         }
 
         //卖家支付方式
+        $pay_where = array(
+            'user_id'=>array('eq',$user_id),
+            'type'=>array('neq',3),
+        );
         $pay_count = Db::name("egg_charge_code")
-            ->where('user_id',$user_id)
+            ->where($pay_where)
             ->count();
         if($pay_count==0){
             $this->error("请去会员中心添加支付方式");
