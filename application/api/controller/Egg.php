@@ -46,6 +46,7 @@ class Egg extends Api
                     'createtime' => time(),
                 ];
             }
+
             Db::name("egg_hours_price")->insertAll($hours_price_data);
         }
     }
