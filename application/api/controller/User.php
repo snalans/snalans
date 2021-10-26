@@ -440,6 +440,7 @@ class User extends Api
                 ->where("u.pid",$this->auth->id)
                 ->paginate($per_page)->each(function($item){
                     $item['avatar'] = $item['avatar']? cdnurl($result['avatar'], true) : letter_avatar($item['nickname']);
+                    $item['title'] = !empty($item['title'])?$item['title']:'普通用户';
                     unset($item['nickname']);
                     return $item;
                 });

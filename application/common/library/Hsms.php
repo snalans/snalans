@@ -1,6 +1,7 @@
 <?php
 namespace app\common\library;
 
+use think\Config;
 use think\Hook;
 use think\Log;
 use fast\Http;
@@ -162,12 +163,15 @@ class Hsms
             'content'   => $content,
             'sendtime'  => date("Y-m-d H:i:s"),      
         ];
-        // $result = Http::post(self::$uri,$data);
-        // $postObj = simplexml_load_string($result);
-        // $jsonStr = json_encode($postObj,JSON_UNESCAPED_UNICODE);
-        // $jsonArray = json_decode($jsonStr,true);
-        $jsonStr = '';
-        $jsonArray['returnstatus'] = 'Success';
+        if(Config::get('site.is_sms')){
+            $result     = Http::post(self::$uri,$data);
+            $postObj    = simplexml_load_string($result);
+            $jsonStr    = json_encode($postObj,JSON_UNESCAPED_UNICODE);
+            $jsonArray  = json_decode($jsonStr,true);
+        }else{
+            $jsonStr = '';
+            $jsonArray['returnstatus'] = 'Success';
+        }
         Log::write($mobile." >> ".$jsonStr,'sms');
         return $jsonArray['returnstatus'] == 'Success' ? true:false;
     }

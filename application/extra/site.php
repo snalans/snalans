@@ -49,6 +49,7 @@ return array (
   'app_version' => '1',
   'valid_time' => '1',
   'confirm_time' => '1',
-  'site_rate_config' => '0.7',
+  'fee_rate' => '70',
   'is_agreement' => '0',
+  'is_sms' => '1',
 );
