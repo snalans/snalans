@@ -623,7 +623,7 @@ class Egg extends Api
         $order_where = [];
         $order_where['order_sn'] = $order_sn;
         $order = Db::name("egg_order")
-            ->field("*")
+            ->field("order_sn,buy_serial_umber,name,kind_id,price,number,rate,amount,status")
             ->where($order_where)
             ->find();
 
