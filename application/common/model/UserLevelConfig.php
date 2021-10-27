@@ -26,6 +26,7 @@ class UserLevelConfig extends Model
 
             //农场主等级
             $level = $this->vip($user_id,$user_info['level'],$p_num,$team_num,$user_info['valid_number']);
+
             if($level!=$user_info['level'] && ($level > $user_info['level'])){
                 $re = Db::name("user")
                     ->where(['id'=>$user_id])
@@ -113,11 +114,11 @@ class UserLevelConfig extends Model
                         'is_attestation'=>array('eq',1)
                     );
                     $user_number = Db::name("user")->where($u_where)->count();
-                    if ($val['user_number']>=$user_number){
+                    if ($val['user_number']<=$user_number){
                         //会员等级直推蛋购买
                         $user_level_buy = Db::name("user_level_buy")->where(['level'=>$val['level']])->select();
                         $user_level_buy_number = Db::name("user_level_buy")->where(['level'=>$val['level']])->count();
-                        if(count($user_level_buy)>0){
+                        if($user_level_buy_number>0){
                             $i = 0;
                             foreach ($user_level_buy as $k => $v) {
                                 //直推有多少人购买该种类的蛋
@@ -138,7 +139,8 @@ class UserLevelConfig extends Model
                             }
                             if($i==$user_level_buy_number){
                                 $level = $val['level'];
-                                break;                            }
+                                break;
+                            }
                         }else{
                             $level = $val['level'];
                             break;
