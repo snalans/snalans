@@ -111,7 +111,7 @@ class OrderList extends Api
         }
         $data['pay_time'] = $data['pay_time']?date("Y-m-d H:i",$data['pay_time']):"";
         $data['createtime'] = date("Y-m-d H:i",$data['createtime']);
-
+        $data['pay_list'] = "";
         if($type == 1 && $data['status'] == 0){
             $data['pay_list'] = Db::name("egg_charge_code")->field("id,type,account,image")->where("user_id",$data['sell_user_id'])->select();
         }
