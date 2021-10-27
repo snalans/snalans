@@ -506,7 +506,10 @@ class User extends Api
         //     $this->error(__('Id_card is incorrect'));
         // }
 
-        $have = Db::name("egg_attestation")->where("id_card",$id_card)->find();
+        $wh = [];
+        $wh['id_card'] = $id_card;
+        $wh['user_id'] = ['<>',$this->auth->id];
+        $have = Db::name("egg_attestation")->where($wh)->find();
         if(!empty($have)){
             $this->error("身份证已经注册过,请更换");
         }
