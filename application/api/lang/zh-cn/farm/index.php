@@ -17,6 +17,6 @@ return [
 	'Feeding failed, please try again'					=> '喂养失败,请重试',
 	'Feeding finished'									=> '喂养完毕',
 	'Feeding success'									=> '喂养成功',
-	'Harvest success'									=> '收获成功',
+	'Harvest success'									=> '收获并喂养成功',
 	'Harvest and feeding failed, please try again'		=> '收获并喂养失败,请重试',
 ];
