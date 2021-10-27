@@ -36,8 +36,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'level', title: __('Level'), sortable: true},
                         {field: 'score', title: __('Score')},
                         {field: 'valid_number', title: __('Valid_number')},
-                        {field: 'logintime', title: __('Logintime'), operate: false, formatter: Table.api.formatter.datetime, addclass: 'datetimerange', sortable: true},
-                        {field: 'loginip', title: __('Loginip'), operate: false, formatter: Table.api.formatter.search},                
                         {field: 'status', title: __('Status'), formatter: Table.api.formatter.status, searchList: {normal: __('Normal'), hidden: __('Hidden')}},
                         {field: 'is_attestation', title: __('是否认证'), formatter: Table.api.formatter.normal, searchList: {0: '未认证', 1: '成功',2: '等待审核',3:'失败'}},
                         {field: 'operate', title: __('Operate'), table: table,buttons: [
