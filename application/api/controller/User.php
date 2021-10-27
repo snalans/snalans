@@ -470,10 +470,15 @@ class User extends Api
      * @ApiReturnParams   (name="hand_img", type="string", description="手持照")
      * @ApiReturnParams   (name="hands_img", type="string", description="手持宣传语照")
      * @ApiReturnParams   (name="remark", type="string", description="审核备注")
+     * @ApiReturnParams   (name="is_attestation", type="string", description="是否认证 0=否 1=是 2=待审核 3=失败")
      */
     public function getAttestationInfo()
     {
-        $result = Db::name("egg_attestation")->field(['id','user_id'],true)->where("user_id",$this->auth->id)->find();
+        $result = Db::name("egg_attestation")->alias("ea")
+                    ->field("ea.name,ea.id_card,ea.front_img,ea.reverse_img,ea.hand_img,ea.hands_img,ea.remark,u.is_attestation")
+                    ->join("user u","u.id=ea.user_id","LEFT")
+                    ->where("user_id",$this->auth->id)
+                    ->find();
         $this->success('',$result);
     }
 
