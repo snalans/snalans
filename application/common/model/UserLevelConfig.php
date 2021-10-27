@@ -14,8 +14,9 @@ class UserLevelConfig extends Model
      */
     public function update_vip($user_id){
         $user_info = Db::name("user")
+            ->field('id,valid_number,level')
             ->where(['id'=>$user_id])
-            ->find('id,valid_number,level');
+            ->find();
         if($user_info){
             //团队数量
             $team_num = Db::name("membership_chain")->where('ancestral_id', $user_id)->count();
@@ -25,7 +26,6 @@ class UserLevelConfig extends Model
 
             //农场主等级
             $level = $this->vip($user_id,$user_info['level'],$p_num,$team_num,$user_info['valid_number']);
-
             if($level!=$user_info['level'] && ($level > $user_info['level'])){
                 $re = Db::name("user")
                     ->where(['id'=>$user_id])
@@ -46,7 +46,7 @@ class UserLevelConfig extends Model
                             $add_rs = Db::name("egg")->where($wh)->inc('number',$v['number'])->update();;
 
                             //蛋日志
-                            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$v['kind_id'],10,1,"农场主等级升级到".$level."级赠送");
+                            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$v['kind_id'],10,1,$v['number'],"农场主等级升级到".$level."级赠送");
                         }
                     }
 
