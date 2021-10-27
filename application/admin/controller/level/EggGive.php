@@ -66,6 +66,7 @@ class EggGive extends Backend
 
             $result = array("total" => $list->total(), "rows" => $list->items());
 
+
             return json($result);
         }
         return $this->view->fetch();
