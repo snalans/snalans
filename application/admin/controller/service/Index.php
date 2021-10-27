@@ -52,5 +52,4 @@ class Index extends Backend
         $this->view->assign("nickname",$result['nickname']);
         return $this->view->fetch();
     }
-
 }
