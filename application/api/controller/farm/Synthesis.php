@@ -41,7 +41,7 @@ class Synthesis extends Api
                     ->column("(`number`-`frozen`) as number","kind_id");          
         $flag = true;
         foreach ($config as $key => $value) {
-            if((intval($value['number'])*$number) > $egg_list[$value['ch_kind_id']]){
+            if((intval($value['number'])*intval($number)) > $egg_list[$value['ch_kind_id']]){
                 $flag = false;
             }
         }
