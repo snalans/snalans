@@ -137,7 +137,7 @@ class Egg extends Api
         $where = array(
             'buy_user_id'=>array('eq',$user_id),
             'kind_id'=>array('eq',$kind_id),
-            'status'=>array('in',[0,2,3,5])
+            'status'=>array('eq',5)
         );
 
         $my_order = Db::name("egg_order")
