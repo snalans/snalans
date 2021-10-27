@@ -523,14 +523,16 @@ class User extends Api
                 Db::name("user")->where("id",$this->auth->id)->update(['is_attestation'=>2]);
                 $this->success("添加成功");
             }
-        }else{
+        }else if($this->auth->is_attestation == 3){
             $result = Db::name("egg_attestation")->where("user_id",$this->auth->id)->update($params);
             if($result){                
                 Db::name("user")->where("id",$this->auth->id)->update(['is_attestation'=>2]);
                 $this->success("更新成功");
             }
+        }else{
+            $this->error("不允许操作");
         }
-        $this->error("执行失败");
+        
     }
 
 
@@ -571,9 +573,19 @@ class User extends Api
         $account        = $this->request->post("account","");
         $image          = $this->request->post("image","");
 
+        if($this->auth->is_attestation != 1){
+            $this->error("还未实名认证");
+        }
+
         if (empty($account) || !in_array($type,[1,2,3,4])) {
             $this->error("参数有误");
         }
+
+        $real_name = Db::name("egg_attestation")->where("user_id",$this->auth->id)->value("name");
+        if($real_name != $name){
+            $this->error("跟实名的名字不一样");
+        }
+
         $wh = [];
         $wh['user_id']      = $this->auth->id;
         $wh['type']         = $type;
