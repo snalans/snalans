@@ -85,7 +85,7 @@ class User extends Api
         if (!$account || !$password) {
             $this->error(__('Invalid parameters'));
         }
-        
+
         if(!captcha_check($captcha)){
              $this->error("验证码错误");
         };
@@ -486,8 +486,7 @@ class User extends Api
      * @ApiParams   (name="id_card", type="string",required=true, description="身份证号")
      * @ApiParams   (name="front_img", type="string",required=true, description="正面照")
      * @ApiParams   (name="reverse_img", type="string",required=true, description="反面照")
-     * @ApiParams   (name="hand_img", type="string",required=true, description="手持照")
-     * @ApiParams   (name="hands_img", type="string",required=true, description="手持宣传语照")
+     * @ApiParams   (name="hand_img", type="string",required=true, description="手持照和手持宣传语")
      */
     public function saveAttestationInfo()
     {

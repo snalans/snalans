@@ -1873,7 +1873,7 @@
                                                                                                                         <tr>
                                                                 <td>status</td>
                                                                 <td>integer</td>
-                                                                <td>状态 1=完成-提示可加蛋 0=孵化中</td>
+                                                                <td>状态 1=空闲-提示可加蛋 0=孵化中</td>
                                                             </tr>
                                                                                                                         <tr>
                                                                 <td>hatch_num</td>
@@ -5105,13 +5105,7 @@
                                                         <td>hand_img</td>
                                                         <td>string</td>
                                                         <td>是</td>
-                                                        <td>手持照</td>
-                                                    </tr>
-                                                                                                        <tr>
-                                                        <td>hands_img</td>
-                                                        <td>string</td>
-                                                        <td>是</td>
-                                                        <td>手持宣传语照</td>
+                                                        <td>手持照和手持宣传语</td>
                                                     </tr>
                                                                                                     </tbody>
                                             </table>
@@ -5153,11 +5147,7 @@
                                                         </div>
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="hand_img">hand_img</label>
-                                                            <input type="string" class="form-control input-sm" id="hand_img" required placeholder="手持照" name="hand_img">
-                                                        </div>
-                                                                                                                <div class="form-group">
-                                                            <label class="control-label" for="hands_img">hands_img</label>
-                                                            <input type="string" class="form-control input-sm" id="hands_img" required placeholder="手持宣传语照" name="hands_img">
+                                                            <input type="string" class="form-control input-sm" id="hand_img" required placeholder="手持照和手持宣传语" name="hand_img">
                                                         </div>
                                                                                                                 <div class="form-group form-group-submit">
                                                             <button type="submit" class="btn btn-success send" rel="47">提交</button>
@@ -6048,7 +6038,7 @@
                                 <div class="panel panel-default">
                     <div class="panel-heading" id="heading-4">
                         <h4 class="panel-title">
-                            <span class="label label-success">GET</span>
+                            <span class="label label-primary">POST</span>
                             <a data-toggle="collapse" data-parent="#accordion4" href="#collapseOne4"> 交易大厅 <span class="text-muted">/api/egg/market_hall</span></a>
                         </h4>
                     </div>
@@ -6149,7 +6139,7 @@
                                                 </div>
                                                 </div>
                                                 <div class="panel-body">
-                                                    <form enctype="application/x-www-form-urlencoded" role="form" action="/api/egg/market_hall" method="Get" name="form4" id="form4">
+                                                    <form enctype="application/x-www-form-urlencoded" role="form" action="/api/egg/market_hall" method="Post" name="form4" id="form4">
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="buy_serial_umber">buy_serial_umber</label>
                                                             <input type="integer" class="form-control input-sm" id="buy_serial_umber" required placeholder="会员编号" name="buy_serial_umber">
@@ -8030,7 +8020,7 @@
 
                 </div>
                 <div class="col-md-6" align="right">
-                    Generated on 2021-10-26 17:07:07 <a href="./" target="_blank">农场</a>
+                    Generated on 2021-10-27 13:49:09 <a href="./" target="_blank">农场</a>
                 </div>
             </div>
 
