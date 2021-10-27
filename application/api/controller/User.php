@@ -447,14 +447,14 @@ class User extends Api
         $page       = $this->request->get("page",1);
         $per_page   = $this->request->get("per_page",15);
         $list = Db::name("user")->alias("u")
-                ->field("u.avatar,u.nickname,u.serial_number,l.title")
+                ->field("u.avatar,u.nickname,u.serial_number,l.title,u.is_attestation")
                 ->join("user_level_config l","l.level=u.level","LEFT")
                 ->where("u.pid",$this->auth->id)
                 ->paginate($per_page)->each(function($item){
                     $item['avatar'] = $item['avatar']? cdnurl($item['avatar'], true) : letter_avatar($item['nickname']);
-                    if(is_null($item['title'])){
+                    if($item['is_attestation'] != 1){
                         $item['title'] = '普通用户';
-                    }else if($item['title'] == 0){
+                    }else if(empty($item['title'])){
                         $item['title'] = '农民';
                     }else{
                         $item['title'] = $item['title'];
