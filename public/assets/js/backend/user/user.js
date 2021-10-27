@@ -23,12 +23,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 pk: 'id',
                 sortName: 'user.id',
                 searchFormVisible: true,
+                dblClickToEdit:false,
                 search:false,
                 columns: [
                     [
                         {checkbox: true},
                         {field: 'id', title: __('Id'), sortable: true},
-                        {field: 'pid', title: __('Pid'), operate: 'LIKE'},
+                        {field: 'puser.mobile', title: __('User.mobile'), operate: 'LIKE'},
                         {field: 'avatar', title: __('Avatar'), events: Table.api.events.image, formatter: Table.api.formatter.image, operate: false},
                         {field: 'serial_number', title: __('Serial_number'), operate: 'LIKE'},
                         {field: 'username', title: __('Username'), operate: 'LIKE'},

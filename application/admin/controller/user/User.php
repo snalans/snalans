@@ -44,13 +44,14 @@ class User extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $list = $this->model
-                ->with('group')
+                ->with(['group','puser'])
                 ->where($where)
                 ->order($sort, $order)
                 ->paginate($limit);
             foreach ($list as $k => $v) {
                 $v->avatar = $v->avatar ? cdnurl($v->avatar, true) : letter_avatar($v->nickname);
                 $v->hidden(['password', 'salt']);
+                $v->getRelation('puser')->visible(['mobile']);
             }
             $result = array("total" => $list->total(), "rows" => $list->items());
 

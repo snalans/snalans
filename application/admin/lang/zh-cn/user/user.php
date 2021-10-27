@@ -34,4 +34,5 @@ return [
     'Valid_number'   => '有效值',
     'Serial_number'  => '编号或邀请码',
     'Pid'            => '上级用户ID',
+    'User.mobile'    => '上级手机号',
 ];
