@@ -609,7 +609,7 @@ class User extends Api
      */
     public function getEggLog()
     {
-        $month          = $this->request->get("month","");
+        $date          = $this->request->get("date","");
         $page           = $this->request->get("page",1);
         $per_page       = $this->request->get("per_page",15);
         $type_arr = [
@@ -625,8 +625,11 @@ class User extends Api
         $wh = [];
         $wh['l.user_id'] = $this->auth->id;
         $wh['l.type']    = ['<>',4];
-        $table = empty($month)?"egg_log_".date("Y_m"):"egg_log_".date("Y_m",strtotime($date));
-        $list = Db::name($table)->alias("l")
+        $table = empty($date)?"egg_log_".date("Y_m"):"egg_log_".date("Y_m",strtotime($date));
+        $rs = Db::query('SHOW TABLES LIKE "fa_'.$table.'"');
+        $list = "";
+        if(!empty($rs)){
+            $list = Db::name($table)->alias("l")
                 ->field("l.type,k.name,l.number,l.note,l.createtime")
                 ->join("egg_kind k","k.id=l.kind_id","LEFT")
                 ->where($wh)
@@ -636,6 +639,7 @@ class User extends Api
                     $item['createtime'] = date("Y-m-d H:i",$item['createtime']);
                     return $item;
                 });
+        }        
         $this->success('',$list);
     }
 
