@@ -273,6 +273,9 @@ class Index extends Api
         if(empty($user_id)){
             $this->error(__('User does not exist!'));
         }
+        if($user_id == $this->auth->id){
+            $this->error("不允许自己给自己转账");
+        }
 
         $rate = ceil($number*Config::get("site.rate_config")/100)??0;
         $wh = [];
