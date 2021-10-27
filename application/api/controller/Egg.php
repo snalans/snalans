@@ -419,10 +419,9 @@ class Egg extends Api
                 DB::rollback();
                 $this->error("出售失败");
             } else {
-                DB::commit();
                 //通知买家
                 \app\common\library\Hsms::send($order['buy_user_id'], '','order');
-                $this->success('出售成功，等待对方打款');
+                DB::commit();
             }
         }//end try
         catch(\Exception $e)
@@ -430,6 +429,7 @@ class Egg extends Api
             DB::rollback();
             $this->error("出售失败");
         }
+        $this->success('出售成功，等待对方打款');
     }
 
     /**
