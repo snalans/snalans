@@ -452,7 +452,13 @@ class User extends Api
                 ->where("u.pid",$this->auth->id)
                 ->paginate($per_page)->each(function($item){
                     $item['avatar'] = $item['avatar']? cdnurl($item['avatar'], true) : letter_avatar($item['nickname']);
-                    $item['title'] = !empty($item['title'])?$item['title']:'普通用户';
+                    if(is_null($item['title'])){
+                        $item['title'] = '普通用户';
+                    }else if($item['title'] == 0){
+                        $item['title'] = '农民';
+                    }else{
+                        $item['title'] = $item['title'];
+                    }
                     unset($item['nickname']);
                     return $item;
                 });
