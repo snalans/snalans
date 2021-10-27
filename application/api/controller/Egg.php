@@ -123,7 +123,7 @@ class Egg extends Api
      */
     public function market_hall()
     {
-        $buy_serial_umber = $this->request->post("buy_serial_umber",0);//会员编号
+        $buy_serial_umber = $this->request->post("buy_serial_umber",'');//会员编号
         $kind_id = $this->request->post("kind_id",1);//蛋分类id
         $page  = $this->request->post("page",1);
         $limit = $this->request->post("per_page",10);
@@ -160,7 +160,7 @@ class Egg extends Api
         }
 
         //别人挂单
-        if($buy_serial_umber>0){
+        if(!empty($buy_serial_umber)){
             $order_where = array(
                 'buy_user_id'=>array('neq',$user_id),
                 'kind_id'=>array('eq',$kind_id),
@@ -358,7 +358,7 @@ class Egg extends Api
         $egg_where = [];
         $egg_where['user_id'] = $user_id;
         $egg_where['kind_id'] = $order['kind_id'];
-        $egg_num = Db::name("egg")->where($egg_where)->value('number');
+        $egg_num = Db::name("egg")->where($egg_where)->value('`number`-`frozen`');
 
         //蛋数量不够
         $total_egg = $order['number'] + $order['rate'];
@@ -419,10 +419,9 @@ class Egg extends Api
                 DB::rollback();
                 $this->error("出售失败");
             } else {
-                DB::commit();
                 //通知买家
                 \app\common\library\Hsms::send($order['buy_user_id'], '','order');
-                $this->success('出售成功，等待对方打款');
+                DB::commit();
             }
         }//end try
         catch(\Exception $e)
@@ -430,6 +429,7 @@ class Egg extends Api
             DB::rollback();
             $this->error("出售失败");
         }
+        $this->success('出售成功，等待对方打款');
     }
 
     /**

@@ -14,8 +14,9 @@ class UserLevelConfig extends Model
      */
     public function update_vip($user_id){
         $user_info = Db::name("user")
+            ->field('id,valid_number,level')
             ->where(['id'=>$user_id])
-            ->find('id,valid_number,level');
+            ->find();
         if($user_info){
             //团队数量
             $team_num = Db::name("membership_chain")->where('ancestral_id', $user_id)->count();
@@ -43,10 +44,10 @@ class UserLevelConfig extends Model
                             $wh = [];
                             $wh['user_id'] =  $user_id;
                             $wh['kind_id'] = $v['kind_id'];
-                            $add_rs = Db::name("egg")->where($wh)->inc('number',$v['number'])->update();;
+                            $add_rs = Db::name("egg")->where($wh)->inc('number',$v['number'])->inc('frozen',$v['frozen'])->update();;
 
                             //蛋日志
-                            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$v['kind_id'],10,1,"农场主等级升级到".$level."级赠送");
+                            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$v['kind_id'],10,1,$v['number'],"农场主等级升级到".$level."级赠送");
                         }
                     }
 
@@ -113,11 +114,11 @@ class UserLevelConfig extends Model
                         'is_attestation'=>array('eq',1)
                     );
                     $user_number = Db::name("user")->where($u_where)->count();
-                    if ($val['user_number']>=$user_number){
+                    if ($val['user_number']<=$user_number){
                         //会员等级直推蛋购买
                         $user_level_buy = Db::name("user_level_buy")->where(['level'=>$val['level']])->select();
                         $user_level_buy_number = Db::name("user_level_buy")->where(['level'=>$val['level']])->count();
-                        if(count($user_level_buy)>0){
+                        if($user_level_buy_number>0){
                             $i = 0;
                             foreach ($user_level_buy as $k => $v) {
                                 //直推有多少人购买该种类的蛋
@@ -138,7 +139,8 @@ class UserLevelConfig extends Model
                             }
                             if($i==$user_level_buy_number){
                                 $level = $val['level'];
-                                break;                            }
+                                break;
+                            }
                         }else{
                             $level = $val['level'];
                             break;
