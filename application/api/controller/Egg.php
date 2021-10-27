@@ -666,12 +666,13 @@ class Egg extends Api
         $confirm_time   = Config::get('site.confirm_time') * 60 * 60;
         $time_out = time() - $confirm_time;
         //订单
-        $order_where = [];
-        $order_where[] = ['pay_time','lt',$time_out];
-        $order_where[] = ['status','eq',2];
-        $order_where[] = ['number','gt',0];
-        $order_where[] = ['rate','gt',0];
-        $order_where[] = ['amount','gt',0];
+        $order_where = array(
+            'pay_time'=>array('lt',$time_out),
+            'status'=>array('eq',2),
+            'number'=>array('gt',0),
+            'rate'=>array('gt',0),
+            'amount'=>array('gt',0)
+        );
         $order = Db::name("egg_order")
             ->field("*")
             ->where($order_where)
