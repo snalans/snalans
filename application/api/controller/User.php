@@ -497,9 +497,15 @@ class User extends Api
         $hand_img       = $this->request->post("hand_img");
         $hands_img      = $this->request->post("hands_img");
 
-        if (!\app\common\library\Validate::check_id_card($id_card)) {
-            $this->error(__('Id_card is incorrect'));
+        // if (!\app\common\library\Validate::check_id_card($id_card)) {
+        //     $this->error(__('Id_card is incorrect'));
+        // }
+
+        $have = Db::name("egg_attestation")->where("id_card",$id_card)->find();
+        if(!empty($have)){
+            $this->error("身份证已经注册过,请更换");
         }
+
         if (!$name || !$id_card || !$front_img || !$reverse_img || !$hand_img) {
             $this->error(__('Invalid parameters'));
         }
@@ -509,7 +515,6 @@ class User extends Api
         $params['front_img']    = $front_img;
         $params['reverse_img']  = $reverse_img;
         $params['hand_img']     = $hand_img;
-        $params['hands_img']    = $hands_img;
         $result = Db::name("egg_attestation")->where("user_id",$this->auth->id)->find();
         if(empty($result)){
             $params['user_id']    = $this->auth->id;
