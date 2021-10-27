@@ -85,9 +85,12 @@ class OrderList extends Api
      * @ApiReturnParams   (name="createtime", type="string", description="下单时间")
      * 
      * @ApiReturnParams   (name="id", type="integer", description="收款ID")
-     * @ApiReturnParams   (name="type", type="integer", description="类型 1=支付宝 2=微信 3=钱包")
+     * @ApiReturnParams   (name="type", type="integer", description="类型 1=支付宝 2=微信 3=钱包 4=银行卡")
      * @ApiReturnParams   (name="account", type="string", description="账号")
      * @ApiReturnParams   (name="image", type="string", description="地址")
+     * @ApiReturnParams   (name="name", type="string", description="姓名")
+     * @ApiReturnParams   (name="mobile", type="string", description="手机号")
+     * @ApiReturnParams   (name="open_bank", type="string", description="开户行")
      */
     public function getOrderDetail()
     {
@@ -113,7 +116,7 @@ class OrderList extends Api
         $data['createtime'] = date("Y-m-d H:i",$data['createtime']);
         $data['pay_list'] = "";
         if($type == 1 && $data['status'] == 0){
-            $data['pay_list'] = Db::name("egg_charge_code")->field("id,type,account,image")->where("user_id",$data['sell_user_id'])->select();
+            $data['pay_list'] = Db::name("egg_charge_code")->field(["user_id","add_time"],true)->where("user_id",$data['sell_user_id'])->select();
         }
         $this->success('',$data);
     }
