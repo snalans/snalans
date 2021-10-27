@@ -33,4 +33,5 @@ return [
     'Leave password blank if dont want to change' => '不修改密码请留空',
     'Valid_number'   => '有效值',
     'Serial_number'  => '编号或邀请码',
+    'Pid'            => '上级用户ID',
 ];

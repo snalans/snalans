@@ -28,6 +28,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     [
                         {checkbox: true},
                         {field: 'id', title: __('Id'), sortable: true},
+                        {field: 'pid', title: __('Pid'), operate: 'LIKE'},
                         {field: 'avatar', title: __('Avatar'), events: Table.api.events.image, formatter: Table.api.formatter.image, operate: false},
                         {field: 'serial_number', title: __('Serial_number'), operate: 'LIKE'},
                         {field: 'username', title: __('Username'), operate: 'LIKE'},
