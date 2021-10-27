@@ -355,6 +355,10 @@ class Egg extends Api
             $this->error("无效订单");
         }
 
+        if($order['buy_user_id'] == $user_id){
+            $this->error("不能出售给自己");
+        }
+
         $egg_where = [];
         $egg_where['user_id'] = $user_id;
         $egg_where['kind_id'] = $order['kind_id'];
