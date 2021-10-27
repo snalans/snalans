@@ -77,7 +77,7 @@ class Team extends Api
                 //蛋收盘价
                 $hours_where = array(
                     'day'=>array('eq',date("Y-m-d")),
-                    'hours'=>array('eq','00-00'),
+                    'hours'=>array('eq','00:00'),
                     'kind_id'=>array('eq',$vi['id'])
                 );
                 $price = Db::name("egg_hours_price")
@@ -88,9 +88,9 @@ class Team extends Api
                 if($vi['id']==1){
                     $white_price = $price;
                 }
-
                $total_price = $total_price + $total_number * $price;
             }
+
             $total_score = intval($total_price/$white_price * 10) ; //总的手续费积分
         }
         $bonus_score = $total_score * $fee_rate;//分红奖励总积分
