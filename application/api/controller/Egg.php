@@ -358,7 +358,7 @@ class Egg extends Api
         $egg_where = [];
         $egg_where['user_id'] = $user_id;
         $egg_where['kind_id'] = $order['kind_id'];
-        $egg_num = Db::name("egg")->where($egg_where)->value('number');
+        $egg_num = Db::name("egg")->where($egg_where)->value('`number`-`frozen`');
 
         //蛋数量不够
         $total_egg = $order['number'] + $order['rate'];
