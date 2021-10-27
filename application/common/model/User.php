@@ -159,7 +159,7 @@ class User extends Model
     {
         if($type==1){
             $code = Random::alnum(6);
-            $result = Db::name("user")->where("invite_code",$code)->find();
+            $result = Db::name("user")->where("serial_number",$code)->find();
         }else{
             $code = Random::alnum(8);
             $result = Db::name("user")->where("serial_number",$code)->find();

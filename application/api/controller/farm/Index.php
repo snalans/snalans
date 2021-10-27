@@ -30,7 +30,7 @@ class Index extends Api
      * 
      * @ApiReturnParams   (name="id", type="string", description="窝ID")
      * @ApiReturnParams   (name="name", type="string", description="窝名称")
-     * @ApiReturnParams   (name="status", type="integer", description="状态 1=完成-提示可加蛋 0=孵化中")
+     * @ApiReturnParams   (name="status", type="integer", description="状态 1=空闲-提示可加蛋 0=孵化中")
      * @ApiReturnParams   (name="hatch_num", type="integer", description="孵化进度-天")
      * @ApiReturnParams   (name="surplus", type="integer", description="剩余时间")
      * @ApiReturnParams   (name="position", type="string", description="窝位置")
