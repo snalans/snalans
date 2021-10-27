@@ -123,7 +123,7 @@ class Egg extends Api
      */
     public function market_hall()
     {
-        $buy_serial_umber = $this->request->post("buy_serial_umber",0);//会员编号
+        $buy_serial_umber = $this->request->post("buy_serial_umber",'');//会员编号
         $kind_id = $this->request->post("kind_id",1);//蛋分类id
         $page  = $this->request->post("page",1);
         $limit = $this->request->post("per_page",10);
@@ -160,7 +160,7 @@ class Egg extends Api
         }
 
         //别人挂单
-        if($buy_serial_umber>0){
+        if(!empty($buy_serial_umber)){
             $order_where = array(
                 'buy_user_id'=>array('neq',$user_id),
                 'kind_id'=>array('eq',$kind_id),
