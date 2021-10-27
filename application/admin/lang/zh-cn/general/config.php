@@ -84,6 +84,6 @@ return [
     'App version'                 => 'app版本号',
     'Valid time'                  => '多少小时内不能撤回',
     'Confirm time'                => '多少小时后订单自动确认',
-    'Fee config'            => '团队分红手续费积分发放比例(%)',
+    'Site rate config'            => '团队分红手续费积分发放比例(%)',
     'Is agreement'                => '是否开启协议',
 ];
