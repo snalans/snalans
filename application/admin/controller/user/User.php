@@ -52,7 +52,13 @@ class User extends Backend
                 $v->avatar = $v->avatar ? cdnurl($v->avatar, true) : letter_avatar($v->nickname);
                 $v->hidden(['password', 'salt']);
                 $v->getRelation('puser')->visible(['mobile']);
-                $sum = Db::name("user")->where("pid",$v->id)->sum("valid_number");
+                $wh = [];
+                $wh['c.ancestral_id'] = $v->id;
+                $wh['c.level']        = ['<',4];
+                $sum = Db::name("membership_chain")->alias("c")
+                        ->join("user u","u.id=c.user_id","LEFT")
+                        ->where($wh)
+                        ->sum("u.valid_number");
                 $v->total_valid_number = $sum + $v->valid_number;
                 $v->team_number = Db::name("user")->where("pid",$v->id)->count();
             }

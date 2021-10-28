@@ -139,11 +139,18 @@ class OrderList extends Api
         $wh['order_sn']     = $order_sn;
         $wh['status']       = 0;
         $wh['buy_user_id']  = $this->auth->id;
-        $sell_user_id = Db::name("egg_order")->where($wh)->value("sell_user_id");
+        $order = Db::name("egg_order")->field("id,sell_user_id,sell_user_id")->where($wh)->find();
+        if(empty($order)){            
+            $this->error("操作无效");
+        }
+
+        if(empty($pay_img)){
+            $this->error("付款证明不能为空");
+        }        
 
         $wh = [];
         $wh['id']       = $charge_code_id;
-        $wh['user_id']  = $sell_user_id;
+        $wh['user_id']  = $order["sell_user_id"];
         $info = Db::name("egg_charge_code")->where($wh)->find();
         if(empty($info)){
             $this->error("收款方式错误");
@@ -157,12 +164,9 @@ class OrderList extends Api
         $data['status']              = 2;
         $data['pay_time']            = time();
 
-        $wh = [];
-        $wh['order_sn']     = $order_sn;
-        $wh['status']       = 0;
-        $wh['buy_user_id']  = $this->auth->id;
-        $rs = Db::name("egg_order")->where($wh)->update($data);
-        if($rs){
+        $rs = Db::name("egg_order")->where("id",$order['id'])->update($data);
+        if($rs){            
+            \app\common\library\Hsms::send($order['sell_user_id'], '','order');
             $this->success('确认成功');
         }else{
             $this->error("操作失败,请重试。");
@@ -189,26 +193,60 @@ class OrderList extends Api
             $this->error("请填写申诉理由。");
         } 
 
+        $wh = [];
+        $wh['order_sn']     = $order_sn;
+        $wh['status']       = 2;
+        $wh['sell_user_id'] = $this->auth->id;
+        $info = Db::name("egg_order")->where($wh)->find();
+        if(empty($info)){
+            $this->error("无效操作");
+        }
+
         Db::startTrans();
-        try {
+        $grs            = true;
+        $log_rs         = true;
+        $valid_rs       = true;
+        $valid_log_res  = true;
+        $ors = Db::name("egg_order")->where("id",$info['id'])->update(['status'=>$status,'note'=>$note]);
+        if($status == 1){
+            $result = Db::name("egg_order")->field("buy_user_id,kind_id,number")->where("order_sn",$order_sn)->find();
             $wh = [];
-            $wh['order_sn']     = $order_sn;
-            $wh['status']       = 2;
-            $wh['sell_user_id'] = $this->auth->id;
-            Db::name("egg_order")->where($wh)->update(['status'=>$status,'note'=>$note]);
-            if($status == 1){
-                $result = Db::name("egg_order")->field("buy_user_id,kind_id,number")->where("order_sn",$order_sn)->find();
-                $wh = [];
-                $wh['user_id'] = $result['buy_user_id'];
-                $wh['kind_id'] = $result['kind_id'];
-                Db::name("egg")->where($wh)->setInc('number',$result['number']);
-                Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$result['buy_user_id'],'kind_id'=>$result['kind_id'],'type'=>1,'order_sn'=>$order_sn,'number'=>$result['number'],'note'=>"订单成交",'createtime'=>time()]);
+            $wh['user_id'] = $result['buy_user_id'];
+            $wh['kind_id'] = $result['kind_id'];
+            $grs = Db::name("egg")->where($wh)->setInc('number',$result['number']);
+
+            $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$result['buy_user_id'],'kind_id'=>$result['kind_id'],'type'=>1,'order_sn'=>$order_sn,'number'=>$result['number'],'note'=>"订单成交",'createtime'=>time()]);
+
+            $valid_number = Db::name("egg_kind")->where("id",$result['kind_id'])->value("valid_number");
+
+            if($valid_number>0){
+                $valid_rs = false;
+                $valid_log_res = false;
+                $valid_number = $valid_number * $result['number'];
+                $valid_rs = Db::name("user")->where('id',$result['buy_user_id'])->inc('valid_number',$valid_number)->update();
+
+                if($valid_rs == true){
+                    $userLevelConfig = new \app\common\model\UserLevelConfig();
+                    $res_vip = $userLevelConfig->update_vip($result['buy_user_id']);
+                }
+
+                $log = [];
+                $log['user_id']         = $result['buy_user_id'];
+                $log['origin_user_id']  = $this->auth->id;
+                $log['number']          = $valid_number;
+                $log['type']            = 2;
+                $log['order_sn']        = $order_sn;
+                $log['add_time']        = time();
+                $valid_log_res  = Db::name("egg_valid_number_log")->insert($log);
             }
+        }
+        if($ors && $grs && $log_rs && $valid_rs && $valid_log_res){
+            \app\common\library\Hsms::send($result['buy_user_id'], '','order');
             Db::commit();
-        } catch (\Exception $e) {
+            $this->success('确认成功'); 
+        }else{
             Db::rollback();
-            $this->error($e->getMessage());
-        }  
-        $this->success('确认成功'); 
+            $this->success('确认失败,请重试'); 
+        }            
     }
 }

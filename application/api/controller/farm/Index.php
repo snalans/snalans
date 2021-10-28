@@ -189,7 +189,7 @@ class Index extends Api
         $wh['user_id'] = $this->auth->id;
         $wh['kind_id'] = $result['kind_id'];
         $reduce_rs = Db::name("egg")->where($wh)->setDec('number');
-        if($result['kind_id'] == 1 && $result['frozen'] > 0){
+        if($result['frozen'] > 0){
             Db::name("egg")->where($wh)->setDec('frozen');
         }
         //写入日志
