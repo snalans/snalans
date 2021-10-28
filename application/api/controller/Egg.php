@@ -414,7 +414,7 @@ class Egg extends Api
             $add_rs = Db::name("egg")->where($egg_where)->dec('number',$total_egg)->update();
 
             //蛋日志
-            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$order['kind_id'],1,$order_sn,$total_egg,"农场市场挂单");
+            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$order['kind_id'],1,$order_sn,'-'.$order['number'],"出售");
 
             //蛋手续费
             $log_fee_add = \app\admin\model\egg\Log::saveLog($order['sell_user_id'],$order['kind_id'],9,$order['order_sn'],'-'.$order['rate'],"农场市场交易手续费");
