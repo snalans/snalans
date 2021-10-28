@@ -202,15 +202,14 @@ class Index extends Api
         $data['uptime']     = time();
         $data['createtime'] = time();
         $hatch_rs = Db::name("egg_hatch")->where("id",$egg_hatch_id)->update($data);
-
         if($result['frozen'] <= 0)
         {
             $valid_number = Db::name("egg_kind")->where("id",$result['kind_id'])->value("valid_number");
-            if($valid_number){
+            if($valid_number>0){
                 //更新农场主等级，$user_id用户id，注意要在积分更新之后调用
-                $userLevelConfig = new \app\common\model\UserLevelConfig();
                 $v_rs = Db::name("user")->where("id",$this->auth->id)->setInc('valid_number',$valid_number);
                 $v_log = Db::name("egg_valid_number_log")->insert(['user_id'=>$this->auth->id,'origin_user_id'=>$this->auth->id,'number'=>$valid_number,'add_time'=>time()]);
+                $userLevelConfig = new \app\common\model\UserLevelConfig();
                 if($v_rs){
                     $userLevelConfig->update_vip($this->auth->id);
                 }
