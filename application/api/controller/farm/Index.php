@@ -4,6 +4,7 @@ namespace app\api\controller\farm;
 use app\common\controller\Api;
 use think\Config;
 use think\Db;
+use think\Log;
 
 /**
  * 农场接口
@@ -189,6 +190,8 @@ class Index extends Api
         $wh['user_id'] = $this->auth->id;
         $wh['kind_id'] = $result['kind_id'];
         $reduce_rs = Db::name("egg")->where($wh)->setDec('number');
+
+        Log::record('result：'.json_encode($result),'sms');
         if($result['frozen'] > 0){
             Db::name("egg")->where($wh)->setDec('frozen');
         }
