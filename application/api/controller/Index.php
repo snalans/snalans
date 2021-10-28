@@ -134,22 +134,33 @@ class Index extends Api
      * 积分兑换
      * 
      * @ApiMethod (POST)
-     * @ApiParams   (name="kind_id", type="integer", description="名称id")
+     * @ApiParams   (name="kind_id", type="integer", description="蛋分类ID")
      * @ApiParams   (name="number", type="integer", description="数量")
      */
     public function exchange()
     {
         $kind_id  = $this->request->post('kind_id',1);
         $number  = $this->request->post('number',1);
-        $wh = [];
-        $wh['id']    = $kind_id;
-        $wh['point'] = ['>',0];
-        $point = Db::name("egg_kind")->where($wh)->value("point");
-        if(empty($point)){
+
+        if(empty($number) || !is_numeric($number) || !in_array($kind_id,[1])){
             $this->error(__('Parameter error'));
         }
-        $score = $point*$number;
-        if($score > $this->auth->score || !is_numeric($number)){
+
+        $wh = [];
+        $wh['id']       = $kind_id;
+        $wh['point']    = ['>',0];
+        $info = Db::name("egg_kind")->field("point,stock")->where($wh)->find();
+        if(empty($info)){
+            $this->error("无法兑换");
+        }
+
+        $stock = $info['stock']-$number;
+        if($stock < 0){
+            $this->error("库存不够,无法兑换");
+        }
+
+        $score = $info['point']*$number;
+        if($score > $this->auth->score){
             $this->error(__('Not enough points'));
         }
 
@@ -165,7 +176,8 @@ class Index extends Api
         //写入日志
         $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>5,'order_sn'=>'','number'=>$number,'note'=>"积分兑换",'createtime'=>time()]);
         $score_log = Db::name("user_score_log")->insert(['user_id' => $this->auth->id, 'score' => $score, 'before' => $before, 'after' => $after, 'memo' => "积分兑换"]);
-        if($score_rs && $num_rs && $log_rs && $score_log){
+        $dec = Db::name('egg_kind')->where("id",$kind_id)->update(["stock"=>$stock]);
+        if($score_rs && $num_rs && $log_rs && $score_log && $dec){
             Db::commit();
             $this->success(__('Exchange successful'));    
         }else{
