@@ -761,6 +761,10 @@ class Egg extends Api
             $this->error("请输入蛋数量！");
         }
 
+        if($number>$egg_info['stock']){
+            $this->error("库存不足！");
+        }
+
         //挂单数量
         $where = array(
             'buy_user_id'=>array('eq',$user_id),
@@ -800,28 +804,44 @@ class Egg extends Api
             $this->error("账号无效或者未认证");
         }
 
-        //生成彩蛋回收订单
-        $order_data = array();
-        $order_data['order_sn'] = date("Ymdhis", time()).mt_rand(1000,9999);
-        $order_sn = $order_data['order_sn'];
-        $order_data['buy_user_id'] = $user_id;
-        $order_data['buy_serial_umber'] = $user_info['serial_number'];
-        $order_data['buy_mobile'] = $user_info['mobile'];
-        $order_data['name'] = $egg_info['name'];
-        $order_data['kind_id'] = $kind_id;
-        $order_data['price'] = $egg_info['price'];
-        $order_data['number'] = $number;
-        $order_data['rate'] = 0;
-        $order_data['amount'] = $egg_info['price'] * $number;
-        $order_data['status'] = 0;
-        $order_data['createtime'] = time();
+        DB::startTrans();
+        try {
+            //减库存
+            $kind_where = array(
+                'id'=>array('eq',$kind_id),
+                'stock'=>array('egt',$number)
+            );
+            $res = Db::name("egg_kind")->where($kind_where)->dec('stock',$number)->update();
 
-        $re = Db::name("egg_order")->insert($order_data);
+            //生成彩蛋回收订单
+            $order_data = array();
+            $order_data['order_sn'] = date("Ymdhis", time()).mt_rand(1000,9999);
+            $order_sn = $order_data['order_sn'];
+            $order_data['buy_user_id'] = $user_id;
+            $order_data['buy_serial_umber'] = $user_info['serial_number'];
+            $order_data['buy_mobile'] = $user_info['mobile'];
+            $order_data['name'] = $egg_info['name'];
+            $order_data['kind_id'] = $kind_id;
+            $order_data['price'] = $egg_info['price'];
+            $order_data['number'] = $number;
+            $order_data['rate'] = 0;
+            $order_data['amount'] = $egg_info['price'] * $number;
+            $order_data['status'] = 0;
+            $order_data['createtime'] = time();
 
-        if ($re == true){
-            $this->success("彩蛋回收成功，请耐心等待打款");
-        }else{
-            $this->error('彩蛋回收失败');
+            $re = Db::name("egg_order")->insert($order_data);
+
+            if ($re == false || $res == false ) {
+                DB::rollback();
+                $this->error("彩蛋回收失败");
+            } else {
+                DB::commit();
+            }
+        }//end try
+        catch (\Exception $e) {
+            DB::rollback();
+            $this->error("彩蛋回收失败");
         }
+        $this->success("彩蛋回收成功，请耐心等待打款");
     }
 }
