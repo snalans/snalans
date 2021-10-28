@@ -19,15 +19,29 @@ class UserLevelConfig extends Model
             ->find();
         if($user_info){
             //团队数量
-            $team_num = Db::name("membership_chain")->where('ancestral_id', $user_id)->count();
+            $team_where = [];
+            $team_where['c.ancestral_id'] = $user_id;
+            $team_where['u.status']        = ['=','normal'];
+            $team_where['u.is_attestation']        = ['=',1];
+            $team_num = Db::name("membership_chain")->alias("c")
+                ->join("user u","u.id=c.user_id","LEFT")
+                ->where($team_where)
+                ->count();
 
             //直推数量
-            $p_num = Db::name("user")->where('pid', $user_id)->count();
+            $p_where = array(
+                'pid'=>array('eq',$user_id),
+                'status'=>array('eq','normal'),
+                'is_attestation'=>array('eq',1)
+            );
+            $p_num = Db::name("user")->where($p_where)->count();
 
             //团队有效值
             $wh = [];
             $wh['c.ancestral_id'] = $user_id;
             $wh['c.level']        = ['<',4];
+            $wh['u.status']        = ['=','normal'];
+            $wh['u.is_attestation']        = ['=',1];
             $valid_number = Db::name("membership_chain")->alias("c")
                 ->join("user u","u.id=c.user_id","LEFT")
                 ->where($wh)
@@ -151,7 +165,9 @@ class UserLevelConfig extends Model
                         //直推有效值人数
                         $v_where = array(
                             'pid'=>array('eq',$user_id),
-                            'valid_number'=>array('egt',$val['person_valid_number'])
+                            'valid_number'=>array('egt',$val['person_valid_number']),
+                            'status'=>array('eq','normal'),
+                            'is_attestation'=>array('eq',1)
                         );
                         $total_people_number = Db::name('user')->where($v_where)->count();
                         if($total_people_number>= $val['person_number']){
