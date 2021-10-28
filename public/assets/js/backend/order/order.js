@@ -42,7 +42,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'number', title: __('Number'), operate: false},
                         {field: 'rate', title: __('Rate'), operate: false},
                         {field: 'amount', title: __('Amount'), operate: false},
-                        {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {0: '待付款', 1: '完成', 2: '待确认', 3: '申诉', 4: '无效'}},
+                        {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {0: '待付款', 1: '完成', 2: '待确认', 3: '申诉', 4: '撤单', 5: '挂单',6:'退款'}},
                         {field: 'note', title: __('Note'), operate: false},
                         {field: 'pay_time', title: __('Pay_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},

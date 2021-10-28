@@ -55,6 +55,7 @@ class OrderList extends Api
         $list = Db::name("egg_order")
                 ->field("order_sn,name,price,number,amount,status,createtime")
                 ->where($wh)
+                ->order("createtime","desc")
                 ->paginate($per_page)->each(function($item,$index){
                     $item['createtime'] = date("Y-m-d H:i",$item['createtime']);
                     return $item;
