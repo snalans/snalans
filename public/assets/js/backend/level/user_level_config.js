@@ -34,6 +34,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'valid_number', title: __('Valid_number'),operate:false},
                         {field: 'user_level', title: __('User_level'),operate:false},
                         {field: 'user_number', title: __('User_number'),operate:false},
+                        {field: 'person_number', title: __('Person_number'),operate:false},
+                        {field: 'person_valid_number', title: __('Person_valid_number'),operate:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]

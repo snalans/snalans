@@ -148,37 +148,48 @@ class UserLevelConfig extends Model
                     );
                     $user_number = Db::name("user")->where($u_where)->count();
                     if ($val['user_number']<=$user_number){
-                        //会员等级直推蛋购买
-                        $user_level_buy = Db::name("user_level_buy")->where(['level'=>$val['level']])->select();
-                        $user_level_buy_number = Db::name("user_level_buy")->where(['level'=>$val['level']])->count();
-                        if($user_level_buy_number>0){
-                            $i = 0;
-                            foreach ($user_level_buy as $k => $v) {
-                                //直推有多少人购买该种类的蛋
-                                $id_array = Db::name('user')->field('id')->where(array('pid'=>$user_id))->select();
-                                $ids = array_column($id_array, 'id');
-                                $order_where = array(
-                                    'buy_user_id'=>array('in',$ids),
-                                    'kind_id'=>array('egt',$v['kind_id']),
-                                    'status'=>array('eq',1)
-                                );
-                                $people = Db::name('egg_order')->where($order_where)->count('DISTINCT buy_user_id');
-
-                                if($people < $v['user_number'] ){
-                                    break;
-                                }else{
-                                    $i++;
-                                }
-                            }
-
-                            if($i==$user_level_buy_number){
-                                $level = $val['level'];
-                                break;
-                            }
-                        }else{
+                        //直推有效值人数
+                        $v_where = array(
+                            'pid'=>array('eq',$user_id),
+                            'valid_number'=>array('egt',$val['person_valid_number'])
+                        );
+                        $total_people_number = Db::name('user')->where($v_where)->count();
+                        if($total_people_number>= $val['person_number']){
                             $level = $val['level'];
                             break;
                         }
+
+                        //会员等级直推蛋购买
+//                        $user_level_buy = Db::name("user_level_buy")->where(['level'=>$val['level']])->select();
+//                        $user_level_buy_number = Db::name("user_level_buy")->where(['level'=>$val['level']])->count();
+//                        if($user_level_buy_number>0){
+//                            $i = 0;
+//                            foreach ($user_level_buy as $k => $v) {
+//                                //直推有多少人购买该种类的蛋
+//                                $id_array = Db::name('user')->field('id')->where(array('pid'=>$user_id))->select();
+//                                $ids = array_column($id_array, 'id');
+//                                $order_where = array(
+//                                    'buy_user_id'=>array('in',$ids),
+//                                    'kind_id'=>array('egt',$v['kind_id']),
+//                                    'status'=>array('eq',1)
+//                                );
+//                                $people = Db::name('egg_order')->where($order_where)->count('DISTINCT buy_user_id');
+//
+//                                if($people < $v['user_number'] ){
+//                                    break;
+//                                }else{
+//                                    $i++;
+//                                }
+//                            }
+//
+//                            if($i==$user_level_buy_number){
+//                                $level = $val['level'];
+//                                break;
+//                            }
+//                        }else{
+//                            $level = $val['level'];
+//                            break;
+//                        }
                     }
                 }
             }
