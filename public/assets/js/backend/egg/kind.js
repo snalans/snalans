@@ -30,10 +30,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'name', title: __('Name'), operate: 'LIKE'},
                         {field: 'image', title: __('Image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'ch_image', title: __('Ch_image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
+                        {field: 'bg_image', title: __('Bg_image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'valid_number', title: __('Valid_number'), operate: false},
                         {field: 'point', title: __('Point'), operate: false},
                         {field: 'price', title: __('Price'), operate: false},
                         {field: 'unit', title: __('Unit'), operate: false},
+                        {field: 'stock', title: __('Stock'), operate: false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
