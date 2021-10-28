@@ -40,6 +40,7 @@ class Log extends Api
                 ->field("u.serial_number,l.type,l.number,FROM_UNIXTIME(l.add_time,'%Y-%m-%d %H:%i') as add_time")
                 ->join("user u","u.id=l.origin_user_id","LEFT")
                 ->where("l.user_id",$this->auth->id)
+                ->order("l.add_time","desc")
                 ->paginate($per_page);
         $this->success('',$list);
     }
@@ -64,6 +65,7 @@ class Log extends Api
         $list = Db::name("user_score_log")->alias("l")
                 ->field("l.before,l.score,l.after,l.memo,FROM_UNIXTIME(l.createtime,'%Y-%m-%d %H:%i') as createtime")
                 ->where("l.user_id",$this->auth->id)
+                ->order("l.createtime","desc")
                 ->paginate($per_page);
         $this->success('',$list);
     }
