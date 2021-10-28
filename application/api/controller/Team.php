@@ -88,7 +88,7 @@ class Team extends Api
                 if($vi['id']==1){
                     $white_price = $price;
                 }
-               $total_price = $total_price + $total_number * $price;
+               $total_price = $total_price + abs($total_number) * $price;
             }
 
             $total_score = intval($total_price/$white_price * 10) ; //总的手续费积分
