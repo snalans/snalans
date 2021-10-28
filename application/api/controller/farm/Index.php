@@ -225,7 +225,7 @@ class Index extends Api
                         $an_rs = Db::name("user")->where("id",$value['ancestral_id'])->setInc('valid_number',$valid_number);
                         Db::name("egg_valid_number_log")->insert(['user_id'=>$value['ancestral_id'],'origin_user_id'=>$this->auth->id,'number'=>$valid_number,'add_time'=>time()]);
                         if($an_rs){
-                            // $userLevelConfig->update_vip($value['ancestral_id']);
+                            $userLevelConfig->update_vip($value['ancestral_id']);
                         }
                     }
                 }            
