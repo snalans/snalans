@@ -163,26 +163,30 @@ class Index extends Api
         if($score > $this->auth->score){
             $this->error(__('Not enough points'));
         }
+        try {
+            Db::startTrans();
+            $before = $this->auth->score;
+            $after = $this->auth->score - $score;
+            $score_rs = Db::name("user")->where("id",$this->auth->id)->update(['score'=>$after]);  
 
-        Db::startTrans();
-        $before = $this->auth->score;
-        $after = $this->auth->score - $score;
-        $score_rs = Db::name("user")->where("id",$this->auth->id)->update(['score'=>$after]);  
-
-        $wh = [];
-        $wh['user_id']      = $this->auth->id;
-        $wh['kind_id']      = $kind_id;
-        $num_rs = Db::name("egg")->where($wh)->setInc("number",$number);
-        //写入日志
-        $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>5,'order_sn'=>'','number'=>$number,'note'=>"积分兑换",'createtime'=>time()]);
-        $score_log = Db::name("user_score_log")->insert(['user_id' => $this->auth->id, 'score' => $score, 'before' => $before, 'after' => $after, 'memo' => "积分兑换"]);
-        $dec = Db::name('egg_kind')->where("id",$kind_id)->update(["stock"=>$stock]);
-        if($score_rs && $num_rs && $log_rs && $score_log && $dec){
-            Db::commit();
-            $this->success(__('Exchange successful'));    
-        }else{
+            $wh = [];
+            $wh['user_id']      = $this->auth->id;
+            $wh['kind_id']      = $kind_id;
+            $num_rs = Db::name("egg")->where($wh)->setInc("number",$number);
+            //写入日志
+            $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>5,'order_sn'=>'','number'=>$number,'note'=>"积分兑换",'createtime'=>time()]);
+            $score_log = Db::name("user_score_log")->insert(['user_id' => $this->auth->id, 'score' => $score, 'before' => $before, 'after' => $after, 'memo' => "积分兑换"]);
+            $dec = Db::name('egg_kind')->where("id",$kind_id)->update(["stock"=>$stock]);
+            if($score_rs && $num_rs && $log_rs && $score_log && $dec){
+                Db::commit();
+                $this->success(__('Exchange successful'));    
+            }else{
+                Db::rollback();
+                $this->error(__('Exchange failure, please try again'));    
+            }            
+        } catch (Exception $e) {
             Db::rollback();
-            $this->error(__('Exchange failure, please try again'));    
+            $this->error("系统忙，请稍后兑换");   
         }
     }
     
