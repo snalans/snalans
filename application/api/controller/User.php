@@ -450,13 +450,14 @@ class User extends Api
      * @ApiReturnParams   (name="avatar", type="string", description="用户头像")
      * @ApiReturnParams   (name="serial_number", type="string", description="用户编号")
      * @ApiReturnParams   (name="title", type="string", description="等级名称")
+     * @ApiReturnParams   (name="team_number", type="int", description="直推人数")
      */
     public function getChildInfo()
     {
         $page       = $this->request->get("page",1);
         $per_page   = $this->request->get("per_page",15);
         $list = Db::name("user")->alias("u")
-                ->field("u.avatar,u.nickname,u.serial_number,l.title,u.is_attestation")
+                ->field("u.id,u.avatar,u.nickname,u.serial_number,l.title,u.is_attestation")
                 ->join("user_level_config l","l.level=u.level","LEFT")
                 ->where("u.pid",$this->auth->id)
                 ->paginate($per_page)->each(function($item){
@@ -468,6 +469,8 @@ class User extends Api
                     }else{
                         $item['title'] = $item['title'];
                     }
+                    $item['team_number'] = Db::name("user")->where("pid",$item['id'])->count();
+                    unset($item['id']);
                     unset($item['nickname']);
                     return $item;
                 });

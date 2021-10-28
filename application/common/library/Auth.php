@@ -134,6 +134,10 @@ class Auth
     public function register($username, $password, $email = '', $mobile = '', $extend = [])
     {
         // 检测用户名、昵称、邮箱、手机号是否存在
+        if ($mobile && User::getByMobile($mobile)) {
+            $this->setError('Mobile already exist');
+            return false;
+        }
         if (User::getByUsername($username)) {
             $this->setError('Username already exist');
             return false;
@@ -144,10 +148,6 @@ class Auth
         }
         if ($email && User::getByEmail($email)) {
             $this->setError('Email already exist');
-            return false;
-        }
-        if ($mobile && User::getByMobile($mobile)) {
-            $this->setError('Mobile already exist');
             return false;
         }
 
