@@ -366,7 +366,7 @@ class Egg extends Api
         $start_time   = Config::get('site.order_start_time') * 60 * 60 + strtotime(date("Y-m-d"));
         $end_time   = Config::get('site.order_end_time') * 60 * 60  + strtotime(date("Y-m-d"));
 
-        //$this->error("交易时间".Config::get('site.order_start_time'));
+        $this->error("交易时间".Config::get('site.order_start_time'));
         if($order_start_time!= 0 || $order_end_time != 0){
             if($start_time>time() || $end_time<time()){
                 $this->error("交易时间".$order_start_time.":00-".$order_end_time.":00");
