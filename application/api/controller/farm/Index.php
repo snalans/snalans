@@ -214,21 +214,6 @@ class Index extends Api
                 if($v_rs){
                     $userLevelConfig->update_vip($this->auth->id);
                 }
-
-                //上级发放有效值
-                $wh = [];
-                $wh['user_id'] = $this->auth->id;
-                $wh['level']   = ['<=',3];
-                $plist = Db::name("membership_chain")->where($wh)->select();
-                if(!empty($plist)){
-                    foreach ($plist as $key => $value) {                
-                        $an_rs = Db::name("user")->where("id",$value['ancestral_id'])->setInc('valid_number',$valid_number);
-                        Db::name("egg_valid_number_log")->insert(['user_id'=>$value['ancestral_id'],'origin_user_id'=>$this->auth->id,'number'=>$valid_number,'add_time'=>time()]);
-                        if($an_rs){
-                            $userLevelConfig->update_vip($value['ancestral_id']);
-                        }
-                    }
-                }            
             }
         }
         if($reduce_rs && $reduce_log && $hatch_rs){
