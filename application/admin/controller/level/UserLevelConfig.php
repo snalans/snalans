@@ -60,8 +60,8 @@ class UserLevelConfig extends Backend
                     ->paginate($limit);
 
             foreach ($list as $row) {
-                $row->visible(['id','level','title','number','team_number','valid_number','user_level','user_number']);
-                
+                $row->visible(['id','level','title','number','team_number','valid_number','user_level','user_number','person_number','person_valid_number']);
+
             }
 
             $result = array("total" => $list->total(), "rows" => $list->items());
