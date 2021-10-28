@@ -170,7 +170,7 @@ class Team extends Api
                         }
                         $log_vip = array();
                         $log_vip['title'] = $v['title'];
-                        $log_vip['lv'] = $v['lv'];
+                        $log_vip['lv'] = $v['level'];
                         $log_vip['bonus'] = json_encode($bonus);
                         $log_vip['add_time'] = date("Y-m-d");
                         $log_vip['is_update'] = 0;
@@ -337,7 +337,7 @@ class Team extends Api
                 foreach ($commission_list as $k => $v) {
                     if($v['score']>0){
                         $asset_where = [];
-                        $asset_where['user_id'] = $v['user_id'];
+                        $asset_where['id'] = $v['user_id'];
                         $before_score = Db::name("user")->where($asset_where)->value('score'); //变更前积分
                         $res = Db::name("user")->where($asset_where)->inc('score', $v['score'])->update();
                         $re = Db::name("team_bonus")->where(array('id' => $v['id']))->data(array('is_issue' => 1, 'pay_time' => time()))->update();
