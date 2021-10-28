@@ -42,7 +42,7 @@ class Team extends Api
             ->where('add_time',date("Y-m-d"))
             ->count();
         if($statistics_count>0){
-            return true;
+            exit;
         }
 
 
@@ -113,7 +113,7 @@ class Team extends Api
             ->field('id,level')
             ->where($where)
             ->count();
-        echo $total_user_count;
+//        echo $total_user_count;
 //        $lock = Cache::get("bonus_commission");
 //        if($lock){
 //            $result['msg'] = "locked";
