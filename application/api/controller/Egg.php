@@ -180,7 +180,7 @@ class Egg extends Api
         $order = Db::name("egg_order")
             ->field("id,buy_serial_umber,name,price,status,order_sn,number,rate,buy_user_id")
             ->where($order_where)
-            ->order('price asc')
+            ->order('price desc')
             ->page($page, $limit)
             ->select();
 
@@ -431,7 +431,7 @@ class Egg extends Api
             $log_add = \app\admin\model\egg\Log::saveLog($user_id,$order['kind_id'],1,$order_sn,'-'.$order['number'],"出售");
 
             //蛋手续费
-            $log_fee_add = \app\admin\model\egg\Log::saveLog($order['sell_user_id'],$order['kind_id'],9,$order['order_sn'],'-'.$order['rate'],"农贸市场交易手续费");
+            $log_fee_add = \app\admin\model\egg\Log::saveLog($user_id,$order['kind_id'],9,$order['order_sn'],'-'.$order['rate'],"农贸市场交易手续费");
 
             if ($re == false || $add_rs == false ||  $log_add == false || $log_fee_add == false ) {
                 DB::rollback();
