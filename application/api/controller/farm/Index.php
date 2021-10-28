@@ -4,7 +4,6 @@ namespace app\api\controller\farm;
 use app\common\controller\Api;
 use think\Config;
 use think\Db;
-use think\Log;
 
 /**
  * 农场接口
@@ -190,8 +189,6 @@ class Index extends Api
         $wh['user_id'] = $this->auth->id;
         $wh['kind_id'] = $result['kind_id'];
         $reduce_rs = Db::name("egg")->where($wh)->setDec('number');
-
-        Log::record('result：'.json_encode($result),'sms');
         if($result['frozen'] > 0){
             Db::name("egg")->where($wh)->setDec('frozen');
         }
@@ -228,7 +225,7 @@ class Index extends Api
                         $an_rs = Db::name("user")->where("id",$value['ancestral_id'])->setInc('valid_number',$valid_number);
                         Db::name("egg_valid_number_log")->insert(['user_id'=>$value['ancestral_id'],'origin_user_id'=>$this->auth->id,'number'=>$valid_number,'add_time'=>time()]);
                         if($an_rs){
-                            $userLevelConfig->update_vip($value['ancestral_id']);
+                            // $userLevelConfig->update_vip($value['ancestral_id']);
                         }
                     }
                 }            
