@@ -24,8 +24,31 @@ class UserLevelConfig extends Model
             //直推数量
             $p_num = Db::name("user")->where('pid', $user_id)->count();
 
+            //团队有效值
+            $wh = [];
+            $wh['c.ancestral_id'] = $user_id;
+            $wh['c.level']        = ['<',4];
+            $valid_number = Db::name("membership_chain")->alias("c")
+                ->join("user u","u.id=c.user_id","LEFT")
+                ->where($wh)
+                ->sum("u.valid_number");
+
+            $total_valid_number = $valid_number + $user_info['valid_number'];
+
+
+            $config_bonus_info = Db::name("user_level_config")
+                ->where('level',1)
+                ->find();
+            if(empty($config_bonus_info)){
+                return true;
+            }
+            
+            if($p_num<$config_bonus_info['number'] || $team_num<$config_bonus_info['team_number'] || $total_valid_number<$config_bonus_info['valid_number']){
+                return true;
+            }
+
             //农场主等级
-            $level = $this->vip($user_id,$user_info['level'],$p_num,$team_num,$user_info['valid_number']);
+            $level = $this->vip($user_id,$user_info['level'],$p_num,$team_num,$total_valid_number);
 
             if($level!=$user_info['level'] && ($level > $user_info['level'])){
                 $re = Db::name("user")
@@ -57,23 +80,33 @@ class UserLevelConfig extends Model
                         ->where(['level'=>$level])
                         ->select();
                     if(count($egg_nest_give)>0){
+                        $datas = [];
+                        $nests_log = [];
                         foreach ($egg_nest_give as $kk=>$vv) {
-                            //增加窝
-                            $nest_where = [];
-                            $nest_where['user_id'] = $user_id;
-                            $nest_where['nest_kind_id'] = $vv['nest_kind_id'];
-                            $add_rs = Db::name("egg_nest")->where($nest_where)->inc('number', $vv['number']);
+                            if($vv['number']>0){
+                                for ($i=1; $i <= $vv['number']; $i++) {
+                                    $data = [];
+                                    $data['user_id']        = $user_id;
+                                    $data['kind_id']        = $vv['nest_kind_id'];
+                                    $data['nest_kind_id']   = $vv['nest_kind_id'];
+                                    $data['position']       = $i;
+                                    $datas[] = $data;
+                                }
 
-                            //窝日志
-                            $data = [];
-                            $data['user_id'] = $user_id;
-                            $data['nest_kind_id'] = $vv['nest_kind_id'];
-                            $data['type'] = 0;
-                            $data['number'] = $vv['number'];
-                            $data['note'] = "农场主等级升级到".$level."级赠送";
-                            $data['createtime'] = time();
-                            $rs = Db::name("egg_nest_log")->insert($data);
+                                $nest_log = [];
+                                $nest_log['user_id']      = $user_id;
+                                $nest_log['nest_kind_id'] = $vv['nest_kind_id'];
+                                $nest_log['type']       = 0;
+                                $nest_log['number']     = $vv['number'];
+                                $nest_log['note']       = "农场主等级升级到".$level."级赠送";
+                                $nest_log['createtime']       = time();
+                                $nests_log[] = $nest_log;
+                            }
                         }
+                        //增加窝
+                        Db::name("egg_hatch")->insertAll($datas);
+                        //窝日志
+                        Db::name("egg_nest_log")->insertAll($nests_log);
                     }
                 }
             }else{

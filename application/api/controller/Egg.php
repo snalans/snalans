@@ -424,7 +424,7 @@ class Egg extends Api
                 $this->error("出售失败");
             } else {
                 //通知买家
-                \app\common\library\Hsms::send($order['buy_user_id'], '','order');
+                \app\common\library\Hsms::send($order['buy_mobile'], '','order');
                 DB::commit();
             }
         }//end try
@@ -540,38 +540,38 @@ class Egg extends Api
             $log_add = \app\admin\model\egg\Log::saveLog($order['buy_user_id'],$order['kind_id'],1,$order_sn,$order['number'],"农场市场卖家确认支付");
 
             //增加买家有效值
-            $egg_info = Db::name("egg_kind")
-                ->field('*')
-                ->where('id',$order['kind_id'])
-                ->find();
-            $valid_rs = true;
-            $res_vip = true;
-            $valid_log_res = true;
-            if($egg_info['valid_number']>0){
-                $valid_number = $egg_info['valid_number'] * $order['number'];
-                $valid_rs = Db::name("user")->where('id',$order['buy_user_id'])->inc('valid_number',$valid_number)->update();
-                if($valid_rs == true){
-                    $userLevelConfig = new \app\common\model\UserLevelConfig();
-                    $res_vip = $userLevelConfig->update_vip($order['buy_user_id']);
-                }
+//            $egg_info = Db::name("egg_kind")
+//                ->field('*')
+//                ->where('id',$order['kind_id'])
+//                ->find();
+//            $valid_rs = true;
+//            $res_vip = true;
+//            $valid_log_res = true;
+//            if($egg_info['valid_number']>0){
+//                $valid_number = $egg_info['valid_number'] * $order['number'];
+//                $valid_rs = Db::name("user")->where('id',$order['buy_user_id'])->inc('valid_number',$valid_number)->update();
+//                if($valid_rs == true){
+//                    $userLevelConfig = new \app\common\model\UserLevelConfig();
+//                    $res_vip = $userLevelConfig->update_vip($order['buy_user_id']);
+//                }
+//
+//                $log = [];
+//                $log['user_id'] = $order['buy_user_id'];
+//                $log['origin_user_id'] = $order['sell_user_id'];
+//                $log['number'] = $valid_number;
+//                $log['add_time'] = time();
+//                $log['type'] = 2;
+//                $log['order_sn'] = $order['order_sn'];
+//                $valid_log_res  = Db::name("egg_valid_number_log")->insert($log);
+//            }
 
-                $log = [];
-                $log['user_id'] = $order['buy_user_id'];
-                $log['origin_user_id'] = $order['sell_user_id'];
-                $log['number'] = $valid_number;
-                $log['add_time'] = time();
-                $log['type'] = 2;
-                $log['order_sn'] = $order['order_sn'];
-                $valid_log_res  = Db::name("egg_valid_number_log")->insert($log);
-            }
 
-
-            if ($re == false || $add_rs == false ||  $log_add == false || $valid_rs==false || $res_vip==false || $valid_log_res=false) {
+            if ($re == false || $add_rs == false ||  $log_add == false ) {
                 DB::rollback();
                 $this->error("确认支付失败");
             } else {
                 //通知买家
-                \app\common\library\Hsms::send($order['buy_user_id'], '','order');
+                \app\common\library\Hsms::send($order['buy_mobile'], '','order');
                 DB::commit();
             }
         }//end try
@@ -656,14 +656,14 @@ class Egg extends Api
     */
     public function market_automatic_confirm(){
 
-        $egg_kind = Db::name("egg_kind")
-            ->field('*')
-            ->order('id asc')
-            ->select();
-        $config_egg_kind = [];
-        foreach ($egg_kind as $key=>$value){
-            $config_egg_kind[$value['id']] = $value;
-        }
+//        $egg_kind = Db::name("egg_kind")
+//            ->field('*')
+//            ->order('id asc')
+//            ->select();
+//        $config_egg_kind = [];
+//        foreach ($egg_kind as $key=>$value){
+//            $config_egg_kind[$value['id']] = $value;
+//        }
 
         //超时待确认的订单
         $confirm_time = 0;
@@ -703,34 +703,34 @@ class Egg extends Api
 
 
                     //增加买家有效值
-                    $valid_rs = true;
-                    $res_vip = true;
-                    $valid_log_res = true;
-                    $egg_info = $config_egg_kind[$v['kind_id']];
-                    if($egg_info['valid_number']>0){
-                        $valid_number = $egg_info['valid_number'] * $v['number'];
-                        $valid_rs = Db::name("user")->where('id',$v['buy_user_id'])->inc('valid_number',$valid_number)->update();
-                        if($valid_rs == true){
-                            $userLevelConfig = new \app\common\model\UserLevelConfig();
-                            $res_vip = $userLevelConfig->update_vip($v['buy_user_id']);
-                        }
+//                    $valid_rs = true;
+//                    $res_vip = true;
+//                    $valid_log_res = true;
+//                    $egg_info = $config_egg_kind[$v['kind_id']];
+//                    if($egg_info['valid_number']>0){
+//                        $valid_number = $egg_info['valid_number'] * $v['number'];
+//                        $valid_rs = Db::name("user")->where('id',$v['buy_user_id'])->inc('valid_number',$valid_number)->update();
+//                        if($valid_rs == true){
+//                            $userLevelConfig = new \app\common\model\UserLevelConfig();
+//                            $res_vip = $userLevelConfig->update_vip($v['buy_user_id']);
+//                        }
+//
+//                        $log = [];
+//                        $log['user_id'] = $v['buy_user_id'];
+//                        $log['origin_user_id'] = $v['sell_user_id'];
+//                        $log['number'] = $valid_number;
+//                        $log['add_time'] = time();
+//                        $log['type'] = 2;
+//                        $log['order_sn'] = $v['order_sn'];
+//                        $valid_log_res  = Db::name("egg_valid_number_log")->insert($log);
+//                    }
 
-                        $log = [];
-                        $log['user_id'] = $v['buy_user_id'];
-                        $log['origin_user_id'] = $v['sell_user_id'];
-                        $log['number'] = $valid_number;
-                        $log['add_time'] = time();
-                        $log['type'] = 2;
-                        $log['order_sn'] = $v['order_sn'];
-                        $valid_log_res  = Db::name("egg_valid_number_log")->insert($log);
-                    }
-
-                    if ($re == false || $add_rs == false ||  $log_add == false  || $valid_rs==false || $res_vip==false || $valid_log_res=false) {
+                    if ($re == false || $add_rs == false ||  $log_add == false ) {
                         DB::rollback();
                         $this->error("确认订单失败");
                     } else {
+                        \app\common\library\Hsms::send($v['buy_mobile'], '','order');
                         DB::commit();
-                        \app\common\library\Hsms::send($v['buy_user_id'], '','order');
                         continue;
                     }
                 }//end try
