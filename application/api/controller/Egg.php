@@ -552,14 +552,14 @@ class Egg extends Api
                 $valid_rs = Db::name("user")->where('id',$order['buy_user_id'])->inc('valid_number',$valid_number)->update();
                 if($valid_rs == true){
                     $userLevelConfig = new \app\common\model\UserLevelConfig();
-                    $res_vip = $userLevelConfig ->update_vip($order['buy_user_id']);
+                    $res_vip = $userLevelConfig->update_vip($order['buy_user_id']);
                 }
 
                 $log = [];
                 $log['user_id'] = $order['buy_user_id'];
                 $log['origin_user_id'] = $order['sell_user_id'];
                 $log['number'] = $valid_number;
-                $log['add_time'] = $valid_number;
+                $log['add_time'] = time();
                 $log['type'] = 2;
                 $log['order_sn'] = $order['order_sn'];
                 $valid_log_res  = Db::name("egg_valid_number_log")->insert($log);
@@ -570,10 +570,9 @@ class Egg extends Api
                 DB::rollback();
                 $this->error("确认支付失败");
             } else {
-                DB::commit();
                 //通知买家
                 \app\common\library\Hsms::send($order['buy_user_id'], '','order');
-                $this->success('确认支付成功');
+                DB::commit();
             }
         }//end try
         catch(\Exception $e)
@@ -581,6 +580,7 @@ class Egg extends Api
             DB::rollback();
             $this->error($e->getMessage());
         }
+        $this->success('确认支付成功');
     }
 
     /**
