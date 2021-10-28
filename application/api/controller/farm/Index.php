@@ -59,7 +59,7 @@ class Index extends Api
                 $surplus = "";
                 if($value['status']==0){
                     $date = $config[$value['kind_id']] - $value['hatch_num'];
-                    $hours = intval((time()-$value['uptime'])/3600);
+                    $hours = 24-intval((time()-$value['uptime'])/3600);
                     $surplus = $date."天".$hours."小时";
                 }
                 $nest_list[$key]['surplus'] = $surplus;
