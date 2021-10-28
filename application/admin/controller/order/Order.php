@@ -76,7 +76,7 @@ class Order extends Backend
                         $number = $row['number'];
                         $user_id = $row['buy_user_id'];
                     }else if($params['status'] == 6){
-                        $note = "管理员：".$this->auth->username." 审核不通过. ".$params['note'];
+                        $note = " 审核不通过. ";
                         $number = $row['number'] + $row['rate'];
                         $user_id = $row['sell_user_id'];
                         //写入日志
