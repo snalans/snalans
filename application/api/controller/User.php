@@ -38,7 +38,8 @@ class User extends Api
      * @ApiReturnParams   (name="serial_number", type="string", description="会员编号或邀请码")
      * @ApiReturnParams   (name="level", type="integer", description="等级")
      * @ApiReturnParams   (name="score", type="integer", description="积分")
-     * @ApiReturnParams   (name="valid_number", type="integer", description="有效值")
+     * @ApiReturnParams   (name="valid_number", type="integer", description="个人有效值")
+     * @ApiReturnParams   (name="total_valid_number", type="integer", description="团队有效值")
      */
     public function index()
     {
@@ -54,6 +55,14 @@ class User extends Api
         }else{
             $result['title'] = '普通用户';
         }
+        $wh = [];
+        $wh['c.ancestral_id'] = $this->auth->id;
+        $wh['c.level']        = ['<',4];
+        $sum = Db::name("membership_chain")->alias("c")
+                ->join("user u","u.id=c.user_id","LEFT")
+                ->where($wh)
+                ->sum("u.valid_number");
+        $result['total_valid_number'] = $result['valid_number'] + $sum;
         
         $this->success('', $result);
     }
