@@ -3,6 +3,7 @@
 namespace app\admin\controller\user;
 
 use app\common\controller\Backend;
+use think\Config;
 use think\Db;
 
 /**
@@ -102,14 +103,14 @@ class Attestation extends Backend
                     }
                     $rs = Db::name("user")->where("id",$row['user_id'])->update(['is_attestation'=>$params['is_attestation']]);
                     if($rs && $params['is_attestation'] == 1){
-                        $data = [];
-                        $data['number'] = 10;
-                        $data['frozen'] = 10;
+                        $number = Config::get("site.valid_number");
                         $wh = [];
                         $wh['user_id'] = $row['user_id'];
                         $wh['kind_id'] = 1;
-                        $add_rs = Db::name("egg")->where($wh)->update($data);
-                        $add_log = \app\admin\model\egg\Log::saveLog($row['user_id'],1,4,'',10,"赠送体验蛋");
+                        $add_rs = Db::name("egg")->where($wh)->inc("number",$number)->inc("frozen",$number)->update();
+                        $add_log = \app\admin\model\egg\Log::saveLog($row['user_id'],1,4,'',$number,"赠送体验蛋");
+                        $userLevelConfig = new \app\common\model\UserLevelConfig();
+                        $userLevelConfig->update_vip($row['user_id']);
                     }
                     $result = $row->allowField(true)->save($params);
                     Db::commit();
