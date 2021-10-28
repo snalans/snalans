@@ -361,6 +361,16 @@ class Egg extends Api
             $this->error("不能出售给自己");
         }
 
+        $order_start_time = Config::get('site.order_start_time');
+        $order_end_time = Config::get('site.order_end_time');
+        $start_time   = Config::get('site.order_start_time') * 60 * 60 + strtotime(date("Y-m-d"));
+        $end_time   = Config::get('site.order_end_time') * 60 * 60  + strtotime(date("Y-m-d"));
+        if($order_start_time!= 0 || $order_end_time != 0){
+            if($start_time>time() || $end_time<time()){
+                $this->error("交易时间".$order_start_time.":00-".$order_end_time.":00");
+            }
+        }
+
         $egg_where = [];
         $egg_where['user_id'] = $user_id;
         $egg_where['kind_id'] = $order['kind_id'];

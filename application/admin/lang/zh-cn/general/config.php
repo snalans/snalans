@@ -86,4 +86,6 @@ return [
     'Confirm time'                => '多少小时后订单自动确认',
     'Site rate config'            => '团队分红手续费积分发放比例(%)',
     'Is agreement'                => '是否开启协议',
+    'Order start time'                => '交易开始时间（几点）',
+    'Order end time'                => '交易结束时间（几点）',
 ];
