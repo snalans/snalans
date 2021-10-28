@@ -90,7 +90,7 @@ class Egg extends Api
                 $data[] = $data1;
             }else{
                 $data1['hours'] = $x.':00';
-                $data1['price'] =  '0';
+                $data1['price'] =  '';
                 $data[] = $data1;
             }
         }
