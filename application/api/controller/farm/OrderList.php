@@ -139,7 +139,7 @@ class OrderList extends Api
         $wh['order_sn']     = $order_sn;
         $wh['status']       = 0;
         $wh['buy_user_id'] = $this->auth->id;
-        $order = Db::name("egg_order")->field("id,buy_user_id,sell_user_id")->where($wh)->find();
+        $order = Db::name("egg_order")->field("id,sell_user_id,sell_mobile")->where($wh)->find();
         if(empty($order)){            
             $this->error("操作无效");
         }
@@ -166,7 +166,7 @@ class OrderList extends Api
 
         $rs = Db::name("egg_order")->where("id",$order['id'])->update($data);
         if($rs){            
-            \app\common\library\Hsms::send($order['sell_user_id'], '','order');
+            \app\common\library\Hsms::send($order['sell_mobile'], '','order');
             $this->success('提交成功,等待确认');
         }else{
             $this->error("操作失败,请重试。");
@@ -209,7 +209,7 @@ class OrderList extends Api
         $valid_log_res  = true;
         $ors = Db::name("egg_order")->where("id",$info['id'])->update(['status'=>$status,'note'=>$note]);
         if($status == 1){
-            $result = Db::name("egg_order")->field("buy_user_id,kind_id,number")->where("order_sn",$order_sn)->find();
+            $result = Db::name("egg_order")->field("buy_user_id,buy_mobile,kind_id,number")->where("order_sn",$order_sn)->find();
             $wh = [];
             $wh['user_id'] = $result['buy_user_id'];
             $wh['kind_id'] = $result['kind_id'];
@@ -243,7 +243,7 @@ class OrderList extends Api
         if($ors && $grs && $log_rs && $valid_rs && $valid_log_res){
             Db::commit();
             if($status == 1){
-                \app\common\library\Hsms::send($result['buy_user_id'], '','order');
+                \app\common\library\Hsms::send($result['buy_mobile'], '','order');
                 $this->success('完成交易'); 
             }else{
                 $this->success('申诉成功,等待审核'); 

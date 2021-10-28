@@ -667,7 +667,7 @@ class User extends Api
                 ->where($wh)
                 ->order("l.createtime","DESC")
                 ->paginate($per_page)->each(function($item) use($type_arr){
-                    $item['type'] = $type_arr[$item['type']];
+                    $item['type'] = isset($type_arr[$item['type']])?$type_arr[$item['type']]:'';
                     $item['createtime'] = date("Y-m-d H:i",$item['createtime']);
                     return $item;
                 });
