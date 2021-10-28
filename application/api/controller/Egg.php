@@ -128,6 +128,8 @@ class Egg extends Api
         $page  = $this->request->post("page",1);
         $limit = $this->request->post("per_page",10);
 
+        $kind_id = $kind_id>0?$kind_id:1;
+
         if($kind_id<=0 || $kind_id>3){
             $this->error("请选择有效的蛋种类！");
         }
