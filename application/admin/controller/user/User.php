@@ -53,14 +53,18 @@ class User extends Backend
                 $v->hidden(['password', 'salt']);
                 $v->getRelation('puser')->visible(['mobile']);
                 $wh = [];
-                $wh['c.ancestral_id'] = $v->id;
-                $wh['c.level']        = ['<',4];
+                $wh['c.ancestral_id']   = $v->id;
+                $wh['c.level']          = ['<',4];
+                $wh['u.is_attestation'] = 1;
                 $sum = Db::name("membership_chain")->alias("c")
                         ->join("user u","u.id=c.user_id","LEFT")
                         ->where($wh)
                         ->sum("u.valid_number");
                 $v->total_valid_number = $sum + $v->valid_number;
-                $v->team_number = Db::name("user")->where("pid",$v->id)->count();
+                $wh = [];
+                $wh['pid']              = $v->id;
+                $wh['is_attestation']   = 1;
+                $v->team_number = Db::name("user")->where($wh)->count();
             }
             $result = array("total" => $list->total(), "rows" => $list->items());
 

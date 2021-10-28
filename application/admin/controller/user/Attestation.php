@@ -111,6 +111,16 @@ class Attestation extends Backend
                         $add_log = \app\admin\model\egg\Log::saveLog($row['user_id'],1,4,'',$number,"赠送体验蛋");
                         $userLevelConfig = new \app\common\model\UserLevelConfig();
                         $userLevelConfig->update_vip($row['user_id']);
+                        //上级发放有效值
+                        $wh = [];
+                        $wh['user_id'] = $row['user_id'];
+                        $wh['level']   = ['<=',3];
+                        $plist = Db::name("membership_chain")->where($wh)->select();
+                        if(!empty($plist)){
+                            foreach ($plist as $key => $value) {                         
+                                $userLevelConfig->update_vip($value['ancestral_id']);
+                            }
+                        }
                     }
                     $result = $row->allowField(true)->save($params);
                     Db::commit();
