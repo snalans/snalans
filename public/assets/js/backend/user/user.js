@@ -36,6 +36,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'level', title: __('Level'), sortable: true},
                         {field: 'score', title: __('Score')},
                         {field: 'valid_number', title: __('Valid_number')},
+                        {field: 'total_valid_number', title: '团队有效值', operate: false},
+                        {field: 'team_number', title: '团队人数', operate: false},
                         {field: 'status', title: __('Status'), formatter: Table.api.formatter.status, searchList: {normal: __('Normal'), hidden: __('Hidden')}},
                         {field: 'is_attestation', title: __('是否认证'), formatter: Table.api.formatter.normal, searchList: {0: '未认证', 1: '成功',2: '等待审核',3:'失败'}},
                         {field: 'operate', title: __('Operate'), table: table,buttons: [

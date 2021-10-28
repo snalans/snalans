@@ -52,6 +52,9 @@ class User extends Backend
                 $v->avatar = $v->avatar ? cdnurl($v->avatar, true) : letter_avatar($v->nickname);
                 $v->hidden(['password', 'salt']);
                 $v->getRelation('puser')->visible(['mobile']);
+                $sum = Db::name("user")->where("pid",$v->id)->sum("valid_number");
+                $v->total_valid_number = $sum + $v->valid_number;
+                $v->team_number = Db::name("user")->where("pid",$v->id)->count();
             }
             $result = array("total" => $list->total(), "rows" => $list->items());
 
