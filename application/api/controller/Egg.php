@@ -712,14 +712,14 @@ class Egg extends Api
                         $valid_rs = Db::name("user")->where('id',$v['buy_user_id'])->inc('valid_number',$valid_number)->update();
                         if($valid_rs == true){
                             $userLevelConfig = new \app\common\model\UserLevelConfig();
-                            $res_vip = $userLevelConfig ->update_vip($v['buy_user_id']);
+                            $res_vip = $userLevelConfig->update_vip($v['buy_user_id']);
                         }
 
                         $log = [];
                         $log['user_id'] = $v['buy_user_id'];
                         $log['origin_user_id'] = $v['sell_user_id'];
                         $log['number'] = $valid_number;
-                        $log['add_time'] = $valid_number;
+                        $log['add_time'] = time();
                         $log['type'] = 2;
                         $log['order_sn'] = $v['order_sn'];
                         $valid_log_res  = Db::name("egg_valid_number_log")->insert($log);
