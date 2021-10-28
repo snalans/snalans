@@ -42,14 +42,13 @@ class UserLevelConfig extends Model
             if(empty($config_bonus_info)){
                 return true;
             }
-            
+
             if($p_num<$config_bonus_info['number'] || $team_num<$config_bonus_info['team_number'] || $total_valid_number<$config_bonus_info['valid_number']){
                 return true;
             }
 
             //农场主等级
             $level = $this->vip($user_id,$user_info['level'],$p_num,$team_num,$total_valid_number);
-
             if($level!=$user_info['level'] && ($level > $user_info['level'])){
                 $re = Db::name("user")
                     ->where(['id'=>$user_id])
@@ -132,8 +131,9 @@ class UserLevelConfig extends Model
      */
     public function vip($user_id,$level,$p_num = 0,$team_num = 0,$valid_number){
         $where = [];
-        $where[] = ['level','gt',$level];
+        $where['level'] = ['>',$level];
         $config_bonus = Db::name("user_level_config")
+            ->where($where)
             ->order('level desc')
             ->select();
         if(count($config_bonus)>0){
@@ -141,7 +141,7 @@ class UserLevelConfig extends Model
                 if($p_num>=$val['number'] && $team_num>=$val['team_number'] && $valid_number>=$val['valid_number']){
                     //直推农场主数量
                     $u_where = array(
-                        'level'=>array('egt',$val['level']),
+                        'level'=>array('egt',$val['user_level']),
                         'pid'=>array('eq',$user_id),
                         'status'=>array('eq','normal'),
                         'is_attestation'=>array('eq',1)
@@ -159,7 +159,7 @@ class UserLevelConfig extends Model
                                 $ids = array_column($id_array, 'id');
                                 $order_where = array(
                                     'buy_user_id'=>array('in',$ids),
-                                    'kind_id'=>array('eq',$v['kind_id']),
+                                    'kind_id'=>array('egt',$v['kind_id']),
                                     'status'=>array('eq',1)
                                 );
                                 $people = Db::name('egg_order')->where($order_where)->count('DISTINCT buy_user_id');
@@ -170,6 +170,7 @@ class UserLevelConfig extends Model
                                     $i++;
                                 }
                             }
+
                             if($i==$user_level_buy_number){
                                 $level = $val['level'];
                                 break;
