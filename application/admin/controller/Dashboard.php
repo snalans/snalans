@@ -46,16 +46,25 @@ class Dashboard extends Backend
 
         $dbTableList = Db::query("SHOW TABLE STATUS");
 
-        $egg = Db::name("egg_log_".date("Y_m"))
+        $degg = Db::name("egg_log_".date("Y_m"))
                     ->whereTime('createtime', 'd')
                     ->where("number",">",0)
                     ->group("kind_id")
                     ->column("kind_id,sum(number)");
+        $megg = Db::name("egg_log_".date("Y_m"))
+                    ->whereTime('createtime', 'month')
+                    ->where("number",">",0)
+                    ->group("kind_id")
+                    ->column("kind_id,sum(number)");
         $this->view->assign([
-            'egg1'            => isset($egg['1'])?$egg['1']:0,
-            'egg2'            => isset($egg['2'])?$egg['2']:0,
-            'egg3'            => isset($egg['3'])?$egg['3']:0,
-            'egg4'            => isset($egg['4'])?$egg['4']:0,
+            'egg1'            => isset($megg['1'])?$megg['1']:0,
+            'egg2'            => isset($megg['2'])?$megg['2']:0,
+            'egg3'            => isset($megg['3'])?$megg['3']:0,
+            'egg4'            => isset($megg['4'])?$megg['4']:0,
+            'degg1'      => isset($degg['1'])?$degg['1']:0,
+            'degg2'      => isset($degg['2'])?$degg['2']:0,
+            'degg3'      => isset($degg['3'])?$degg['3']:0,
+            'degg4'      => isset($degg['4'])?$degg['4']:0,
             'totaluser'       => User::count(),
             'totaladdon'      => count(get_addon_list()),
             'totaladmin'      => Admin::count(),
@@ -78,6 +87,10 @@ class Dashboard extends Backend
 
         $this->assignconfig('column', array_keys($userlist));
         $this->assignconfig('userdata', array_values($userlist));
+        $wh = [];
+        $wh['u.status']     = 'normal';
+        $wh['e.number']     = ['>',0];
+        $wh['e.kind_id']    = 1;
         $egglist1 = Db::name("egg")->alias("e")
                     ->field("u.mobile,e.number")
                     ->join("user u","u.id=e.user_id","LEFT")
@@ -85,24 +98,27 @@ class Dashboard extends Backend
                     ->order(['e.number'=>'desc'])
                     ->limit(5)
                     ->select();
+        $wh['e.kind_id']    = 2;
         $egglist2 = Db::name("egg")->alias("e")
                     ->field("u.mobile,e.number")
                     ->join("user u","u.id=e.user_id","LEFT")
-                    ->where(['e.kind_id'=>2,'u.status'=>'normal'])
+                    ->where($wh)
                     ->order(['e.number'=>'desc'])
                     ->limit(5)
                     ->select();
+        $wh['e.kind_id']    = 3;
         $egglist3 = Db::name("egg")->alias("e")
                     ->field("u.mobile,e.number")
                     ->join("user u","u.id=e.user_id","LEFT")
-                    ->where(['e.kind_id'=>3,'u.status'=>'normal'])
+                    ->where($wh)
                     ->order(['e.number'=>'desc'])
                     ->limit(5)
                     ->select();
+        $wh['e.kind_id']    = 4;
         $egglist4 = Db::name("egg")->alias("e")
                     ->field("u.mobile,e.number")
                     ->join("user u","u.id=e.user_id","LEFT")
-                    ->where(['e.kind_id'=>4,'u.status'=>'normal'])
+                    ->where($wh)
                     ->order(['e.number'=>'desc'])
                     ->limit(5)
                     ->select();
