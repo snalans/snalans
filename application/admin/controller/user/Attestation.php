@@ -115,7 +115,7 @@ class Attestation extends Backend
                         $wh = [];
                         $wh['user_id'] = $row['user_id'];
                         $wh['level']   = ['<=',3];
-                        $plist = Db::name("membership_chain")->where($wh)->select();
+                        $plist = Db::name("membership_chain")->where($wh)->order("level","ASC")->select();
                         if(!empty($plist)){
                             foreach ($plist as $key => $value) {                         
                                 $userLevelConfig->update_vip($value['ancestral_id']);
