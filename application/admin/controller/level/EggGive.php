@@ -54,7 +54,7 @@ class EggGive extends Backend
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
 
             $list = $this->model
-                    ->with(['eggkind'])
+                    ->with(['eggkind','level'])
                     ->where($where)
                     ->order($sort, $order)
                     ->paginate($limit);
@@ -62,6 +62,7 @@ class EggGive extends Backend
             foreach ($list as $row) {
                 
                 $row->getRelation('eggkind')->visible(['name']);
+                $row->getRelation('level')->visible(['title']);
             }
 
             $result = array("total" => $list->total(), "rows" => $list->items());
