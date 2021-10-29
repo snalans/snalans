@@ -200,9 +200,11 @@ class Team extends Api
                 $result['msg'] = "bonus_commission:".$e->getMessage();
                 return $result;
             }
-        }else{
-            //Cache::rm("bonus_commission");
         }
+//        else{
+//            Cache::rm("bonus_commission");
+//        }
+        $this->success("更新成功");
     }
 
     /**
@@ -306,6 +308,8 @@ class Team extends Api
             }
         }
 
+        $this->success("更新成功");
+
 
     }
 
@@ -372,6 +376,8 @@ class Team extends Api
                 return $result;
             }
         }
+
+        $this->success("更新成功");
 //        else{
 //            Cache::rm("commission_issue");
 //        }
