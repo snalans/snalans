@@ -38,12 +38,12 @@ class Team extends Api
      */
     public function bonus_commission(){
 
-        $statistics_count = Db::name("team_statistics")
-            ->where('add_time',date("Y-m-d"))
-            ->count();
-        if($statistics_count>0){
-            exit;
-        }
+//        $statistics_count = Db::name("team_statistics")
+//            ->where('add_time',date("Y-m-d"))
+//            ->count();
+//        if($statistics_count>0){
+//            exit;
+//        }
 
 
         //统计昨天发放的分红奖励总积分
@@ -60,20 +60,17 @@ class Team extends Api
             ->where($kind_where)
             ->order('id asc')
             ->select();
-
         if(count($egg_kind)>0){
             foreach ($egg_kind as $ki=>$vi ){
                 //蛋数量
                 $fee_where = array(
-                    'createtime'=>array('egt',strtotime(date("Y-m-d",strtotime("-1 day")))),
-                    'createtime'=>array('lt',strtotime(date("Y-m-d"))),
+                    'createtime'=>array('between',[strtotime(date("Y-m-d",strtotime("-1 day"))),strtotime(date("Y-m-d"))]),
                     'type'=>array('eq',9),
                     'kind_id'=>array('eq',$vi['id'])
                 );
                 $total_number = Db::name("egg_log_".date("Y_m",strtotime("-1 day")))
                     ->where($fee_where)
                     ->sum('number');
-
                 //蛋收盘价
                 $hours_where = array(
                     'day'=>array('eq',date("Y-m-d")),
@@ -88,6 +85,8 @@ class Team extends Api
                 if($vi['id']==1){
                     $white_price = $price;
                 }
+                $tota_score = abs($total_number) * $price;
+
                $total_price = $total_price + abs($total_number) * $price;
             }
 
