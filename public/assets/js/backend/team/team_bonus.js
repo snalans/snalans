@@ -34,12 +34,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'add_time', title: __('Add_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {field: 'level', title: __('Level'),operate:false},
                         {field: 'score', title: __('Score'),operate:false},
-                        {field: 'is_issue', title: __('Is_issue'), formatter: Table.api.formatter.is_issue, searchList: {1: '是', 0: '否'}},
-                        {field: 'createtime', title: __('Createtime'),operate:false, addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
-                        {field: 'pay_time', title: __('Pay_time'), operate:false, addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
+                        {field: 'is_issue', title: __('Is_issue'), formatter: Table.api.formatter.normal, searchList: {1: '是', 0: '否'}},
                         {field: 'title', title: __('Title'), operate:false},
                         {field: 'team_rate', title: __('Team_rate'),operate:false},
                         {field: 'team_score', title: __('Team_score'),operate:false},
+                        {field: 'pay_time', title: __('Pay_time'), operate:false, addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
+                        {field: 'createtime', title: __('Createtime'),operate:false, addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
