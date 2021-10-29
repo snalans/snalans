@@ -233,7 +233,7 @@ class Team extends Api
                 DB::startTrans();
                 try {
                     $is_rollback = true;
-                    $page_num = $vip_info['num']+2;
+                    $page_num = $vip_info['num']+20;
                     $i=0;
                     $log_bonus = array();
                     foreach ($commission_list as $k => $v) {
