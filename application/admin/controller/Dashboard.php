@@ -48,23 +48,40 @@ class Dashboard extends Backend
 
         $degg = Db::name("egg_log_".date("Y_m"))
                     ->whereTime('createtime', 'd')
-                    ->where("number",">",0)
                     ->group("kind_id")
                     ->column("kind_id,sum(number)");
+
+        $minfo = Db::name("egg_log_all")->where("createtime",date("Y-m",strtotime("-1 month")))->select();
+        if(empty($minfo)){
+            $legg = Db::name("egg_log_".date("Y_m",strtotime("-1 month")))
+                    ->whereTime('createtime', 'd')
+                    ->group("kind_id")
+                    ->column("kind_id,sum(number)");
+            $datas = [];
+            for ($i=1; $i <= 4; $i++) { 
+                $data = [];
+                $data['kind_id']    = $i;
+                $data['number']     = isset($legg[$i])?$legg[$i]:0;
+                $data['createtime'] = date("Y-m",strtotime("-1 month"));
+                $datas[] = $data;
+            }
+            Db::name("egg_log_all")->insertAll($datas);
+        }
+        $total = Db::name("egg_log_all")->group("kind_id")->column("kind_id,sum(number)");
+
         $megg = Db::name("egg_log_".date("Y_m"))
                     ->whereTime('createtime', 'month')
-                    ->where("number",">",0)
                     ->group("kind_id")
                     ->column("kind_id,sum(number)");
         $this->view->assign([
-            'egg1'            => isset($megg['1'])?$megg['1']:0,
-            'egg2'            => isset($megg['2'])?$megg['2']:0,
-            'egg3'            => isset($megg['3'])?$megg['3']:0,
-            'egg4'            => isset($megg['4'])?$megg['4']:0,
-            'degg1'      => isset($degg['1'])?$degg['1']:0,
-            'degg2'      => isset($degg['2'])?$degg['2']:0,
-            'degg3'      => isset($degg['3'])?$degg['3']:0,
-            'degg4'      => isset($degg['4'])?$degg['4']:0,
+            'egg1'            => isset($megg['1'])?($megg['1']+$total['1']):0,
+            'egg2'            => isset($megg['2'])?($megg['2']+$total['2']):0,
+            'egg3'            => isset($megg['3'])?($megg['3']+$total['3']):0,
+            'egg4'            => isset($megg['4'])?($megg['4']+$total['4']):0,
+            'degg1'           => isset($degg['1'])?$degg['1']:0,
+            'degg2'           => isset($degg['2'])?$degg['2']:0,
+            'degg3'           => isset($degg['3'])?$degg['3']:0,
+            'degg4'           => isset($degg['4'])?$degg['4']:0,
             'totaluser'       => User::count(),
             'totaladdon'      => count(get_addon_list()),
             'totaladmin'      => Admin::count(),
