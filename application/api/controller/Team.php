@@ -143,7 +143,7 @@ class Team extends Api
                     if($user_count>0){
                         $bonus = array();
                         $total_rate_score = $bonus_score * $v['rate'];//当前农场主等级总奖励
-                        $score = $total_rate_score/$user_count;//当前农场主等级人均奖励
+                        $score = intval($total_rate_score/$user_count);//当前农场主等级人均奖励
 
                         $statistics = array();
                         $statistics['fee_rate'] = $fee_rate;
