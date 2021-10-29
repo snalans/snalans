@@ -44,7 +44,7 @@ class User extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $list = $this->model
-                ->with(['group','puser'])
+                ->with(['group','puser','level'])
                 ->where($where)
                 ->order($sort, $order)
                 ->paginate($limit);
@@ -52,6 +52,7 @@ class User extends Backend
                 $v->avatar = $v->avatar ? cdnurl($v->avatar, true) : letter_avatar($v->nickname);
                 $v->hidden(['password', 'salt']);
                 $v->getRelation('puser')->visible(['mobile']);
+                $v->getRelation('level')->visible(['title']);
                 $wh = [];
                 $wh['c.ancestral_id']   = $v->id;
                 $wh['c.level']          = ['<',4];
@@ -93,6 +94,12 @@ class User extends Backend
         if (!$row) {
             $this->error(__('No Results were found'));
         }        
+        $level_str = "普通用户";
+        if($row['is_attestation']==1){
+            $title = Db::name("user_level_config")->where("level",$row['level'])->value("title");
+            $level_str = empty($title)?"农民":$title;
+        }
+        $row['level'] = $level_str;
         $row['avatar'] = $row['avatar']?$row['avatar']:letter_avatar($row['nickname']);
         $this->view->assign("row", $row);
         return $this->view->fetch();
@@ -186,5 +193,59 @@ class User extends Backend
             }
         }
         $this->error();
+    }
+
+
+    /**
+     * 修改等级
+     */
+    public function level($ids = null)
+    {
+        $row = $this->model->get($ids);
+        if (!$row) {
+            $this->error(__('No Results were found'));
+        }
+        $adminIds = $this->getDataLimitAdminIds();
+        if (is_array($adminIds)) {
+            if (!in_array($row[$this->dataLimitField], $adminIds)) {
+                $this->error(__('You have no permission'));
+            }
+        }
+        if ($this->request->isPost()) {
+            $params = $this->request->post("row/a");
+            if ($params) {
+                $params = $this->preExcludeFields($params);
+                $result = false;
+                Db::startTrans();
+                try {                    
+                    //是否采用模型验证
+                    if ($this->modelValidate) {
+                        $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
+                        $row->validateFailException(true)->validate($validate);
+                    }
+                    $result = $row->allowField(true)->save($params);
+                    Db::commit();
+                } catch (ValidateException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (PDOException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (Exception $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                }
+                if ($result !== false) {
+                    $this->success();
+                } else {
+                    $this->error(__('No rows were updated'));
+                }
+            }
+            $this->error(__('Parameter %s can not be empty', ''));
+        }
+        $row['level_str'] = $row['is_attestation']==1?"农民":"普通用户";
+        $this->view->assign("row", $row);
+        return $this->view->fetch();
     }
 }

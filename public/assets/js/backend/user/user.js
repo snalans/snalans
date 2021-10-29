@@ -17,6 +17,14 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
             var table = $("#table");
 
+            //在普通搜索渲染后
+            table.on('post-common-search.bs.table', function (event, table) {
+                var form = $("form", table.$commonsearch);
+                $("input[name='level']", form).addClass("selectpage").data("source", "level/user_level_config/index").data("primaryKey", "level").data("field", "title");
+                Form.events.cxselect(form);
+                Form.events.selectpage(form);
+            });
+
             // 初始化表格
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
@@ -29,11 +37,11 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     [
                         {checkbox: true},
                         {field: 'id', title: __('Id'), sortable: true},
-                        {field: 'puser.mobile', title: __('User.mobile'), operate: 'LIKE'},
-                        {field: 'serial_number', title: __('Serial_number'), operate: 'LIKE'},
-                        {field: 'username', title: __('Username'), operate: 'LIKE'},
                         {field: 'mobile', title: __('Mobile'), operate: 'LIKE'},
-                        {field: 'level', title: __('Level'), sortable: true},
+                        {field: 'serial_number', title: __('Serial_number'), operate: 'LIKE'},
+                        {field: 'puser.mobile', title: __('User.mobile'), operate: 'LIKE'},
+                        {field: 'level', title: __('Level'), visible:false},
+                        {field: 'level.title', title: __('Level'), operate:false},
                         {field: 'score', title: __('Score')},
                         {field: 'valid_number', title: __('Valid_number')},
                         {field: 'total_valid_number', title: '团队有效值', operate: false},
@@ -45,6 +53,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                             {name: 'edit', text: '修改密码', title: '修改密码', icon: 'fa fa-list', classname: 'btn btn-xs btn-primary btn-editone btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url},
                             {name: 'assets', text: '资产', title: '蛋资产', icon: 'fa fa-list', classname: 'btn btn-xs btn-primary btn-dialog' ,url:function(row){
                                 return 'egg/egg/index?user.mobile='+row.mobile
+                            }},
+                            {name: 'level', text: '等级', title: '修改等级', icon: 'fa fa-arrows-v', classname: 'btn btn-xs btn-warning btn-dialog' ,url:function(row){
+                                return 'user/user/level?ids='+row.id
                             }},
                             {name: 'edit', text: '认证', title: '认证信息', icon: 'fa fa-list', classname: 'btn btn-xs btn-success btn-dialog' ,url:function(row){
                                 return 'user/attestation/index?user_id='+row.id
@@ -99,6 +110,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Table.api.bindevent(table);
         },
         see: function () {
+            Controller.api.bindevent();
+        },
+        level: function () {
             Controller.api.bindevent();
         },
         add: function () {
