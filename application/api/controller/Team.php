@@ -371,9 +371,10 @@ class Team extends Api
                 $result['msg'] = $e->getMessage();
                 return $result;
             }
-        }else{
-            //Cache::rm("commission_issue");
         }
+//        else{
+//            Cache::rm("commission_issue");
+//        }
     }
 
 }
