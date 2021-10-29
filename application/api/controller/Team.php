@@ -38,12 +38,12 @@ class Team extends Api
      */
     public function bonus_commission(){
 
-//        $statistics_count = Db::name("team_statistics")
-//            ->where('add_time',date("Y-m-d"))
-//            ->count();
-//        if($statistics_count>0){
-//            exit;
-//        }
+        $statistics_count = Db::name("team_statistics")
+            ->where('add_time',date("Y-m-d"))
+            ->count();
+        if($statistics_count>0){
+            exit;
+        }
 
 
         //统计昨天发放的分红奖励总积分
