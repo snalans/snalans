@@ -839,6 +839,7 @@ class Egg extends Api
             );
             $res = Db::name("egg_kind")->where($kind_where)->dec('stock',$number)->update();
 
+
             //生成彩蛋回收订单
             $order_data = array();
             $order_data['order_sn'] = date("Ymdhis", time()).mt_rand(1000,9999);
@@ -857,7 +858,18 @@ class Egg extends Api
 
             $re = Db::name("egg_order")->insert($order_data);
 
-            if ($re == false || $res == false ) {
+            //扣除蛋
+            $egg_where = array(
+                'user_id'=>array('eq',$user_id),
+                'kind_id'=>array('eq',$kind_id),
+                'number'=>array('egt',$number)
+            );
+            $add_rs = Db::name("egg")->where($egg_where)->dec('number',$number)->update();
+
+            //蛋日志
+            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$kind_id,1,$order_sn,'-'.$number,"出售");
+
+            if ($re == false || $res == false || $add_rs==false || $log_add==false ) {
                 DB::rollback();
                 $this->error("彩蛋回收失败");
             } else {
