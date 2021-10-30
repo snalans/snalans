@@ -406,7 +406,7 @@ class Egg extends Api
             ->where($pay_where)
             ->count();
         if($pay_count==0){
-            $this->error("请去会员中心添加支付方式");
+            $this->error("请往会员中心添加支付方式");
         }
 
         DB::startTrans();
@@ -777,6 +777,18 @@ class Egg extends Api
 
         if($number>$egg_info['stock']){
             $this->error("库存不足！");
+        }
+
+        //卖家钱包支付方式
+        $pay_where = array(
+            'user_id'=>array('eq',$user_id),
+            'type'=>array('eq',3)
+        );
+        $pay_count = Db::name("egg_charge_code")
+            ->where($pay_where)
+            ->count();
+        if($pay_count==0){
+            $this->error("请往会员中心添加钱包支付方式");
         }
 
         //挂单数量
