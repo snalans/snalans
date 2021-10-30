@@ -90,7 +90,7 @@ class Hsms
      */
     public static function notice($mobile, $msg = '', $template = null)
     {
-        $log_msg = '【【我的农场】】'.$msg;
+        $log_msg = '【我的农场】'.$msg;
         $result = self::sendSms($mobile,$log_msg);
         return $result ? true : false;
     }
