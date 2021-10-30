@@ -406,7 +406,7 @@ class Egg extends Api
             ->where($pay_where)
             ->count();
         if($pay_count==0){
-            $this->error("请去会员中心添加支付方式");
+            $this->error("请往会员中心添加支付方式");
         }
 
         DB::startTrans();
@@ -765,11 +765,13 @@ class Egg extends Api
     public function market_sale_colour(){
         $user_id  = $this->auth->id;
         $kind_id  = 5;
-        $number = $this->request->post("number",1);
+        $number = $this->request->post("number",0);
         $egg_info = Db::name("egg_kind")
             ->field('*')
             ->where('id',$kind_id)
             ->find();
+
+        $number = $number>0?$number:0;
 
         if($number==0){
             $this->error("请输入蛋数量！");
@@ -777,6 +779,18 @@ class Egg extends Api
 
         if($number>$egg_info['stock']){
             $this->error("库存不足！");
+        }
+
+        //卖家钱包支付方式
+        $pay_where = array(
+            'user_id'=>array('eq',$user_id),
+            'type'=>array('eq',3)
+        );
+        $pay_count = Db::name("egg_charge_code")
+            ->where($pay_where)
+            ->count();
+        if($pay_count==0){
+            $this->error("请往会员中心添加钱包支付方式");
         }
 
         //挂单数量
@@ -827,6 +841,7 @@ class Egg extends Api
             );
             $res = Db::name("egg_kind")->where($kind_where)->dec('stock',$number)->update();
 
+
             //生成彩蛋回收订单
             $order_data = array();
             $order_data['order_sn'] = date("Ymdhis", time()).mt_rand(1000,9999);
@@ -845,7 +860,18 @@ class Egg extends Api
 
             $re = Db::name("egg_order")->insert($order_data);
 
-            if ($re == false || $res == false ) {
+            //扣除蛋
+            $egg_where = array(
+                'user_id'=>array('eq',$user_id),
+                'kind_id'=>array('eq',$kind_id),
+                'number'=>array('egt',$number)
+            );
+            $add_rs = Db::name("egg")->where($egg_where)->dec('number',$number)->update();
+
+            //蛋日志
+            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$kind_id,1,$order_sn,'-'.$number,"出售");
+
+            if ($re == false || $res == false || $add_rs==false || $log_add==false ) {
                 DB::rollback();
                 $this->error("彩蛋回收失败");
             } else {
