@@ -140,11 +140,13 @@ class Index extends Api
      * @ApiMethod (POST)
      * @ApiParams   (name="kind_id", type="integer", description="蛋分类ID")
      * @ApiParams   (name="number", type="integer", description="数量")
+     * @ApiParams   (name="paypwd", type="string", description="支付密码")
      */
     public function exchange()
     {
-        $kind_id  = $this->request->post('kind_id',1);
-        $number  = $this->request->post('number',1);
+        $kind_id        = $this->request->post('kind_id',1);
+        $number         = $this->request->post('number',1);
+        $paypwd         = $this->request->post('paypwd',"");
 
         if(empty($number) || !is_numeric($number) || !in_array($kind_id,[1])){
             $this->error(__('Parameter error'));
@@ -156,6 +158,11 @@ class Index extends Api
         $info = Db::name("egg_kind")->field("point,stock")->where($wh)->find();
         if(empty($info)){
             $this->error("无法兑换");
+        }
+
+        $auth = new \app\common\library\Auth();
+        if ($this->auth->password != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
+            $this->error('支付密码错误');
         }
 
         $stock = $info['stock']-$number;

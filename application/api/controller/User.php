@@ -102,6 +102,10 @@ class User extends Api
         $ret = $this->auth->login($account, $password);
         if ($ret) {
             $data = ['userinfo' => $this->auth->getUserinfo()];
+            $wh = [];
+            $wh['user_id']      = $data['userinfo']['user_id'];
+            $wh['createtime']   = ['<>',$data['userinfo']['createtime']];
+            Db::name("user_token")->where($wh)->delete();
             $this->success(__('Logged in successful'), $data);
         } else {
             $this->error($this->auth->getError());

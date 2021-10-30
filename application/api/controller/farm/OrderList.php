@@ -129,12 +129,14 @@ class OrderList extends Api
      * @ApiParams   (name="order_sn", type="string", description="订单号")
      * @ApiParams   (name="charge_code_id", type="string", description="收款信息ID")
      * @ApiParams   (name="pay_img", type="string", description="付款截图")
+     * @ApiParams   (name="paypwd", type="string", description="支付密码")
      */
     public function confirm()
     {
-        $order_sn               = $this->request->post("order_sn","");
-        $charge_code_id         = $this->request->post("charge_code_id","");
-        $pay_img                = $this->request->post("pay_img","");
+        $order_sn           = $this->request->post("order_sn","");
+        $charge_code_id     = $this->request->post("charge_code_id","");
+        $pay_img            = $this->request->post("pay_img","");
+        $paypwd             = $this->request->post('paypwd');
 
         $wh = [];
         $wh['order_sn']     = $order_sn;
@@ -155,6 +157,11 @@ class OrderList extends Api
         $info = Db::name("egg_charge_code")->where($wh)->find();
         if(empty($info)){
             $this->error("收款方式错误");
+        }
+
+        $auth = new \app\common\library\Auth();
+        if ($this->auth->password != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
+            $this->error('支付密码错误');
         }
 
         $data = [];
