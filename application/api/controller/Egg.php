@@ -831,9 +831,9 @@ class Egg extends Api
             $order_data = array();
             $order_data['order_sn'] = date("Ymdhis", time()).mt_rand(1000,9999);
             $order_sn = $order_data['order_sn'];
-            $order_data['buy_user_id'] = $user_id;
-            $order_data['buy_serial_umber'] = $user_info['serial_number'];
-            $order_data['buy_mobile'] = $user_info['mobile'];
+            $order_data['sell_user_id'] = $user_id;
+            $order_data['sell_serial_umber'] = $user_info['serial_number'];
+            $order_data['sell_mobile'] = $user_info['mobile'];
             $order_data['name'] = $egg_info['name'];
             $order_data['kind_id'] = $kind_id;
             $order_data['price'] = $egg_info['price'];
