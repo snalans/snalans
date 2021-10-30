@@ -20,6 +20,7 @@ class Index extends Api
      * 加载初始化
      * @ApiReturnParams   (name="egg_info", type="string", description="蛋的信息 name:蛋名称 image：蛋图片 ch_image:小鸡图片 bg_image:背景图片 stock:库存数量")
      * @ApiReturnParams   (name="share_image", type="int", description="分享背景图")
+     * @ApiReturnParams   (name="invite_url", type="int", description="邀请地址")
      * @ApiReturnParams   (name="is_open", type="int", description="是否开启APP 1=开启 0=关闭")
      * @ApiReturnParams   (name="is_agreement", type="int", description="是否开启协议 1=开启 0=关闭")
      * @ApiReturnParams   (name="adroid", type="string", description="安卓下载地址")
@@ -31,6 +32,7 @@ class Index extends Api
         $data = [];
         $data['egg_info']       = Db::name("egg_kind")->field("id,name,image,ch_image,bg_image,stock")->select();
         $data['share_image']    = Db::name("egg_news")->where("news_type_id",4)->value("image");
+        $data['invite_url']     = Config::get("site.invite_url");
         $data['is_open']        = Config::get("site.is_open");
         $data['adroid']         = Config::get("site.android_url");
         $data['ios']            = Config::get("site.ios_url");
@@ -177,7 +179,7 @@ class Index extends Api
             $num_rs = Db::name("egg")->where($wh)->setInc("number",$number);
             //写入日志
             $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>5,'order_sn'=>'','number'=>$number,'note'=>"积分兑换",'createtime'=>time()]);
-            $score_log = Db::name("user_score_log")->insert(['user_id' => $this->auth->id, 'score' => $score, 'before' => $before, 'after' => $after, 'memo' => "积分兑换"]);
+            $score_log = Db::name("user_score_log")->insert(['user_id' => $this->auth->id, 'score' => $score, 'before' => $before, 'after' => $after, 'memo' => "积分兑换",'createtime'=>time()]);
             $dec = Db::name('egg_kind')->where("id",$kind_id)->update(["stock"=>$stock]);
             if($score_rs && $num_rs && $log_rs && $score_log && $dec){
                 Db::commit();

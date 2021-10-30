@@ -7,6 +7,45 @@
         </div>
     </div>    
     <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">选择付款方式:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="panel-heading">
+                <ul class="nav nav-tabs">
+                    {volist name="pay_info" id="vo"}
+                    {eq name="$key" value="0"}
+                        <input type="hidden" name="row[charge_code]" id="charge_code" value="{$vo.id}">
+                    {/eq}
+                    <li {in name="$key" value="0"}class="active"{/in}>
+                        <a href="#{$vo.type}" data-toggle="tab" data-type="{$vo.id}" class="check_pay">{$vo.pay_name}</a>
+                    </li>
+                    {/volist}
+                </ul>
+            </div>
+
+            <div class="panel-body">
+                <div id="myTabContent" class="tab-content">            
+                    {volist name="pay_info" id="vo"}
+                    <div {eq name="$key" value="0"}class="tab-pane fade active in"{else/}class="tab-pane fade"{/eq} id="{$vo.type}">
+                        <p>姓名：<b>{$vo.name}</b></p>
+                        {notempty name="$vo.mobile"}
+                            <p>手机号：<b>{$vo.mobile}</b></p>
+                        {/notempty}
+                        {notempty name="$vo.open_bank"}
+                            <p>开户行：<b>{$vo.open_bank}</b></p>
+                        {/notempty}
+                        {notempty name="$vo.account"}
+                            <p>账户：<b>{$vo.account}</b></p>
+                        {/notempty}
+                        {notempty name="$vo.image"}
+                            <img src="{$vo.image}" style="max-width:260px;max-height: 260px;">
+                        {/notempty}
+                    </div>
+                    {/volist}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('上传支付截图')}:</label>
         <div class="col-xs-12 col-sm-8">
             <div class="input-group">

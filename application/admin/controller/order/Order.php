@@ -140,6 +140,10 @@ class Order extends Backend
                     $this->error('该订单不允许操作');
                 }
                 $result = false;
+                $info = Db::name("egg_charge_code")->where("id",$params['charge_code'])->find();
+                if(empty($info)){
+                    $this->error('支付方式有误');
+                }
                 Db::startTrans();
                 try {
                     $log_re = true;
@@ -149,8 +153,11 @@ class Order extends Backend
                         $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
                         $row->validateFailException(true)->validate($validate);
                     }
-                    $params['status'] = 2;
-                    $params['pay_time'] = time();
+                    $params['attestation_type']     = $info['type'];
+                    $params['attestation_image']    = $info['image'];
+                    $params['attestation_account']  = $info['account'];
+                    $params['status']               = 2;
+                    $params['pay_time']             = time();
                     $result = $row->allowField(true)->save($params);
                     if ($result) {  
                         \app\common\library\Hsms::send($row['sell_mobile'], '','order');
@@ -173,6 +180,22 @@ class Order extends Backend
             }
             $this->error(__('Parameter %s can not be empty', ''));
         }
+        $pay_info = Db::name("egg_charge_code")->field(["user_id","add_time"],true)->where("user_id",$row['sell_user_id'])->select();
+        if(!empty($pay_info)){
+            foreach ($pay_info as $key => $value) {
+                if($value['type']==1){
+                    $pay_name = "支付宝";
+                }else if($value['type']==2){
+                    $pay_name = "微信";
+                }else if($value['type']==3){
+                    $pay_name = "钱包";
+                }else{
+                    $pay_name = "银行卡";
+                }
+                $pay_info[$key]['pay_name'] = $pay_name;
+            }
+        }
+        $this->view->assign("pay_info",$pay_info);
         $this->view->assign("row", $row);
         return $this->view->fetch();
     }

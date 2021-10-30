@@ -53,7 +53,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                         return true; 
                                     }
                                 },
-                                extend: 'data-area=\'["500px", "450px"]\''
+                                extend: 'data-area=\'["500px", "650px"]\''
                             },
                             {name: 'edit', text: '审核', title: '审核', icon: 'fa fa-star', classname: 'btn btn-xs btn-success btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url
                                 ,visible:function(row){
@@ -76,9 +76,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         },
         pay: function () {
             
-            $("#c-ch_category_id").data("params", function(){
-                return {custom: {'pid': $("#c-agency_id").val()}};
-            });
+            $(".check_pay").on("click",function () {
+                $("#charge_code").val($(this).attr("data-type"))
+            })
+
             Controller.api.bindevent();
         },
         edit: function () {
