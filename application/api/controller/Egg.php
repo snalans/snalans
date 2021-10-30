@@ -341,11 +341,13 @@ class Egg extends Api
      *
      * @ApiMethod (Post)
      * @ApiParams   (name="order_sn", type="integer", description="订单编号")
+     * @ApiParams   (name="paypwd", type="string", description="支付密码")
     */
     public function market_sale()
     {
         $user_id  = $this->auth->id;
         $order_sn  = $this->request->post("order_sn",0);
+        $paypwd         = $this->request->post('paypwd',"");
 
         //订单
         $order = Db::name("egg_order")
@@ -359,6 +361,11 @@ class Egg extends Api
 
         if($order['buy_user_id'] == $user_id){
             $this->error("不能出售给自己");
+        }
+
+        $auth = new \app\common\library\Auth();
+        if ($this->auth->password != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
+            $this->error('支付密码错误');
         }
 
         $order_start_time = Config::get('site.order_start_time');
@@ -761,11 +768,13 @@ class Egg extends Api
      *
      * @ApiMethod (Post)
      * @ApiParams   (name="number", type="integer", description="数量")
+     * @ApiParams   (name="paypwd", type="string", description="支付密码")
      */
     public function market_sale_colour(){
         $user_id  = $this->auth->id;
         $kind_id  = 5;
         $number = $this->request->post("number",0);
+        $paypwd         = $this->request->post('paypwd',"");
         $egg_info = Db::name("egg_kind")
             ->field('*')
             ->where('id',$kind_id)
@@ -775,6 +784,11 @@ class Egg extends Api
 
         if($number==0){
             $this->error("请输入蛋数量！");
+        }
+
+        $auth = new \app\common\library\Auth();
+        if ($this->auth->password != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
+            $this->error('支付密码错误');
         }
 
         if($number>$egg_info['stock']){
