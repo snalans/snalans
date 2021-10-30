@@ -186,7 +186,7 @@ class Index extends Api
             $num_rs = Db::name("egg")->where($wh)->setInc("number",$number);
             //写入日志
             $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>5,'order_sn'=>'','number'=>$number,'note'=>"积分兑换",'createtime'=>time()]);
-            $score_log = Db::name("user_score_log")->insert(['user_id' => $this->auth->id, 'score' => $score, 'before' => $before, 'after' => $after, 'memo' => "积分兑换",'createtime'=>time()]);
+            $score_log = Db::name("user_score_log")->insert(['user_id' => $this->auth->id, 'score' => -$score, 'before' => $before, 'after' => $after, 'memo' => "积分兑换",'createtime'=>time()]);
             $dec = Db::name('egg_kind')->where("id",$kind_id)->update(["stock"=>$stock]);
             if($score_rs && $num_rs && $log_rs && $score_log && $dec){
                 Db::commit();
