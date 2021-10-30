@@ -765,11 +765,13 @@ class Egg extends Api
     public function market_sale_colour(){
         $user_id  = $this->auth->id;
         $kind_id  = 5;
-        $number = $this->request->post("number",1);
+        $number = $this->request->post("number",0);
         $egg_info = Db::name("egg_kind")
             ->field('*')
             ->where('id',$kind_id)
             ->find();
+
+        $number = $number>0?$number:0;
 
         if($number==0){
             $this->error("请输入蛋数量！");
