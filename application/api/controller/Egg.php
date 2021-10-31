@@ -53,8 +53,13 @@ class Egg extends Api
 
     /**
      * 农贸市场
+     *
+     * @ApiMethod (Post)
+     * @ApiParams   (name="day_time", type="integer", description="日期（例如 '2021-11-01'）")
      */
     public function market_index(){
+        $day_time = $this->request->post("day_time",'');
+        $day_time  = $day_time?$day_time:date('Y-m-d',time());
         $kind_where = array(
             'id'=>array('lt',4)
         );
@@ -67,7 +72,7 @@ class Egg extends Api
             foreach ($egg_kind as $k => $v) {
                 $hours_where = [];
                 $hours_where['kind_id'] = $v['id'];
-                $hours_where['day'] = date('Y-m-d',time());
+                $hours_where['day'] = $day_time;
                 $hours_where['hours'] =['between',['09:00','21:00']];
                 $list = Db::name("egg_hours_price")
                     ->field("price,hours,kind_id")
