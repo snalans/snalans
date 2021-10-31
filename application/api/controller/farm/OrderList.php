@@ -213,8 +213,6 @@ class OrderList extends Api
         Db::startTrans();
         $grs            = true;
         $log_rs         = true;
-        $valid_rs       = true;
-        $valid_log_res  = true;
         $ors = Db::name("egg_order")->where("id",$info['id'])->update(['status'=>$status,'note'=>$note]);
         if($status == 1){
             $result = Db::name("egg_order")->field("buy_user_id,buy_mobile,kind_id,number")->where("order_sn",$order_sn)->find();
@@ -224,31 +222,8 @@ class OrderList extends Api
             $grs = Db::name("egg")->where($wh)->setInc('number',$result['number']);
 
             $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$result['buy_user_id'],'kind_id'=>$result['kind_id'],'type'=>1,'order_sn'=>$order_sn,'number'=>$result['number'],'note'=>"订单成交",'createtime'=>time()]);
-
-            $valid_number = Db::name("egg_kind")->where("id",$result['kind_id'])->value("valid_number");
-
-            if($valid_number>0){
-                $valid_rs = false;
-                $valid_log_res = false;
-                $valid_number = $valid_number * $result['number'];
-                $valid_rs = Db::name("user")->where('id',$result['buy_user_id'])->inc('valid_number',$valid_number)->update();
-
-                if($valid_rs == true){
-                    $userLevelConfig = new \app\common\model\UserLevelConfig();
-                    $res_vip = $userLevelConfig->update_vip($result['buy_user_id']);
-                }
-
-                $log = [];
-                $log['user_id']         = $result['buy_user_id'];
-                $log['origin_user_id']  = $this->auth->id;
-                $log['number']          = $valid_number;
-                $log['type']            = 2;
-                $log['order_sn']        = $order_sn;
-                $log['add_time']        = time();
-                $valid_log_res  = Db::name("egg_valid_number_log")->insert($log);
-            }
         }
-        if($ors && $grs && $log_rs && $valid_rs && $valid_log_res){
+        if($ors && $grs && $log_rs){
             Db::commit();
             if($status == 1){
                 \app\common\library\Hsms::send($result['buy_mobile'], '','order');

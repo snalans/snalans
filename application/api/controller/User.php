@@ -451,33 +451,45 @@ class User extends Api
      * @ApiParams   (name="page", type="int", description="页码")
      * @ApiParams   (name="per_page", type="int", description="数量")
      * 
+     * @ApiReturnParams   (name="team_total", type="int", description="团队总人数")
+     * @ApiReturnParams   (name="team_valid", type="int", description="团队有效人数")
+     * @ApiReturnParams   (name="total", type="int", description="直推总人数")
+     * @ApiReturnParams   (name="valid", type="int", description="直推有效人数")
+     * 
      * @ApiReturnParams   (name="avatar", type="string", description="用户头像")
      * @ApiReturnParams   (name="serial_number", type="string", description="用户编号")
      * @ApiReturnParams   (name="title", type="string", description="等级名称")
-     * @ApiReturnParams   (name="team_number", type="int", description="直推人数")
+     * @ApiReturnParams   (name="team_number", type="int", description="下级-直推人数")
      */
     public function getChildInfo()
     {
         $page       = $this->request->get("page",1);
         $per_page   = $this->request->get("per_page",15);
+        $wh = [];
+        $wh['u.pid']            = $this->auth->id;
+        $wh['u.is_attestation'] = 1;
         $list = Db::name("user")->alias("u")
-                ->field("u.id,u.avatar,u.nickname,u.serial_number,l.title,u.is_attestation")
+                ->field("u.id,u.avatar,u.nickname,u.serial_number,l.title")
                 ->join("user_level_config l","l.level=u.level","LEFT")
-                ->where("u.pid",$this->auth->id)
+                ->where($wh)
                 ->paginate($per_page)->each(function($item){
                     $item['avatar'] = $item['avatar']? cdnurl($item['avatar'], true) : letter_avatar($item['nickname']);
-                    if($item['is_attestation'] != 1){
-                        $item['title'] = '普通用户';
-                    }else if(empty($item['title'])){
-                        $item['title'] = '农民';
-                    }else{
-                        $item['title'] = $item['title'];
-                    }
                     $item['team_number'] = Db::name("user")->where("pid",$item['id'])->count();
                     unset($item['id']);
                     unset($item['nickname']);
                     return $item;
                 });
+                
+        $wh = [];
+        $wh['mc.ancestral_id'] = $this->auth->id;
+        $wh['mc.level']        = ['<=',3];
+        $info = Db::name("membership_chain")->alias("mc")
+                        ->field("sum(if(u.is_attestation=1,1,0)) as valid,count(mc.id) as total")
+                        ->join("user u","u.id=mc.user_id","LEFT")
+                        ->where($wh)
+                        ->find();
+        $list['team_total'] = empty($info['total'])?0:$info['total'];
+        $list['team_valid'] = empty($info['valid'])?0:$info['valid'];
         $this->success('',$list);
     }
 

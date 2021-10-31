@@ -4876,6 +4876,26 @@
                                                         </thead>
                                                         <tbody>
                                                                                                                         <tr>
+                                                                <td>team_valid</td>
+                                                                <td>int</td>
+                                                                <td>团队有效人数</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>team_invalid</td>
+                                                                <td>int</td>
+                                                                <td>团队无效人数</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>total</td>
+                                                                <td>int</td>
+                                                                <td>直推有效人数</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>invalid</td>
+                                                                <td>int</td>
+                                                                <td>直推无效人数</td>
+                                                            </tr>
+                                                                                                                        <tr>
                                                                 <td>avatar</td>
                                                                 <td>string</td>
                                                                 <td>用户头像</td>
@@ -4893,7 +4913,7 @@
                                                                                                                         <tr>
                                                                 <td>team_number</td>
                                                                 <td>int</td>
-                                                                <td>直推人数</td>
+                                                                <td>下级-直推人数</td>
                                                             </tr>
                                                                                                                     </tbody>
                                                     </table>
@@ -6638,6 +6658,12 @@
                                                         <td>是</td>
                                                         <td>订单编号</td>
                                                     </tr>
+                                                                                                        <tr>
+                                                        <td>paypwd</td>
+                                                        <td>string</td>
+                                                        <td>是</td>
+                                                        <td>支付密码</td>
+                                                    </tr>
                                                                                                     </tbody>
                                             </table>
                                                                                     </div>
@@ -6663,6 +6689,10 @@
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="order_sn">order_sn</label>
                                                             <input type="integer" class="form-control input-sm" id="order_sn" required placeholder="订单编号" name="order_sn">
+                                                        </div>
+                                                                                                                <div class="form-group">
+                                                            <label class="control-label" for="paypwd">paypwd</label>
+                                                            <input type="string" class="form-control input-sm" id="paypwd" required placeholder="支付密码" name="paypwd">
                                                         </div>
                                                                                                                 <div class="form-group form-group-submit">
                                                             <button type="submit" class="btn btn-success send" rel="7">提交</button>
@@ -7436,6 +7466,12 @@
                                                         <td>是</td>
                                                         <td>数量</td>
                                                     </tr>
+                                                                                                        <tr>
+                                                        <td>paypwd</td>
+                                                        <td>string</td>
+                                                        <td>是</td>
+                                                        <td>支付密码</td>
+                                                    </tr>
                                                                                                     </tbody>
                                             </table>
                                                                                     </div>
@@ -7461,6 +7497,10 @@
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="number">number</label>
                                                             <input type="integer" class="form-control input-sm" id="number" required placeholder="数量" name="number">
+                                                        </div>
+                                                                                                                <div class="form-group">
+                                                            <label class="control-label" for="paypwd">paypwd</label>
+                                                            <input type="string" class="form-control input-sm" id="paypwd" required placeholder="支付密码" name="paypwd">
                                                         </div>
                                                                                                                 <div class="form-group form-group-submit">
                                                             <button type="submit" class="btn btn-success send" rel="13">提交</button>
@@ -8080,7 +8120,7 @@
 
                 </div>
                 <div class="col-md-6" align="right">
-                    Generated on 2021-10-30 18:52:07 <a href="./" target="_blank">农场</a>
+                    Generated on 2021-10-31 18:31:09 <a href="./" target="_blank">农场</a>
                 </div>
             </div>
 
