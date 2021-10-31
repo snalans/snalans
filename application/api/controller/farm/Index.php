@@ -270,13 +270,13 @@ class Index extends Api
         if($user_id == $this->auth->id){
             $this->error("不允许自己给自己转账");
         }
-
         $rate_config = Db::name("egg_kind")->where("id",$kind_id)->value("rate_config");
         $num = ceil($rate_config/10);
         $rate = 0;
         for ($i=$num; $i > 0; $i--) { 
-            $rate += ceil($number*10/100)??0;
+            $rate += ceil($number*10/100);
         }
+
         $wh = [];
         $wh['user_id'] = $this->auth->id;
         $wh['kind_id'] = $kind_id;
