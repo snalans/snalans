@@ -27,8 +27,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     [
                         {checkbox: true},
                         {field: 'id', title: __('Id'),operate:false},
-                        {field: 'user.serial_number', title: __('User.serial_number'), operate: false},
-                        {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
+                        {field: 'user_id', title: __('User_id'),visible:false},                                                {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
                         {field: 'type', title: __('Type'), formatter: Table.api.formatter.normal, searchList: {1: '支付宝',2: '微信',3:'钱包',4:'银行卡'}},
                         {field: 'name', title: __('Name'), operate: 'LIKE'},
                         {field: 'mobile', title: __('Mobile'), operate: 'LIKE'},

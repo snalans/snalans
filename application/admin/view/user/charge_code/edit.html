@@ -1,9 +1,15 @@
 <form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
 
     <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">用户手机号:</label>
+        <div class="col-xs-12 col-sm-8">
+            <span class="form-control" disabled="disabled">{$mobile}</span>
+        </div>
+    </div>
+    <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Type')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <select  id="c-type" data-rule="required" class="form-control selectpicker" name="row[type]">
+            <select  id="c-type" data-rule="required" disabled="disabled" class="form-control selectpicker" name="row[type]">
                 <option value="{$row.type}" {in name="$row.type" value="1"}selected{/in}>支付宝</option>
                 <option value="{$row.type}" {in name="$row.type" value="2"}selected{/in}>微信</option>
                 <option value="{$row.type}" {in name="$row.type" value="3"}selected{/in}>钱包</option>
