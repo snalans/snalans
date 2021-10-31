@@ -45,4 +45,9 @@ class Order extends Model
     }
 
 
+
+    public function attestation()
+    {
+        return $this->belongsTo('app\admin\model\user\Attestation', 'sell_user_id', 'user_id', [], 'LEFT')->setEagerlyType(0);
+    }
 }
