@@ -10,5 +10,5 @@ return [
     'Price'         => '回收价格',
     'Unit'          => '价格单位',
     'Stock'         => '库存数量',
-    'Rate_config'         => '手续费(%)',
+    'Rate_config'   => '手续费(每满10-N)',
 ];
