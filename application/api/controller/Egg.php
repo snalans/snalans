@@ -218,9 +218,10 @@ class Egg extends Api
             $this->error("请选择有效的蛋种类！");
         }
 
-        $egg_name = Db::name("egg_kind")
+        $egg_kind_info = Db::name("egg_kind")
+            ->field("name,rate_config")
             ->where('id',$kind_id)
-            ->value('name');
+            ->find();
 
         if($number==0){
             $this->error("请输入蛋数量！");
@@ -274,11 +275,11 @@ class Egg extends Api
         $order_data['buy_user_id'] = $user_id;
         $order_data['buy_serial_umber'] = $user_info['serial_number'];
         $order_data['buy_mobile'] = $user_info['mobile'];
-        $order_data['name'] = $egg_name;
+        $order_data['name'] = $egg_kind_info['name'];
         $order_data['kind_id'] = $kind_id;
         $order_data['price'] = $price;
         $order_data['number'] = $number;
-        $order_data['rate'] = ceil($number*Config::get('site.rate_config')/100);
+        $order_data['rate'] = ceil(ceil($number/10)*$egg_kind_info['rate_config']);
         $order_data['amount'] = $price * $number;
         $order_data['status'] = 5;
         $order_data['createtime'] = time();
@@ -290,6 +291,7 @@ class Egg extends Api
         }else{
             $this->error('挂单失败');
         }
+
     }
 
     /**
