@@ -916,6 +916,7 @@ class Egg extends Api
             'status'=>array('eq',0),
             'number'=>array('gt',0),
             'rate'=>array('gt',0),
+            'kind_id'=>array('lt',5),
             'amount'=>array('gt',0)
         );
         $order = Db::name("egg_order")
