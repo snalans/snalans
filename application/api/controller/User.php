@@ -453,8 +453,8 @@ class User extends Api
      * 
      * @ApiReturnParams   (name="team_total", type="int", description="团队总人数")
      * @ApiReturnParams   (name="team_valid", type="int", description="团队有效人数")
-     * @ApiReturnParams   (name="total", type="int", description="直推总人数")
-     * @ApiReturnParams   (name="valid", type="int", description="直推有效人数")
+     * @ApiReturnParams   (name="p_total", type="int", description="直推总人数")
+     * @ApiReturnParams   (name="p_valid", type="int", description="直推有效人数")
      * 
      * @ApiReturnParams   (name="avatar", type="string", description="用户头像")
      * @ApiReturnParams   (name="serial_number", type="string", description="用户编号")
@@ -479,10 +479,14 @@ class User extends Api
                     unset($item['nickname']);
                     return $item;
                 });
+        $list = json_encode($list);
+        $list = json_decode($list,1);
+
         $wh = [];
         $wh['pid']              = $this->auth->id;
         $wh['is_attestation']   = 1;
-        $list['valid'] = Db::name("user")->where($wh)->count(); 
+        $list['p_valid'] = Db::name("user")->where($wh)->count(); 
+        $list['p_total'] = $list['total'];
 
         $wh = [];
         $wh['mc.ancestral_id'] = $this->auth->id;
@@ -494,6 +498,7 @@ class User extends Api
                         ->find();
         $list['team_total'] = empty($info['total'])?0:$info['total'];
         $list['team_valid'] = empty($info['valid'])?0:$info['valid'];
+     
         $this->success('',$list);
     }
 
