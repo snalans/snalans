@@ -459,6 +459,7 @@ class User extends Api
      * @ApiReturnParams   (name="avatar", type="string", description="用户头像")
      * @ApiReturnParams   (name="serial_number", type="string", description="用户编号")
      * @ApiReturnParams   (name="title", type="string", description="等级名称")
+     * @ApiReturnParams   (name="is_attestation", type="string", description="是否认证 0=否 1=是 2=待审核 3=失败")
      * @ApiReturnParams   (name="team_number", type="int", description="下级-直推人数")
      */
     public function getChildInfo()
@@ -467,9 +468,8 @@ class User extends Api
         $per_page   = $this->request->get("per_page",15);
         $wh = [];
         $wh['u.pid']            = $this->auth->id;
-        $wh['u.is_attestation'] = 1;
         $list = Db::name("user")->alias("u")
-                ->field("u.id,u.avatar,u.nickname,u.serial_number,l.title")
+                ->field("u.id,u.avatar,u.nickname,u.serial_number,l.title,u.is_attestation")
                 ->join("user_level_config l","l.level=u.level","LEFT")
                 ->where($wh)
                 ->paginate($per_page)->each(function($item){
@@ -479,7 +479,11 @@ class User extends Api
                     unset($item['nickname']);
                     return $item;
                 });
-                
+        $wh = [];
+        $wh['pid']              = $this->auth->id;
+        $wh['is_attestation']   = 1;
+        $list['valid'] = Db::name("user")->where($wh)->count(); 
+
         $wh = [];
         $wh['mc.ancestral_id'] = $this->auth->id;
         $wh['mc.level']        = ['<=',3];
