@@ -23,6 +23,8 @@
             <input id="c-name" data-rule="required" class="form-control" name="row[name]" type="text" value="{$row.name|htmlentities}">
         </div>
     </div>
+    
+    {in name="$row.type" value="4"}
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Mobile')}:</label>
         <div class="col-xs-12 col-sm-8">
@@ -35,12 +37,15 @@
             <input id="c-open_bank" class="form-control" name="row[open_bank]" type="text" value="{$row.open_bank|htmlentities}">
         </div>
     </div>
+    {/in}
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Account')}:</label>
         <div class="col-xs-12 col-sm-8">
             <input id="c-account" data-rule="required" class="form-control" name="row[account]" type="text" value="{$row.account|htmlentities}">
         </div>
     </div>
+
+    {in name="$row.type" value="1,2,3"}
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Image')}:</label>
         <div class="col-xs-12 col-sm-8">
@@ -55,6 +60,7 @@
             <ul class="row list-inline faupload-preview" id="p-image"></ul>
         </div>
     </div>
+    {/in}
 
     <div class="form-group layer-footer">
         <label class="control-label col-xs-12 col-sm-2"></label>
