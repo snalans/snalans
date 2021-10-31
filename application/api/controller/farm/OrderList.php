@@ -159,10 +159,10 @@ class OrderList extends Api
             $this->error("收款方式错误");
         }
 
-        $auth = new \app\common\library\Auth();
-        if ($this->auth->password != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
-            $this->error('支付密码错误');
-        }
+        // $auth = new \app\common\library\Auth();
+        // if ($this->auth->password != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
+        //     $this->error('支付密码错误');
+        // }
 
         $data = [];
         $data['attestation_type']    = $info['type'];
