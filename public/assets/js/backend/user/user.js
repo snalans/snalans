@@ -54,7 +54,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                             {name: 'assets', text: '资产', title: '蛋资产', icon: 'fa fa-list', classname: 'btn btn-xs btn-primary btn-dialog' ,url:function(row){
                                 return 'egg/egg/index?user.mobile='+row.mobile
                             }},
-                            {name: 'charge', text: '收款信息', title: '收款信息', icon: 'fa fa-list', classname: 'btn btn-xs btn-info btn-dialog' ,url:function(row){
+                            {name: 'charge', text: '收款信息', title: '收款信息', icon: 'fa fa-bank', classname: 'btn btn-xs btn-info btn-dialog' ,url:function(row){
                                 return 'user/charge_code/index?user_id='+row.id
                             }},
                             {name: 'level', text: '等级', title: '修改等级', icon: 'fa fa-arrows-v', classname: 'btn btn-xs btn-warning btn-dialog' ,url:function(row){
