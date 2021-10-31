@@ -55,7 +55,7 @@ class Egg extends Api
      * 农贸市场
      *
      * @ApiMethod (Post)
-     * @ApiParams   (name="day_time", type="integer", description="日期（例如 '2021-11-01'）")
+     * @ApiParams   (name="day_time", type="integer", description="日期（例如2021-11-01）")
      */
     public function market_index(){
         $day_time = $this->request->post("day_time",'');
