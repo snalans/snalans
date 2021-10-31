@@ -426,6 +426,7 @@ class Egg extends Api
             $data['sell_serial_umber'] = $user_info['serial_number'];
             $data['sell_mobile'] = $user_info['mobile'];
             $data['status'] = 0;
+            $data['sale_time'] = time();
             $re = Db::name("egg_order")->where('order_sn',$order_sn)->data($data)->update();
 
             //扣除蛋
@@ -899,5 +900,88 @@ class Egg extends Api
             $this->error("彩蛋回收失败");
         }
         $this->success("彩蛋回收成功，请耐心等待打款");
+    }
+
+    /**
+     * 买家有效时间未打款自动退款订单
+     */
+    public function market_automatic_refund(){
+        //超时待未打款的订单
+        $confirm_time = 0;
+        $confirm_time   = Config::get('site.confirm_time') * 60 * 60;
+        $time_out = time() - $confirm_time;
+        //订单
+        $order_where = array(
+            'sale_time'=>array('lt',$time_out),
+            'status'=>array('eq',0),
+            'number'=>array('gt',0),
+            'rate'=>array('gt',0),
+            'amount'=>array('gt',0)
+        );
+        $order = Db::name("egg_order")
+            ->field("*")
+            ->where($order_where)
+            ->limit(30)
+            ->select();
+        if(count($order)>0){
+            foreach($order as $k=>$v) {
+                DB::startTrans();
+                try {
+                    //更新订单
+                    $data = array();
+                    $data['status'] = 6;
+                    $data['refund_status'] = 1;
+                    $re = Db::name("egg_order")->where('order_sn', $v['order_sn'])->data($data)->update();
+
+                    $res_user = true;
+                    if($re == true){
+                        //未打款次数
+                        $refund_where = array(
+                            'refund_status'=>array('eq',1),
+                            'buy_user_id'=>array('eq',$v['buy_user_id'])
+                        );
+                        $refund_count = Db::name("egg_order")->where($refund_where)->count();
+                        if($refund_count>=3){
+                            //封买家账号
+                            $user_data = array();
+                            $user_data['status'] = 'hidden';
+                            $res_user = Db::name("user")->where('id', $v['buy_user_id'])->data($user_data)->update();
+
+                            //清空买家token
+                            Db::name("user_token")->where('user_id', $v['buy_user_id'])->delete();
+
+                        }
+                    }
+
+                    //蛋退给卖家
+                    $number = $v['number'] + $v['rate'];
+                    $egg_where = array(
+                        'user_id'=>array('eq',$v['sell_user_id']),
+                        'kind_id'=>array('eq',$v['kind_id'])
+                    );
+                    $add_rs = Db::name("egg")->where($egg_where)->inc('number',$number)->update();
+
+                    //卖家出售蛋返还日志
+                    $log_add = \app\admin\model\egg\Log::saveLog($v['sell_user_id'],$v['kind_id'],1,$v['order_sn'],$v['number'],"超时未付款返还出售");
+
+                    //卖家手续费蛋返还日志
+                    $log_fee = \app\admin\model\egg\Log::saveLog($v['sell_user_id'],$v['kind_id'],9,$v['order_sn'],$v['rate'],"超时未付款返还手续费");
+
+
+                    if ($re == false || $add_rs == false ||  $log_add == false || $log_fee = false || $res_user == false ) {
+                        DB::rollback();
+                        $this->error("买家有效时间未打款自动退款订单失败");
+                    } else {
+                        \app\common\library\Hsms::send($v['buy_mobile'], '','order');
+                        DB::commit();
+                        continue;
+                    }
+                }//end try
+                catch (\Exception $e) {
+                    DB::rollback();
+                    $this->error("买家有效时间未打款自动退款订单失败");
+                }
+            }
+        }
     }
 }
