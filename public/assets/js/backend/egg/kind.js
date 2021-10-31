@@ -34,6 +34,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'valid_number', title: __('Valid_number'), operate: false},
                         {field: 'point', title: __('Point'), operate: false},
                         {field: 'price', title: __('Price'), operate: false},
+                        {field: 'rate_config', title: __('Rate_config'), operate: false},
                         {field: 'unit', title: __('Unit'), operate: false},
                         {field: 'stock', title: __('Stock'), operate: false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
