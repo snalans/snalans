@@ -31,7 +31,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'sell_serial_umber', title: __('Sell_serial_umber'), operate: 'LIKE'},
                         {field: 'sell_mobile', title: __('Sell_mobile'), operate: 'LIKE'},
                         {field: 'order_sn', title: __('Order_sn'), operate: 'LIKE'},
-                        {field: 'Real_name', title: __('Real_name'), operate: false},
+                        {field: 'attestation.name', title: __('Real_name'), operate: false},
                         {field: 'attestation_type', title: __('Attestation_type'), formatter: Table.api.formatter.status, searchList: {1: '支付宝', 2: '微信',3: '钱包'}},
                         {field: 'attestation_account', title: __('Attestation_account'), operate: false},
                         {field: 'attestation_image', title: __('Attestation_image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
