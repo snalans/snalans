@@ -79,6 +79,8 @@ class Team extends Api
         if(count($egg_kind)>0){
             DB::startTrans();
             try {
+                $statistics_bonus = array();
+                $trade_vip = array();
                 foreach ($egg_kind as $ki=>$vi ){
                     //蛋数量
                     $fee_where = array(
@@ -91,14 +93,13 @@ class Team extends Api
                         ->sum('number');
 
                     //蛋总积分
-                    $tota_score = bcdiv(abs($total_number) * 1, 1, 4);
+                    $total_score = abs($total_number) * 1;
+                    $total_score = bcdiv($total_score, 1, 4);
 
-                    $bonus_score = bcdiv($total_score * $fee_rate, 1, 4);//分红奖励总积分
+                    $bonus_score = $total_score * $fee_rate;
+                    $bonus_score = bcdiv($bonus_score, 1, 4);//分红奖励总积分
 
                     if(count($config_bonus)>0 && $bonus_score>0 && $total_user_count>0){
-
-                        $statistics_bonus = array();
-                        $trade_vip = array();
                         foreach($config_bonus as $k=>$v) {
                             $where = array(
                                 'level'=>array('eq',$v['level']),
@@ -151,13 +152,16 @@ class Team extends Api
                                 $log_vip['is_update'] = 0;
                                 $log_vip['total_num'] = $user_count;
                                 $trade_vip[] = $log_vip;
+
                             }
                         }
                     }
 
                 }
+
                 $re = Db::name("team_statistics")->insertAll($statistics_bonus);
                 $res = Db::name("team_vip")->insertAll($trade_vip);
+
                 if($re==false || $res==false){
                     DB::rollback();
                 } else{
@@ -167,6 +171,7 @@ class Team extends Api
                 return $result;
             } catch (\Exception $e) {
                 DB::rollback();
+                $this->error($e->getMessage());
                 $result['msg'] = "bonus_commission:".$e->getMessage();
                 return $result;
             }
@@ -206,6 +211,7 @@ class Team extends Api
                             $data = array();
                             $where = array(
                                 'level'=>array('eq',$vip_info['lv']),
+                                'kind_id'=>array('eq',$vip_info['kind_id']),
                                 'add_time'=>array('eq',date("Y-m-d"))
                             );
                             $statistics_info = Db::name("team_statistics")
@@ -213,8 +219,8 @@ class Team extends Api
                                 ->where($where)
                                 ->find();
 
-                            $data['kind_id'] = $v['kind_id'];
-                            $data['user_id'] = $statistics_info['user_id'];
+                            $data['kind_id'] = $statistics_info['kind_id'];
+                            $data['user_id'] = $v['user_id'];
                             $data['title'] = $statistics_info['title'];
                             $data['level'] = $statistics_info['level'];
                             $data['bonus_score'] = $statistics_info['bonus_score'];
@@ -292,7 +298,7 @@ class Team extends Api
                         $asset_where = [];
                         $asset_where['user_id'] = $v['user_id'];
                         $asset_where['kind_id'] = $v['kind_id'];
-                        $res = Db::name("egg")->where($asset_where)->inc('point', $v['point'])->update();
+                        $res = Db::name("egg")->where($asset_where)->inc('point', $v['score'])->update();
                         $re = Db::name("team_bonus")->where(array('id' => $v['id']))->data(array('is_issue' => 1, 'pay_time' => time()))->update();
                         //添加积分发放日志
                         $log = [];
