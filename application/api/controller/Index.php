@@ -42,14 +42,14 @@ class Index extends Api
     }
 
     /**
-     * 首页 白蛋兑换、彩蛋回收
+     * 首页-彩蛋回收,其它蛋兑换
      *
      */
     public function index()
     {
         $wh = [];
         $wh['status'] = 1;
-        $result = Db::name("egg_kind")->field(['valid_number','weigh'],true)->where($wh)->order("weigh","DESC")->select();
+        $result = Db::name("egg_kind")->field(['valid_number','rate_config','weigh'],true)->where($wh)->order("weigh","DESC")->select();
         $this->success('success',$result);
     }
 

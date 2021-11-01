@@ -257,7 +257,7 @@ class Index extends Api
             $this->error(__('Paypwd is incorrect'));
         }
 
-        if(!in_array($kind_id,[1,2,3])){
+        if(!in_array($kind_id,[1,2,3,4])){
             $this->error("此蛋不允许转账");
         }
 
