@@ -103,15 +103,15 @@ class Order extends Backend
                     }
                     $number = 0;
                     if($params['status'] == 1){
-                        $note = "管理员：".$this->auth->username." 审核通过. ".$params['note'];
+                        $note = "申诉通过";
                         $number = $row['number'];
                         $user_id = $row['buy_user_id'];
                     }else if($params['status'] == 6){
-                        $note = " 审核不通过. ";
+                        $note = " 申诉不通过. ";
                         $number = $row['number'] + $row['rate'];
                         $user_id = $row['sell_user_id'];
                         //写入日志
-                        $log_re = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>9,'order_sn'=>$row['order_sn'],'number'=>$row['rate'],'note'=>$note." 返还手续费",'createtime'=>time()]);
+                        $log_re = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>9,'order_sn'=>$row['order_sn'],'number'=>$row['rate'],'note'=>$note.",返还手续费",'createtime'=>time()]);
                     }else{
                         $this->error("无效操作");
                     }
@@ -120,7 +120,7 @@ class Order extends Backend
                     $wh['kind_id'] = $row['kind_id'];
                     $inc_rs = Db::name("egg")->where($wh)->setInc('number',$number);
                     //写入日志
-                    $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>4,'order_sn'=>$row['order_sn'],'number'=>$row['number'],'note'=>$note,'createtime'=>time()]);
+                    $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>1,'order_sn'=>$row['order_sn'],'number'=>$row['number'],'note'=>$note,'createtime'=>time()]);
 
                     $result = $row->allowField(true)->save($params);
                     if ($result !== false && $inc_rs && $log_rs && $log_re) {  
