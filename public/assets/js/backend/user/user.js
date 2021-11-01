@@ -42,7 +42,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'puser.mobile', title: __('User.mobile'), operate: 'LIKE'},
                         {field: 'level', title: __('Level'), visible:false},
                         {field: 'level.title', title: __('Level'), operate:false},
-                        {field: 'score', title: __('Score')},
                         {field: 'valid_number', title: __('Valid_number')},
                         {field: 'total_valid_number', title: '团队有效值', operate: false},
                         {field: 'team_number', title: '直推人数', operate: false},

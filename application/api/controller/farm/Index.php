@@ -27,6 +27,7 @@ class Index extends Api
      * @ApiReturnParams   (name="kind_id", type="integer", description="名称id")
      * @ApiReturnParams   (name="name", type="string", description="名称")
      * @ApiReturnParams   (name="number", type="integer", description="蛋数量")
+     * @ApiReturnParams   (name="point", type="integer", description="蛋积分")
      * 
      * @ApiReturnParams   (name="id", type="string", description="窝ID")
      * @ApiReturnParams   (name="name", type="string", description="窝名称")
@@ -41,7 +42,7 @@ class Index extends Api
     public function index()
     {
         $data['egg_list'] = Db::name("egg")->alias("e")
-                    ->field("e.kind_id,ek.name,e.number")
+                    ->field("e.kind_id,ek.name,e.number,e.point")
                     ->join("egg_kind ek","ek.id=e.kind_id","LEFT")
                     ->where("e.user_id",$this->auth->id)
                     ->order("ek.weigh","DESC")

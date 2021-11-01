@@ -5,13 +5,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             // 初始化表格参数配置
             Table.api.init({
                 extend: {
-                    index_url: 'egg/egg/index' + location.search,
-                    add_url: 'egg/egg/add',
-                    edit_url: 'egg/egg/edit',
-                    del_url: 'egg/egg/del',
-                    multi_url: 'egg/egg/multi',
-                    import_url: 'egg/egg/import',
-                    table: 'egg',
+                    index_url: 'egg/score_log/index' + location.search,
+                    add_url: 'egg/score_log/add',
+                    edit_url: 'egg/score_log/edit',
+                    del_url: 'egg/score_log/del',
+                    multi_url: 'egg/score_log/multi',
+                    import_url: 'egg/score_log/import',
+                    table: 'egg_score_log',
                 }
             });
 
@@ -22,25 +22,20 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pk: 'id',
                 sortName: 'id',
-                dblClickToEdit:false,
                 search:false,
                 columns: [
                     [
                         {checkbox: true},
-                        {field: 'id', title: __('Id'), operate:false},
-                        {field: 'user.username', title: __('User.username'), operate: 'LIKE'},
+                        {field: 'id', title: __('Id'),operate:false},
                         {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
-                        {field: 'eggkind.name', title: __('Eggkind.name'), operate: 'LIKE'},
-                        {field: 'number', title: __('Number'), operate:false, sortable: true},
-                        {field: 'frozen', title: __('Frozen'), operate:false},
-                        {field: 'point', title: __('Point'), operate:false},
-                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                        {field: 'type', title: __('Type'), formatter: Table.api.formatter.normal, searchList: {1: '团队分红', 2: '积分兑换蛋'}},
+                        {field: 'kind_id', title: __('Kind_id'), formatter: Table.api.formatter.normal, searchList: {1: '白蛋', 2: '铜蛋', 3: '银蛋'}},
+                        {field: 'score', title: __('Score'), operate:'BETWEEN'},
+                        {field: 'memo', title: __('Memo'), operate: false},
+                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                     ]
                 ]
             });
-            table.on('post-body.bs.table',function(){
-                $(".btn-editone").data("area",["800px","500px"]);
-            })
 
             // 为表格绑定事件
             Table.api.bindevent(table);

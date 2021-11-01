@@ -30,7 +30,7 @@ class Index extends Api
     public function init()
     {
         $data = [];
-        $data['egg_info']       = Db::name("egg_kind")->field("id,name,image,ch_image,bg_image,stock")->select();
+        $data['egg_info']       = Db::name("egg_kind")->field("id,name,image,ch_image,bg_image,stock")->where("status",1)->order("weigh","DESC")->select();
         $data['share_image']    = Db::name("egg_news")->where("news_type_id",4)->value("image");
         $data['invite_url']     = Config::get("site.invite_url");
         $data['is_open']        = Config::get("site.is_open");
@@ -148,16 +148,15 @@ class Index extends Api
         $number         = $this->request->post('number',1);
         $paypwd         = $this->request->post('paypwd',"");
 
-        if(empty($number) || !is_numeric($number) || !in_array($kind_id,[1])){
+        if(empty($number) || !is_numeric($number) || !in_array($kind_id,[1,2,3])){
             $this->error(__('Parameter error'));
         }
 
         $wh = [];
-        $wh['id']       = $kind_id;
-        $wh['point']    = ['>',0];
-        $info = Db::name("egg_kind")->field("point,stock")->where($wh)->find();
-        if(empty($info)){
-            $this->error("无法兑换");
+        $wh['id'] = $kind_id;
+        $kinfo = Db::name("egg_kind")->field("name,point,stock")->where($wh)->find();
+        if(($kinfo['stock']-$number) < 0){
+            $this->error("库存不够,无法兑换");
         }
 
         $auth = new \app\common\library\Auth();
@@ -165,30 +164,26 @@ class Index extends Api
             $this->error('支付密码错误');
         }
 
-        $stock = $info['stock']-$number;
-        if($stock < 0){
-            $this->error("库存不够,无法兑换");
-        }
+        $wh = [];
+        $wh['kind_id'] = $kind_id;
+        $wh['user_id'] = $this->auth->id;
+        $info = Db::name("egg")->where($wh)->find();
 
-        $score = $info['point']*$number;
-        if($score > $this->auth->score){
+        $score = $kinfo['point']*$number;
+        if($score > $info['point']){
             $this->error(__('Not enough points'));
         }
         try {
-            Db::startTrans();
-            $before = $this->auth->score;
-            $after = $this->auth->score - $score;
-            $score_rs = Db::name("user")->where("id",$this->auth->id)->update(['score'=>$after]);  
-
+            Db::startTrans();            
             $wh = [];
             $wh['user_id']      = $this->auth->id;
             $wh['kind_id']      = $kind_id;
-            $num_rs = Db::name("egg")->where($wh)->setInc("number",$number);
+            $num_rs = Db::name("egg")->where($wh)->inc("number",$number)->dec("point",$score)->update();
             //写入日志
-            $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>5,'order_sn'=>'','number'=>$number,'note'=>"积分兑换",'createtime'=>time()]);
-            $score_log = Db::name("user_score_log")->insert(['user_id' => $this->auth->id, 'score' => -$score, 'before' => $before, 'after' => $after, 'memo' => "积分兑换",'createtime'=>time()]);
-            $dec = Db::name('egg_kind')->where("id",$kind_id)->update(["stock"=>$stock]);
-            if($score_rs && $num_rs && $log_rs && $score_log && $dec){
+            $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>5,'order_sn'=>'','number'=>$number,'note'=>"蛋积分兑换",'createtime'=>time()]);
+            $score_log = Db::name("egg_score_log")->insert(['user_id' => $this->auth->id, 'score' => -$score, 'kind_id' => $kind_id, 'type'=>2,'memo' => "积分兑换:".$number."个".$kinfo['name'],'createtime'=>time()]);
+            $dec = Db::name('egg_kind')->where("id",$kind_id)->dec("stock",$number)->update();
+            if($num_rs && $log_rs && $score_log && $dec){
                 Db::commit();
                 $this->success(__('Exchange successful'));    
             }else{

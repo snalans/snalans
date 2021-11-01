@@ -9,4 +9,5 @@ return [
     'Kind_id'       => '蛋类型',
     'Change_number' => '变动数量',
     'Frozen'        => '冻结数量',
+    'Point'         => '蛋积分',
 ];

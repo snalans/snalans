@@ -37,6 +37,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'rate_config', title: __('Rate_config'), operate: false},
                         {field: 'unit', title: __('Unit'), operate: false},
                         {field: 'stock', title: __('Stock'), operate: false},
+                        {field: 'weigh', title: __('Weigh'), operate: false},
+                        {field: 'status', title: "APP首页是否显示", formatter:Table.api.formatter.toggle, searchList: {1: '显示', 0: '不显示'}},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
