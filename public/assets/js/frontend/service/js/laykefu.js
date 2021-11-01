@@ -21,8 +21,6 @@ socket.onopen = function (res) {
 // 监听消息
 socket.onmessage = function (res) {
     var data = eval("(" + res.data + ")");
-    console.log(data)
-
     switch (data['message_type']) {
         // 服务端ping客户端
         case 'ping':
@@ -30,6 +28,7 @@ socket.onmessage = function (res) {
             break;
         // 添加用户
         case 'connect':
+            $("audio")[0].play()
             addUser(data.data.user_info);
             break;
         // 显示用户
