@@ -93,12 +93,13 @@ class Team extends Api
                         ->sum('number');
 
                     //蛋总积分
-                    $tota_score = bcdiv(abs($total_number) * 1, 1, 4);
+                    $total_score = abs($total_number) * 1;
+                    $total_score = bcdiv($total_score, 1, 4);
 
-                    $bonus_score = bcdiv($total_score * $fee_rate, 1, 4);//分红奖励总积分
+                    $bonus_score = $total_score * $fee_rate;
+                    $bonus_score = bcdiv($bonus_score, 1, 4);//分红奖励总积分
 
                     if(count($config_bonus)>0 && $bonus_score>0 && $total_user_count>0){
-
                         foreach($config_bonus as $k=>$v) {
                             $where = array(
                                 'level'=>array('eq',$v['level']),
@@ -151,13 +152,16 @@ class Team extends Api
                                 $log_vip['is_update'] = 0;
                                 $log_vip['total_num'] = $user_count;
                                 $trade_vip[] = $log_vip;
+
                             }
                         }
                     }
 
                 }
+
                 $re = Db::name("team_statistics")->insertAll($statistics_bonus);
                 $res = Db::name("team_vip")->insertAll($trade_vip);
+
                 if($re==false || $res==false){
                     DB::rollback();
                 } else{
