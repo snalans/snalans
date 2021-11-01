@@ -219,7 +219,7 @@ class Team extends Api
                                 ->find();
 
                             $data['kind_id'] = $statistics_info['kind_id'];
-                            $data['user_id'] = $statistics_info['user_id'];
+                            $data['user_id'] = $v['user_id'];
                             $data['title'] = $statistics_info['title'];
                             $data['level'] = $statistics_info['level'];
                             $data['bonus_score'] = $statistics_info['bonus_score'];
