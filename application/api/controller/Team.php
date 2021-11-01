@@ -297,7 +297,7 @@ class Team extends Api
                         $asset_where = [];
                         $asset_where['user_id'] = $v['user_id'];
                         $asset_where['kind_id'] = $v['kind_id'];
-                        $res = Db::name("egg")->where($asset_where)->inc('point', $v['point'])->update();
+                        $res = Db::name("egg")->where($asset_where)->inc('point', $v['score'])->update();
                         $re = Db::name("team_bonus")->where(array('id' => $v['id']))->data(array('is_issue' => 1, 'pay_time' => time()))->update();
                         //添加积分发放日志
                         $log = [];
