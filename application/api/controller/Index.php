@@ -30,7 +30,7 @@ class Index extends Api
     public function init()
     {
         $data = [];
-        $data['egg_info']       = Db::name("egg_kind")->field("id,name,image,ch_image,bg_image,stock")->where("status",1)->order("weigh","DESC")->select();
+        $data['egg_info']       = Db::name("egg_kind")->field("id,name,image,ch_image,bg_image,stock")->order("weigh","DESC")->select();
         $data['share_image']    = Db::name("egg_news")->where("news_type_id",4)->value("image");
         $data['invite_url']     = Config::get("site.invite_url");
         $data['is_open']        = Config::get("site.is_open");
@@ -48,7 +48,7 @@ class Index extends Api
     public function index()
     {
         $wh = [];
-        $wh['id'] = ['in',[1,5]];
+        $wh['status'] = 1;
         $result = Db::name("egg_kind")->field(['valid_number','weigh'],true)->where($wh)->select();
         $this->success('success',$result);
     }
