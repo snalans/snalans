@@ -79,6 +79,8 @@ class Team extends Api
         if(count($egg_kind)>0){
             DB::startTrans();
             try {
+                $statistics_bonus = array();
+                $trade_vip = array();
                 foreach ($egg_kind as $ki=>$vi ){
                     //蛋数量
                     $fee_where = array(
@@ -97,8 +99,6 @@ class Team extends Api
 
                     if(count($config_bonus)>0 && $bonus_score>0 && $total_user_count>0){
 
-                        $statistics_bonus = array();
-                        $trade_vip = array();
                         foreach($config_bonus as $k=>$v) {
                             $where = array(
                                 'level'=>array('eq',$v['level']),
