@@ -49,5 +49,10 @@ class TeamBonus extends Model
         return $this->belongsTo('app\admin\model\User', 'user_id', 'id', [], 'LEFT')->setEagerlyType(0);
     }
 
+    public function eggkind()
+    {
+        return $this->belongsTo('app\admin\model\EggKind', 'kind_id', 'id', [], 'LEFT')->setEagerlyType(0);
+    }
+
 
 }
