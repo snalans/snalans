@@ -301,12 +301,17 @@ class Team extends Api
                         $res = Db::name("egg")->where($asset_where)->inc('point', $v['score'])->update();
                         $re = Db::name("team_bonus")->where(array('id' => $v['id']))->data(array('is_issue' => 1, 'pay_time' => time()))->update();
                         //添加积分发放日志
+
+                        $egg_name = Db::name("egg_kind")
+                            ->where('id',$v['kind_id'])
+                            ->value('name');
+
                         $log = [];
                         $log['type'] = 1;
                         $log['user_id'] = $v['user_id'];
                         $log['kind_id'] = $v['kind_id'];
                         $log['score'] = $v['score'];
-                        $log['memo'] = '【'.$v['add_time'].'】获得'.$v['title'].'分红' . $v['score'] . '积分';
+                        $log['memo'] = '【'.$v['add_time'].'】获得'.$egg_name.'分红,等级'.$v['title'].$v['score'] . '积分';
                         $log['createtime'] = time();
                         $re1 = Db::name("egg_score_log")->insert($log);
 
