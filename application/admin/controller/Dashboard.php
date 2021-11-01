@@ -54,7 +54,7 @@ class Dashboard extends Backend
         $minfo = Db::name("egg_log_all")->where("createtime",date("Y-m",strtotime("-1 month")))->select();
         if(empty($minfo)){
             $legg = Db::name("egg_log_".date("Y_m",strtotime("-1 month")))
-                    ->whereTime('createtime', 'd')
+                    ->whereTime('createtime', 'last month')
                     ->group("kind_id")
                     ->column("kind_id,sum(number)");
             $datas = [];
