@@ -51,15 +51,39 @@ class HoursPrice extends Backend
                     $params[$this->dataLimitField] = $this->auth->id;
                 }
                 $result = false;
+                $attr = array_values(array_filter(explode("\n",$params['content']),function($str){return trim($str);}));
                 Db::startTrans();
                 try {
+                    $kind_name = Db::name("egg_kind")->where("id",$params['kind_id'])->value("name");
+                    $datas = [];
+                    foreach ($attr as $key => $value) {
+                        $info       = explode("#",$value);
+                        $day        = date("Y-m-d",strtotime($info[1]));
+                        $hours      = date("H:i",strtotime($info[1]));
+                        $wh = [];
+                        $wh['kind_id']    = $params['kind_id'];
+                        $wh['day']        = $day;
+                        $wh['hours']      = $hours;
+                        $rs = Db::name("egg_hours_price")->where($wh)->find();
+                        if(empty($rs))
+                        {
+                            $data = [];
+                            $data['kind_id']    = $params['kind_id'];
+                            $data['kind_name']  = $kind_name;
+                            $data['price']      = $info[0];
+                            $data['day']        = $day;
+                            $data['hours']      = $hours;
+                            $data['createtime'] = strtotime($info[1]);
+                            $datas[] = $data;
+                        }
+                    }
                     //是否采用模型验证
                     if ($this->modelValidate) {
                         $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
                         $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.add' : $name) : $this->modelValidate;
                         $this->model->validateFailException(true)->validate($validate);
                     }
-                    $result = $this->model->allowField(true)->save($params);
+                    $result = Db::name("egg_hours_price")->insertAll($datas);
                     Db::commit();
                 } catch (ValidateException $e) {
                     Db::rollback();
