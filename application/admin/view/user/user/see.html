@@ -90,4 +90,17 @@
             <span class="form-control">{:date("Y-m-d H:i",$row.jointime)}</span>
         </div>
     </div>
+    <div class="form-group">
+        <label for="c-jointime" class="control-label col-xs-12 col-sm-3">未付款次数:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input type="number" class="form-control" id="unpay_num" name="row[unpay_num]" value="{$row.unpay_num|htmlentities}" />
+        </div>
+    </div>
+    <div class="form-group hidden layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-7">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
 </form>
