@@ -213,7 +213,7 @@ class OrderList extends Api
         Db::startTrans();
         $grs            = true;
         $log_rs         = true;
-        $ors = Db::name("egg_order")->where("id",$info['id'])->update(['status'=>$status,'note'=>$note]);
+        $ors = Db::name("egg_order")->where("id",$info['id'])->update(['over_time'=>time(),'status'=>$status,'note'=>$note]);
         if($status == 1){
             $result = Db::name("egg_order")->field("buy_user_id,buy_mobile,kind_id,number")->where("order_sn",$order_sn)->find();
             $wh = [];
