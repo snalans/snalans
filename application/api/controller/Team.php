@@ -211,6 +211,7 @@ class Team extends Api
                             $data = array();
                             $where = array(
                                 'level'=>array('eq',$vip_info['lv']),
+                                'kind_id'=>array('eq',$vip_info['kind_id']),
                                 'add_time'=>array('eq',date("Y-m-d"))
                             );
                             $statistics_info = Db::name("team_statistics")
