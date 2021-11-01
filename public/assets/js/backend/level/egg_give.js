@@ -29,9 +29,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {checkbox: true},
                         {field: 'id', title: __('Id'),operate:false},
                         {field: 'level.title', title: __('Level'),operate:false},
-                        {field: 'kind_id', title: __('Kind_id')},
-                        {field: 'number', title: __('Number'),operate:false},
                         {field: 'eggkind.name', title: __('Eggkind.name'), operate: 'LIKE'},
+                        {field: 'number', title: __('Number'),operate:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
