@@ -35,6 +35,11 @@ class EggNestGive extends Model
 
 
 
+    public function level()
+    {
+        return $this->belongsTo('app\admin\model\level\UserLevelConfig', 'level', 'level', [], 'LEFT')->setEagerlyType(0);
+    }
+
 
 
     public function eggnestkind()

@@ -2,6 +2,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
     var Controller = {
         index: function () {
+            $(".btn-add").data("area",["800px","400px"]);
             // 初始化表格参数配置
             Table.api.init({
                 extend: {
@@ -27,14 +28,17 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     [
                         {checkbox: true},
                         {field: 'id', title: __('Id'),operate:false},
-                        {field: 'level', title: __('Level'),operate:false},
-                        {field: 'nest_kind_id', title: __('Nest_kind_id')},
-                        {field: 'number', title: __('Number'),operate:false},
+                        {field: 'level.title', title: __('Level'),operate:false},
                         {field: 'eggnestkind.name', title: __('Eggnestkind.name'), operate: 'LIKE'},
+                        {field: 'number', title: __('Number'),operate:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
             });
+
+            table.on('post-body.bs.table',function(){
+                $(".btn-editone").data("area",["800px","400px"]);
+            })
 
             // 为表格绑定事件
             Table.api.bindevent(table);
