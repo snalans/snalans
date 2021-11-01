@@ -167,6 +167,7 @@ class Team extends Api
                 return $result;
             } catch (\Exception $e) {
                 DB::rollback();
+                $this->error($e->getMessage());
                 $result['msg'] = "bonus_commission:".$e->getMessage();
                 return $result;
             }
