@@ -718,6 +718,7 @@ class Egg extends Api
                     //更新订单
                     $data = array();
                     $data['status'] = 1;
+                    $data['over_time'] = time();
                     $re = Db::name("egg_order")->where('order_sn', $v['order_sn'])->data($data)->update();
 
                     //蛋给买家
