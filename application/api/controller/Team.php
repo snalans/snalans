@@ -218,7 +218,7 @@ class Team extends Api
                                 ->where($where)
                                 ->find();
 
-                            $data['kind_id'] = $v['kind_id'];
+                            $data['kind_id'] = $statistics_info['kind_id'];
                             $data['user_id'] = $statistics_info['user_id'];
                             $data['title'] = $statistics_info['title'];
                             $data['level'] = $statistics_info['level'];
