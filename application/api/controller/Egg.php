@@ -941,22 +941,25 @@ class Egg extends Api
                     $re = Db::name("egg_order")->where('order_sn', $v['order_sn'])->data($data)->update();
 
                     $res_user = true;
+                    $res_user_update = true;
                     if($re == true){
-                        //未打款次数
-                        $refund_where = array(
-                            'refund_status'=>array('eq',1),
-                            'buy_user_id'=>array('eq',$v['buy_user_id'])
-                        );
-                        $refund_count = Db::name("egg_order")->where($refund_where)->count();
-                        if($refund_count>=3){
-                            //封买家账号
-                            $user_data = array();
-                            $user_data['status'] = 'hidden';
-                            $res_user = Db::name("user")->where('id', $v['buy_user_id'])->data($user_data)->update();
 
-                            //清空买家token
-                            Db::name("user_token")->where('user_id', $v['buy_user_id'])->delete();
+                        //更新用户超时未打款次数
+                        $res_user = Db::name("user")->where('id', $v['buy_user_id'])->inc('unpay_num',1)->update();
 
+                        if($res_user == true){
+                            //未打款次数
+                            $refund_count = Db::name("user")->where('id', $v['buy_user_id'])->value('unpay_num');
+                            if($refund_count>=3){
+                                //封买家账号
+                                $user_data = array();
+                                $user_data['status'] = 'hidden';
+                                $res_user_update = Db::name("user")->where('id', $v['buy_user_id'])->data($user_data)->update();
+
+                                //清空买家token
+                                Db::name("user_token")->where('user_id', $v['buy_user_id'])->delete();
+
+                            }
                         }
                     }
 
@@ -975,7 +978,7 @@ class Egg extends Api
                     $log_fee = \app\admin\model\egg\Log::saveLog($v['sell_user_id'],$v['kind_id'],9,$v['order_sn'],$v['rate'],"超时未付款返还手续费");
 
 
-                    if ($re == false || $add_rs == false ||  $log_add == false || $log_fee = false || $res_user == false ) {
+                    if ($re == false || $add_rs == false ||  $log_add == false || $log_fee = false || $res_user == false || $res_user_update == false) {
                         DB::rollback();
                         $this->error("买家有效时间未打款自动退款订单失败");
                     } else {
