@@ -3,7 +3,6 @@
 namespace app\admin\controller\egg;
 
 use app\common\controller\Backend;
-use think\Db;
 
 /**
  * 蛋变动日志
@@ -64,37 +63,33 @@ class Log extends Backend
             }
 
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
-            try{
-                $list = $this->model->name($table)
-                        ->with(['user','eggkind'])
-                        ->where($where)
-                        ->order($sort, $order)
-                        ->paginate($limit);
 
-                foreach ($list as $row) {
-                    
-                    $row->getRelation('user')->visible(['serial_number','username','mobile']);
-    				$row->getRelation('eggkind')->visible(['name']);
-
-                }                
-
-                $rate_info = Db::name($table)->where($where)->where("type",9)->group("kind_id")->column("kind_id,sum(number) as rate");
-                $rate = [];
-                $rate['egg1'] = 0;
-                $rate['egg2'] = 0;
-                $rate['egg3'] = 0;
-                if(!empty($rate)){
-                    $rate['egg1'] = abs($rate_info[1]);  
-                    $rate['egg2'] = abs($rate_info[2]);  
-                    $rate['egg3'] = abs($rate_info[3]);
+            $list = $this->model->name($table)
+                    ->with(['user','eggkind'])
+                    ->where($where)
+                    ->order($sort, $order)
+                    ->paginate($limit);
+            $rate = [];
+            $rate['egg1'] = 0;  
+            $rate['egg2'] = 0;  
+            $rate['egg3'] = 0;
+            foreach ($list as $row) {
+                
+                $row->getRelation('user')->visible(['serial_number','username','mobile']);
+    			$row->getRelation('eggkind')->visible(['name']);
+                if($row['type'] == 9){
+                    if($row['kind_id']==1){
+                        $rate['egg1'] += $row['number'];
+                    }else if($row['kind_id']==2){
+                        $rate['egg2'] += $row['number'];
+                    }else if($row['kind_id']==3){
+                        $rate['egg3'] += $row['number'];
+                    }
                 }
-                $result = array("total" => $list->total(), "rows" => $list->items(),"extend"=>$rate);
-                return json($result);
-            } catch (\Exception $e) {
-                $result = array("total" => 0, "rows" => [],"extend"=>$rate);
-                return json($result);
-            }  
+            }                
+            $result = array("total" => $list->total(), "rows" => $list->items(),"extend"=>$rate);
             
+            return json($result); 
         }
         return $this->view->fetch();
     }
