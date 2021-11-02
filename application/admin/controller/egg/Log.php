@@ -87,7 +87,7 @@ class Log extends Backend
                         }
                     }
                 }                
-                $result = array("total" => $list->total(), "rows" => $list->items(),"extend"=>['total_rate'=>abs($total_rate),'rate'=>abs($rate)]);
+                $result = array("total" => $list->total(), "rows" => $list->items(),"extend"=>$rate);
                 return json($result);
             } catch (\Exception $e) {
                 $result = array("total" => 0, "rows" => [],"extend"=>$rate);
