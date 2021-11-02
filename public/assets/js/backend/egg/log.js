@@ -20,7 +20,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             //在普通搜索渲染后
             table.on('post-common-search.bs.table', function (event, table) {
                 var form = $("form", table.$commonsearch);
-                $("input[name='month']", form).addClass("selectpage").data("source", "egg/log/getMonth").data("primaryKey", "id").data("field", "name");
+                $("input[name='month']", form).addClass("selectpage").data("source", "egg/log/get_month").data("primaryKey", "id").data("field", "name");
                 Form.events.cxselect(form);
                 Form.events.selectpage(form);
             });
