@@ -69,20 +69,28 @@ class Log extends Backend
                         ->where($where)
                         ->order($sort, $order)
                         ->paginate($limit);
-                $rate = 0;        
+                $rate = [];
+                $rate['egg1'] = 0;  
+                $rate['egg2'] = 0;  
+                $rate['egg3'] = 0;
                 foreach ($list as $row) {
                     
                     $row->getRelation('user')->visible(['serial_number','username','mobile']);
     				$row->getRelation('eggkind')->visible(['name']);
                     if($row['type'] == 9){
-                        $rate += $row['number']; 
+                        if($row['kind_id']==1){
+                            $rate['egg1'] += $row['number'];
+                        }else if($row['kind_id']==2){
+                            $rate['egg2'] += $row['number'];
+                        }else if($row['kind_id']==3){
+                            $rate['egg3'] += $row['number'];
+                        }
                     }
-                }
-                $total_rate = $this->model->name($table)->where("type",9)->sum("number");
+                }                
                 $result = array("total" => $list->total(), "rows" => $list->items(),"extend"=>['total_rate'=>abs($total_rate),'rate'=>abs($rate)]);
                 return json($result);
             } catch (\Exception $e) {
-                $result = array("total" => 0, "rows" => [],"extend"=>['total_rate'=>0,'rate'=>0]);
+                $result = array("total" => 0, "rows" => [],"extend"=>$rate);
                 return json($result);
             }  
             
@@ -94,7 +102,7 @@ class Log extends Backend
     /**
      * 查看
      */
-    public function getMonth()
+    public function get_month()
     {
         $data = [];
         $data['list'][] = [
