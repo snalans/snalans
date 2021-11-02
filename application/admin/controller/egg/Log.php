@@ -3,6 +3,7 @@
 namespace app\admin\controller\egg;
 
 use app\common\controller\Backend;
+use think\Db;
 
 /**
  * 蛋变动日志
@@ -53,8 +54,12 @@ class Log extends Backend
             }
             $filter = json_decode($this->request->get('filter'),true);
             $op = json_decode($this->request->get('op'),true);
+            $stime = strtotime(date("Y_m"));
+            $etime = strtotime("+1 month",$stime);
             $table = "egg_log_".date("Y_m");
             if(isset($filter['month'])){
+                $stime = strtotime($filter['month']);
+                $etime = strtotime("+1 month",$stime);
                 $table = "egg_log_".date("Y_m",strtotime($filter['month']));
                 unset($filter['month']);
                 unset($op['month']);
@@ -69,24 +74,32 @@ class Log extends Backend
                     ->where($where)
                     ->order($sort, $order)
                     ->paginate($limit);
-            $rate = [];
-            $rate['egg1'] = 0;  
-            $rate['egg2'] = 0;  
-            $rate['egg3'] = 0;
             foreach ($list as $row) {
                 
                 $row->getRelation('user')->visible(['serial_number','username','mobile']);
     			$row->getRelation('eggkind')->visible(['name']);
-                if($row['type'] == 9){
-                    if($row['kind_id']==1){
-                        $rate['egg1'] += $row['number'];
-                    }else if($row['kind_id']==2){
-                        $rate['egg2'] += $row['number'];
-                    }else if($row['kind_id']==3){
-                        $rate['egg3'] += $row['number'];
-                    }
-                }
-            }                
+            }    
+            $filter = json_decode($this->request->get('filter'),true);
+            $op = json_decode($this->request->get('op'),true);
+            if(isset($filter['type'])){
+                unset($filter['type']);
+                unset($op['type']);
+            }
+            $this->request->get(['filter'=>json_encode($filter)]);
+            $this->request->get(['filter'=>json_encode($op)]);
+            $info = $this->model->name($table)
+                    ->with(['user','eggkind'])
+                    ->where($where)  
+                    ->where("type",9)
+                    ->group("kind_id")
+                    ->column("kind_id,sum(number) as rate");
+            $info = collection($info)->toArray();
+
+            $rate = [];
+            $rate['egg1'] = isset($info[1])?abs($info[1]):0;
+            $rate['egg2'] = isset($info[2])?abs($info[2]):0;
+            $rate['egg3'] = isset($info[3])?abs($info[3]):0;            
+
             $result = array("total" => $list->total(), "rows" => $list->items(),"extend"=>$rate);
             
             return json($result); 

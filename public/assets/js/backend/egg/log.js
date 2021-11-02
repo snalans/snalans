@@ -51,9 +51,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
             table.on('load-success.bs.table', function (e, data) {
                 //这里我们手动设置底部的值
-                $("#egg1").text(Math.abs(data.extend.egg1));
-                $("#egg2").text(Math.abs(data.extend.egg2));
-                $("#egg2").text(Math.abs(data.extend.egg2));
+                $("#egg1").text(data.extend.egg1);
+                $("#egg2").text(data.extend.egg2);
+                $("#egg2").text(data.extend.egg2);
 
             });
 
