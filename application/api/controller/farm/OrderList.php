@@ -197,8 +197,11 @@ class OrderList extends Api
 
         if(!in_array($status,[1,3])){            
             $this->error("参数不正确,请重试。");
-        }else if($status == 3 && empty($note)){
-            $this->error("请填写申诉理由。");
+        }else if($status == 3){
+            $num = mb_strlen($note);
+            if($num < 6 || $num > 200){
+                $this->error("理由字符数需要在6~200之间");
+            }
         } 
 
         $wh = [];
