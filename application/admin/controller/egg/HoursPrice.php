@@ -160,5 +160,33 @@ class HoursPrice extends Backend
         return $this->view->fetch();
     }
 
+    public function mkPrice()
+    {
+        $kind_name = Db::name("egg_kind")->where("id",$params['kind_id'])->value("name");
 
+        $date = "2021-06-07";
+        $time = strtotime("+1 day",strtotime($date));
+        $datas = [];
+        foreach ($attr as $key => $value) {
+            $info       = explode("#",$value);
+            $day        = date("Y-m-d",strtotime($info[1]));
+            $hours      = date("H:i",strtotime($info[1]));
+            $wh = [];
+            $wh['kind_id']    = $params['kind_id'];
+            $wh['day']        = $day;
+            $wh['hours']      = $hours;
+            $rs = Db::name("egg_hours_price")->where($wh)->find();
+            if(empty($rs))
+            {
+                $data = [];
+                $data['kind_id']    = $params['kind_id'];
+                $data['kind_name']  = $kind_name;
+                $data['price']      = $info[0];
+                $data['day']        = $day;
+                $data['hours']      = $hours;
+                $data['createtime'] = strtotime($info[1]);
+                $datas[] = $data;
+            }
+        }
+    }
 }

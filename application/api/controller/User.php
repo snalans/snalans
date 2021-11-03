@@ -95,9 +95,9 @@ class User extends Api
             $this->error(__('Invalid parameters'));
         }
 
-        // if(!captcha_check($captcha)){
-        //      $this->error("验证码错误");
-        // };
+        if(!captcha_check($captcha)){
+             $this->error("验证码错误");
+        };
 
         $ret = $this->auth->login($account, $password);
         if ($ret) {
@@ -185,10 +185,10 @@ class User extends Api
         if ($mobile && !Validate::regex($mobile, "^1\d{10}$")) {
             $this->error(__('Mobile is incorrect'));
         }
-//        $ret = Sms::check($mobile, $code, 'register');
-//        if (!$ret) {
-//            $this->error(__('Captcha is incorrect'));
-//        }
+       $ret = Sms::check($mobile, $code, 'register');
+       if (!$ret) {
+           $this->error(__('Captcha is incorrect'));
+       }
         $ret = $this->auth->register($username, $password, $email, $mobile, ['invite_code'=>$invite_code]);
         if ($ret) {
             $data = ['userinfo' => $this->auth->getUserinfo()];
@@ -545,9 +545,9 @@ class User extends Api
         $hand_img       = $this->request->post("hand_img");
         $hands_img      = $this->request->post("hands_img");
 
-        // if (!\app\common\library\Validate::check_id_card($id_card)) {
-        //     $this->error(__('Id_card is incorrect'));
-        // }
+        if (!\app\common\library\Validate::check_id_card($id_card)) {
+            $this->error(__('Id_card is incorrect'));
+        }
 
         $wh = [];
         $wh['id_card'] = $id_card;
