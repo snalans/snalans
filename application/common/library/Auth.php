@@ -165,7 +165,7 @@ class Auth
             'level'    => 0,
             'score'    => 0,
             'avatar'   => '',
-            'serial_number'  => \app\common\model\User::getInviteCode(2),
+            'serial_number'  => \app\common\model\User::getInviteCode(1),
         ];
         $params = array_merge($data, [
             'nickname'  => preg_match("/^1[3-9]{1}\d{9}$/",$username) ? substr_replace($username,'****',3,4) : $username,
