@@ -40,11 +40,12 @@ class User extends Api
      * @ApiReturnParams   (name="score", type="integer", description="积分")
      * @ApiReturnParams   (name="valid_number", type="integer", description="个人有效值")
      * @ApiReturnParams   (name="total_valid_number", type="integer", description="团队有效值")
+     * @ApiReturnParams   (name="is_paypwd", type="integer", description="是否配置过密码 1=是 0=否")
      */
     public function index()
     {
         $result = Db::name("user")->alias("u")
-                    ->field("u.avatar,u.nickname,u.serial_number,u.mobile,u.valid_number,u.level,u.score,u.is_attestation,lc.title")
+                    ->field("u.avatar,u.nickname,u.serial_number,u.mobile,u.paypwd,u.valid_number,u.level,u.score,u.is_attestation,lc.title")
                     ->join("user_level_config lc","lc.level=u.level","LEFT")
                     ->where("u.id",$this->auth->id)
                     ->find();
@@ -63,7 +64,8 @@ class User extends Api
                 ->where($wh)
                 ->sum("u.valid_number");
         $result['total_valid_number'] = $result['valid_number'] + $sum;
-        
+        $result['is_paypwd'] = empty($result['paypwd'])?0:1;
+        unset($result['paypwd']);
         $this->success('', $result);
     }
 
@@ -416,25 +418,30 @@ class User extends Api
      */
     public function resetpay()
     {
-        $mobile = $this->request->post("mobile");
-        $newpassword = $this->request->post("newpassword");
-        $captcha = $this->request->post("captcha");
-        if (!$newpassword || !$captcha) {
+        $mobile         = $this->request->post("mobile");
+        $newpassword    = $this->request->post("newpassword");
+        $captcha        = $this->request->post("captcha");
+
+        if (!$newpassword) {
             $this->error(__('Invalid parameters'));
         }
 
-        if (!Validate::regex($mobile, "^1\d{10}$")) {
-            $this->error(__('Mobile is incorrect'));
+        $paypwd = Db::name("user")->where("id",$this->auth->id)->value("paypwd");
+        if(!empty($paypwd))
+        {        
+            if (!Validate::regex($mobile, "^1\d{10}$")) {
+                $this->error(__('Mobile is incorrect'));
+            }
+            $user = \app\common\model\User::getByMobile($mobile);
+            if (!$user) {
+                $this->error(__('User not found'));
+            }
+            $ret = Sms::check($mobile, $captcha, 'resetpay');
+            if (!$ret) {
+                $this->error(__('Captcha is incorrect'));
+            }
+            Sms::flush($mobile, 'resetpay');
         }
-        $user = \app\common\model\User::getByMobile($mobile);
-        if (!$user) {
-            $this->error(__('User not found'));
-        }
-        $ret = Sms::check($mobile, $captcha, 'resetpay');
-        if (!$ret) {
-            $this->error(__('Captcha is incorrect'));
-        }
-        Sms::flush($mobile, 'resetpay');
         
         $ret = $this->auth->changepay($newpassword, '', true);
         if ($ret) {
