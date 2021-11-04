@@ -162,31 +162,65 @@ class HoursPrice extends Backend
 
     public function mkPrice()
     {
-        $kind_name = Db::name("egg_kind")->where("id",$params['kind_id'])->value("name");
+        $range = 1.2;
+        $kind_id = 1;
 
-        $date = "2021-06-07";
-        $time = strtotime("+1 day",strtotime($date));
         $datas = [];
-        foreach ($attr as $key => $value) {
-            $info       = explode("#",$value);
-            $day        = date("Y-m-d",strtotime($info[1]));
-            $hours      = date("H:i",strtotime($info[1]));
+        $price1 = $min_price1 = 0.5;
+        $price2 = $min_price2 = 10;
+        $price3 = $min_price3 = 80;
+        $stime = strtotime("2021-06-06 09:00:00");
+        for ($i=1; $i < 86; $i++) { 
+            $time = strtotime("+$i day",$stime);
+            $day  = date("Y-m-d",$time);
+            
             $wh = [];
-            $wh['kind_id']    = $params['kind_id'];
+            $wh['kind_id']    = 1;
             $wh['day']        = $day;
-            $wh['hours']      = $hours;
             $rs = Db::name("egg_hours_price")->where($wh)->find();
             if(empty($rs))
             {
-                $data = [];
-                $data['kind_id']    = $params['kind_id'];
-                $data['kind_name']  = $kind_name;
-                $data['price']      = $info[0];
-                $data['day']        = $day;
-                $data['hours']      = $hours;
-                $data['createtime'] = strtotime($info[1]);
-                $datas[] = $data;
+                for ($n=0; $n < 13; $n++) 
+                { 
+                    $t = strtotime("+$n hours",$stime);
+                    $hours = date("H:i",$t);
+                    $data = [];
+                    $data['kind_id']    = 1;
+                    $data['kind_name']  = "白蛋";
+                    $data['price']      = $price1;
+                    $data['day']        = $day;
+                    $data['hours']      = $hours;
+                    $data['createtime'] = $t;
+                    $datas[] = $data;
+                    $data['kind_id']    = 2;
+                    $data['kind_name']  = "铜蛋";
+                    $data['price']      = $price2;
+                    $datas[] = $data;
+                    $data['kind_id']    = 3;
+                    $data['kind_name']  = "银蛋";
+                    $data['price']      = $price3;
+                    $datas[] = $data;
+
+                    $max_price1 = $min_price1 * $range;
+                    $max_price2 = $min_price2 * $range;
+                    $max_price3 = $min_price3 * $range;
+                    if($n!=0){
+                        $price1 = intval(rand($min_price1*100,$max_price1*100))/100;
+                        $price2 = intval(rand($min_price2*100,$max_price2*100))/100;
+                        $price3 = intval(rand($min_price3*100,$max_price3*100))/100;
+                    }
+
+                    if($n==12){
+                        if($i%7==0){
+                            $min_price1 = $min_price1 + intval($min_price1*0.07);
+                            $min_price2 = $min_price2 + intval($min_price2*0.16);
+                            $min_price3 = $min_price3 + intval($min_price3*0.17);
+                        }
+                    }
+                }
             }
         }
+        $num = Db::name("egg_hours_price")->insertAll($datas);
+        echo $num." Successed";
     }
 }
