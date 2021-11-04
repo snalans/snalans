@@ -242,7 +242,6 @@ class User extends Api
             }
             $user->nickname = $nickname;
         }
-        $user->bio = $bio;
         $user->avatar = $avatar;
         $user->save();
         $this->success();
