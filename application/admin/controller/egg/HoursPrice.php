@@ -166,14 +166,13 @@ class HoursPrice extends Backend
         $kind_id = 1;
 
         $datas = [];
-        $price1 = $min_price1 = 0.5;
-        $price2 = $min_price2 = 10;
-        $price3 = $min_price3 = 80;
-        $stime = strtotime("2021-06-06 09:00:00");
-        for ($i=1; $i < 86; $i++) { 
+        $price1 = $min_price1 = 1.39;
+        $price2 = $min_price2 = 106.81;
+        $price3 = $min_price3 = 924.99;
+        $stime = strtotime("2021-10-25 09:00:00");
+        for ($i=1; $i < 9; $i++) { 
             $time = strtotime("+$i day",$stime);
             $day  = date("Y-m-d",$time);
-            
             $wh = [];
             $wh['kind_id']    = 1;
             $wh['day']        = $day;
@@ -212,15 +211,17 @@ class HoursPrice extends Backend
 
                     if($n==12){
                         if($i%7==0){
-                            $min_price1 = $min_price1 + intval($min_price1*0.07);
-                            $min_price2 = $min_price2 + intval($min_price2*0.16);
-                            $min_price3 = $min_price3 + intval($min_price3*0.17);
+                            $min_price1 = $min_price1 + intval($min_price1*0.07*100)/100;
+                            $min_price2 = $min_price2 - intval($min_price2*0.01);
+                            $min_price3 = $min_price3 - intval($min_price3*0.02);
                         }
                     }
                 }
             }
         }
-        $num = Db::name("egg_hours_price")->insertAll($datas);
-        echo $num." Successed";
+        echo '<pre>';
+        print_r($datas);
+        // $num = Db::name("egg_hours_price")->insertAll($datas);
+        // echo $num." Successed";
     }
 }

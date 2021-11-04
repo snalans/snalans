@@ -81,6 +81,7 @@ class Index extends Api
      * 
      * @ApiReturnParams   (name="id", type="string", description="文章id")
      * @ApiReturnParams   (name="title", type="int", description="标题")
+     * @ApiReturnParams   (name="image", type="sting", description="图片")
      * @ApiReturnParams   (name="description", type="int", description="描述")
      * @ApiReturnParams   (name="add_time", type="sting", description="时间")
      */
@@ -93,7 +94,7 @@ class Index extends Api
         $wh['status']       = 1;
         $wh['news_type_id'] = $type_id;
         $result = Db::name("egg_news")
-                    ->field("id,title,description,add_time")
+                    ->field("id,title,description,image,add_time")
                     ->where($wh)
                     ->order("weigh","DESC")
                     ->paginate($per_page)->each(function($item){
