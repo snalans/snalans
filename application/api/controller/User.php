@@ -431,9 +431,8 @@ class User extends Api
             if (!Validate::regex($mobile, "^1\d{10}$")) {
                 $this->error(__('Mobile is incorrect'));
             }
-            $user = \app\common\model\User::getByMobile($mobile);
-            if (!$user) {
-                $this->error(__('User not found'));
+            if ($this->auth->mobile != $mobile){                
+                $this->error("请使用账户绑定的手机号进行验证");
             }
             $ret = Sms::check($mobile, $captcha, 'resetpay');
             if (!$ret) {

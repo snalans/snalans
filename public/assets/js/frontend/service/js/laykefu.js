@@ -107,6 +107,7 @@ $(function () {
 
     // 发送消息
     $("#send").click(function () {
+        $("#user_list").prepend($("li.layui-nav-item.active"))
         sendMessage();
     });
 

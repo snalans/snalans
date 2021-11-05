@@ -4,7 +4,7 @@ return array (
   'name' => '农场',
   'beian' => '',
   'cdnurl' => '',
-  'version' => '1.0.17',
+  'version' => '1.0.25',
   'timezone' => 'Asia/Shanghai',
   'forbiddenip' => '',
   'languages' => 
@@ -46,7 +46,7 @@ return array (
   'rate_config' => '10',
   'android_url' => 'https://egg.snalans.com/download/farm.apk',
   'ios_url' => 'https://egg.snalans.com/ios',
-  'app_version' => '1',
+  'app_version' => '1.0.0',
   'valid_time' => '1',
   'confirm_time' => '1',
   'fee_rate' => '70',
@@ -55,5 +55,6 @@ return array (
   'is_open' => '1',
   'order_start_time' => '9',
   'order_end_time' => '24',
-  'valid_number' => '5',
+  'valid_number' => '3',
+  'invite_url' => 'http://h5.snalans.com',
 );
