@@ -283,7 +283,18 @@ function showUser(data) {
         addUser(item)
     })
 }
-
+function copyText(mobile) {
+    const input = document.getElementById('copyText');
+    input.setAttribute('value', mobile);
+    input.select();
+    if (document.execCommand('copy')) {
+        document.execCommand('copy');
+        $(".copyText").html("复制成功")
+        setTimeout(function () {
+            $(".copyText").html("")
+        },1500)
+    }
+}
 // 添加用户到面板
 function addUser(data) {
 	var add = true;
@@ -293,13 +304,14 @@ function addUser(data) {
 		}
 	});
 	if(add){
-    var _html = '<li class="layui-nav-item" data-id="' + data.id + '" id="f-' + data.id +
+    var _html = '<li onclick="copyText(' + data.name + ')" class="layui-nav-item" data-id="' + data.id + '" id="f-' + data.id +
         '" data-name="' + data.name + '" data-avatar="' + data.avatar + '" data-ip="' + data.ip + '">';
     _html += '<img src="' + data.avatar + '">';
     _html += '<span class="user-name">' + data.name + '</span>';
     _html += '<span class="layui-badge" style="margin-left:5px">0</span>';
     _html += '<i class="layui-icon close" style="display:none">ဇ</i>';
     _html += '</li>';
+
     // 添加左侧列表
     $("#user_list").append(_html);
 
@@ -389,7 +401,6 @@ function sendWord(obj) {
 
 // 获取聊天记录
 function getChatLog(uid, page, flag) {
-
     socket.send('{"type":"chatRecord","to_id":"'+ uid +'","page":"'+ page +'"}');
 }
 
@@ -408,8 +419,8 @@ function showChatLog(res)
     for(var i = 0; i < len; i++)
     {
         var v = res.data[len - i - 1];
+        show_id = v.from_id;
         if ('mine' == v.type) {
-            show_id = v.to_id;
             _html += '<li class="laykefu-chat-mine">';
         } else {
             _html += '<li>';
@@ -424,7 +435,6 @@ function showChatLog(res)
         _html += '</div><div class="laykefu-chat-text">' + replaceContent(v.content) + '</div>';
         _html += '</li>';
     }
-
     setTimeout(function () {
         // 滚动条自动定位到最底端
         if(res.page <= 1){
@@ -434,7 +444,7 @@ function showChatLog(res)
             $("#u-" + show_id).prepend(_html);
         }
         showBigPic();
-    }, 100);        
+    }, 200);        
     
 }
 

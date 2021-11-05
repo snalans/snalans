@@ -272,7 +272,7 @@ class Index extends Api
             $this->error("不允许自己给自己转账");
         }
         $rate_config = Db::name("egg_kind")->where("id",$kind_id)->value("rate_config");
-        $rate = ceil($rate_config/10)*$rate_config;
+        $rate = ceil($number/10)*$rate_config;
 
         $wh = [];
         $wh['user_id'] = $this->auth->id;

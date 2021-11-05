@@ -53,7 +53,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 //这里我们手动设置底部的值
                 $("#egg1").text(data.extend.egg1);
                 $("#egg2").text(data.extend.egg2);
-                $("#egg2").text(data.extend.egg2);
+                $("#egg3").text(data.extend.egg3);
 
             });
 
