@@ -12,7 +12,7 @@ use think\Db;
  */
 class Egg extends Api
 {
-    protected $noNeedLogin = ['hours_price','market_automatic_confirm','hours','market_automatic_refund'];
+    protected $noNeedLogin = ['hours_price','market_index','market_automatic_confirm','hours','market_automatic_refund'];
     protected $noNeedRight = '*';
     /**
      * 蛋收盘价格表（定时器每个小时整点运行）
