@@ -79,23 +79,23 @@ class Egg extends Api
                     ->where($hours_where)
                     ->order('hours asc')
                     ->select();
-                $egg_kind[$k]['list'] = $this->hours($list);;
+                $egg_kind[$k]['list'] = $this->hours($list,date("H",time()));
             }
         }
         $this->success('查询成功',$egg_kind);
     }
 
-    public function hours($list=array())
+    public function hours($list=array(),$num=0)
     {
         $data = [];
         for ($x=9; $x<=21; $x++) {
             if($x<10){
                 $data1['hours'] ='0'.$x.':00';
-                $data1['price'] =  '0';
+                $data1['price'] =  $num>$x?'0':'';
                 $data[] = $data1;
             }else{
                 $data1['hours'] = $x.':00';
-                $data1['price'] =  '';
+                $data1['price'] =  $num>$x?'0':'';
                 $data[] = $data1;
             }
         }
