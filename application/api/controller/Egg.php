@@ -196,8 +196,9 @@ class Egg extends Api
             ->field("id,buy_serial_umber,name,price,status,order_sn,number,rate,buy_user_id")
             ->where($order_where)
             ->order('price desc')
-            ->page($page, $limit)
-            ->select();
+            ->paginate($limit);
+//            ->page($page, $limit)
+//            ->select();
 
 
         $order_count = Db::name("egg_order")->where($order_where)->count();
