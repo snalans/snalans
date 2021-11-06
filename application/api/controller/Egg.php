@@ -181,7 +181,7 @@ class Egg extends Api
             $order_where = array(
                 'buy_user_id'=>array('neq',$user_id),
                 'kind_id'=>array('eq',$kind_id),
-                'status'=>array('eq',0),
+                'status'=>array('eq',5),
                 'buy_serial_umber'=>array('eq',$buy_serial_umber)
             );
         }else{
@@ -199,7 +199,7 @@ class Egg extends Api
             ->page($page, $limit)
             ->select();
 
-echo Db::name("egg_order")->getLastSql();exit;
+
         $order_count = Db::name("egg_order")->where($order_where)->count();
         if($order_count>($page*$limit)){
             $has_next = 1;
