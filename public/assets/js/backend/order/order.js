@@ -28,14 +28,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     [
                         {checkbox: true},
                         {field: 'id', title: __('Id'), operate: false},
-                        {field: 'sell_serial_umber', title: __('Sell_serial_umber'), operate: 'LIKE'},
                         {field: 'sell_mobile', title: __('Sell_mobile'), operate: 'LIKE'},
                         {field: 'order_sn', title: __('Order_sn'), operate: 'LIKE'},
                         {field: 'attestation.name', title: __('Real_name'), operate: false},
                         {field: 'attestation_type', title: __('Attestation_type'), formatter: Table.api.formatter.status, searchList: {1: '支付宝', 2: '微信',3: '钱包',4: '银行卡'}},
                         {field: 'attestation_account', title: __('Attestation_account'), operate: false},
                         {field: 'attestation_image', title: __('Attestation_image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
-                        {field: 'buy_serial_umber', title: __('Buy_serial_umber'), operate: 'LIKE'},
                         {field: 'buy_mobile', title: __('Buy_mobile'), operate: 'LIKE'},
                         {field: 'pay_img', title: __('Pay_img'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'name', title: __('Name'), operate: 'LIKE'},
@@ -44,6 +42,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'rate', title: __('Rate'), operate: false},
                         {field: 'amount', title: __('Amount'), operate: false},
                         {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {0: '待付款', 1: '完成', 2: '待确认', 3: '申诉', 4: '撤单', 5: '挂单',6:'退款'}},
+                        {field: 'refund_status', title:'退款类型',formatter:function(value,row,index){
+                            if(row.status == 6){
+                                return row.refund_status==1?'超时未打款退款':'申诉退款';
+                            }
+                            return '';
+                        }},
                         {field: 'note', title: __('Note'), operate: false},
                         {field: 'pay_time', title: __('Pay_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'over_time', title: "确认收款时间", operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},

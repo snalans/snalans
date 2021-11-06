@@ -34,6 +34,7 @@ class OrderList extends Api
      * @ApiReturnParams   (name="number", type="integer", description="数量")
      * @ApiReturnParams   (name="amount", type="integer", description="总价")
      * @ApiReturnParams   (name="status", type="integer", description="状态 0=待付款 1=完成 2=待确认 3=申诉 4=无效（撤单） 5=挂单  6退款")
+     * @ApiReturnParams   (name="refund_status", type="int", description="退款类型：1=超时未打款退款  0=申诉退款")
      * @ApiReturnParams   (name="createtime", type="integer", description="创建时间")
      */
     public function getOrderList()
@@ -53,7 +54,7 @@ class OrderList extends Api
             $wh['status'] = $status;
         }
         $list = Db::name("egg_order")
-                ->field("order_sn,name,price,number,amount,status,createtime")
+                ->field("order_sn,name,price,number,amount,status,refund_status,createtime")
                 ->where($wh)
                 ->order("createtime","desc")
                 ->paginate($per_page)->each(function($item,$index){
@@ -81,6 +82,8 @@ class OrderList extends Api
      * @ApiReturnParams   (name="attestation_image", type="string", description="支付图片地址")
      * @ApiReturnParams   (name="attestation_account", type="string", description="卖家收款地址")
      * @ApiReturnParams   (name="kind_id", type="int", description="蛋类型ID")
+     * @ApiReturnParams   (name="status", type="integer", description="状态 0=待付款 1=完成 2=待确认 3=申诉 4=无效（撤单） 5=挂单  6退款")
+     * @ApiReturnParams   (name="refund_status", type="int", description="退款类型：1=超时未打款退款  0=申诉退款")
      * @ApiReturnParams   (name="note", type="string", description="备注")
      * @ApiReturnParams   (name="pay_time", type="string", description="付款时间")
      * @ApiReturnParams   (name="createtime", type="string", description="下单时间")
@@ -101,11 +104,11 @@ class OrderList extends Api
         $wh = [];
         $wh['order_sn'] = $order_sn;
         if($type == 1){            
-            $field = "order_sn,name,price,number,amount,sell_user_id,sell_serial_umber,attestation_type,attestation_image,attestation_account,kind_id,status,pay_img,pay_time,note,createtime";
+            $field = "order_sn,name,price,number,amount,sell_user_id,sell_serial_umber,attestation_type,attestation_image,attestation_account,kind_id,status,refund_status,pay_img,pay_time,note,createtime";
 
             $wh['buy_user_id'] = $this->auth->id;
         }else{
-            $field = "order_sn,name,price,number,amount,buy_serial_umber,kind_id,status,pay_img,pay_time,note,createtime";
+            $field = "order_sn,name,price,number,amount,buy_serial_umber,kind_id,status,refund_status,pay_img,pay_time,note,createtime";
 
             $wh['sell_user_id'] = $this->auth->id;
         }

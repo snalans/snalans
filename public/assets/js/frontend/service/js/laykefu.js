@@ -298,13 +298,13 @@ function copyText(mobile) {
 }
 // 添加用户到面板
 function addUser(data) {
-	var add = true;
-	$('.layui-nav-item').each(function(i){
-		if(parseInt($(this).attr('data-id'))==data.id) {
-			add =  false;
-		}
-	});
-	if(add){
+    var add = true;
+    $('.layui-nav-item').each(function(i){
+        if(parseInt($(this).attr('data-id'))==data.id) {
+            add =  false;
+        }
+    });
+    if(add){
     var _html = '<li onclick="copyText(' + data.name + ')" class="layui-nav-item" data-id="' + data.id + '" id="f-' + data.id +
         '" data-name="' + data.name + '" data-avatar="' + data.avatar + '" data-ip="' + data.ip + '">';
     _html += '<img src="' + data.avatar + '">';
@@ -350,7 +350,7 @@ function addUser(data) {
     getChatLog(data.id, 1);
 
     checkUser();
-	}
+    }
 
 }
 // 操作新连接用户的 dom操作

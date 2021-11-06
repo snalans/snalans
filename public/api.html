@@ -304,7 +304,6 @@
                                                             </span>
                         </a>
                                                 <a href="javascript:;" data-id="2" class="list-group-item">农贸市场                            <span class="tag">
-                                                                    <span class="label label-success pull-right noneedlogin">登</span>
                                                             </span>
                         </a>
                                                 <a href="javascript:;" data-id="3" class="list-group-item">hours                            <span class="tag">
@@ -2429,6 +2428,11 @@
                                                                 <td>状态 0=待付款 1=完成 2=待确认 3=申诉 4=无效（撤单） 5=挂单  6退款</td>
                                                             </tr>
                                                                                                                         <tr>
+                                                                <td>refund_status</td>
+                                                                <td>int</td>
+                                                                <td>退款类型：1=超时未打款退款  0=申诉退款</td>
+                                                            </tr>
+                                                                                                                        <tr>
                                                                 <td>createtime</td>
                                                                 <td>integer</td>
                                                                 <td>创建时间</td>
@@ -2638,6 +2642,16 @@
                                                                 <td>kind_id</td>
                                                                 <td>int</td>
                                                                 <td>蛋类型ID</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>status</td>
+                                                                <td>integer</td>
+                                                                <td>状态 0=待付款 1=完成 2=待确认 3=申诉 4=无效（撤单） 5=挂单  6退款</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>refund_status</td>
+                                                                <td>int</td>
+                                                                <td>退款类型：1=超时未打款退款  0=申诉退款</td>
                                                             </tr>
                                                                                                                         <tr>
                                                                 <td>note</td>
@@ -5932,7 +5946,7 @@
                                                 <tbody>
                                                 <tr>
                                                     <td>登录</td>
-                                                    <td>是</td>
+                                                    <td>否</td>
                                                 </tr>
                                                 <tr>
                                                     <td>鉴权</td>
@@ -8264,7 +8278,7 @@
 
                 </div>
                 <div class="col-md-6" align="right">
-                    Generated on 2021-11-04 20:15:02 <a href="./" target="_blank">农场</a>
+                    Generated on 2021-11-06 10:23:35 <a href="./" target="_blank">农场</a>
                 </div>
             </div>
 
