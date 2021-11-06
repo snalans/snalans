@@ -23,7 +23,7 @@ class Egg extends Api
             ->where($kind_where)
             ->order('id asc')
             ->select();
-echo date("H:",time()).'00';exit;
+echo date("H",time()).':00';exit;
         $hours_where = array(
             'day'=>array('eq',date("Y-m-d")),
             'hours'=>array('eq',date("H:".'00',time()))
@@ -50,7 +50,7 @@ echo date("H:",time()).'00';exit;
                     'kind_name' => $v['name'],
                     'price' => $price,
                     'day' => date("Y-m-d"),
-                    'hours' => date("H:",time()).'00',
+                    'hours' => date("H",time()).':00',
                     'createtime' => time(),
                 ];
             }
