@@ -26,7 +26,7 @@ class Egg extends Api
 echo date("H",time()).':00';exit;
         $hours_where = array(
             'day'=>array('eq',date("Y-m-d")),
-            'hours'=>array('eq',date("H:".'00',time()))
+            'hours'=>array('eq',date("H",time()).':00')
         );
         $hours_price_count = Db::name("egg_hours_price")
             ->where($hours_where)
