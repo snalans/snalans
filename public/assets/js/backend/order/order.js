@@ -44,7 +44,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {0: '待付款', 1: '完成', 2: '待确认', 3: '申诉', 4: '撤单', 5: '挂单',6:'退款'}},
                         {field: 'refund_status', title:'退款类型',formatter:function(value,row,index){
                             if(row.status == 6){
-                                return row.refund_status==1?'超时未打款退款':'申诉退款';
+                                return row.refund_status==1?'超时未付款取消':'申诉退款';
                             }
                             return '';
                         }},
