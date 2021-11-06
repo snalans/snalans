@@ -18,15 +18,12 @@ class Egg extends Api
      * 蛋收盘价格表（定时器每个小时整点运行）
      */
     public function hours_price(){
-        echo '11aa';exit;
         $kind_where = array('id'=>array('lt',5));
         $egg_kind = Db::name("egg_kind")
             ->where($kind_where)
             ->order('id asc')
             ->select();
-        echo '11aa';
-        echo date("H",time());
-echo date("H",time()).':00';exit;
+
         $hours_where = array(
             'day'=>array('eq',date("Y-m-d")),
             'hours'=>array('eq',date("H",time()).':00')
@@ -34,7 +31,8 @@ echo date("H",time()).':00';exit;
         $hours_price_count = Db::name("egg_hours_price")
             ->where($hours_where)
             ->count();
-        if(count($egg_kind)>0 || $hours_price_count==0){
+
+        if(count($egg_kind)>0 && $hours_price_count==0){
             foreach ($egg_kind as $k=>$v ){
                 //时间段最后一笔交易单价，如果为0的话就去配置蛋的价格
                 $order_where = array(
