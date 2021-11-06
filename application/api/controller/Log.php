@@ -61,9 +61,12 @@ class Log extends Api
     {
         $page       = $this->request->get("page",1);
         $per_page   = $this->request->get("per_page",15);
+        $wh = [];
+        $wh['user_id']  = $this->auth->id;
+        $wh['type']     = ['<>',3];
         $list = Db::name("egg_score_log")
                 ->field("type,score,memo,FROM_UNIXTIME(createtime,'%m-%d %H:%i') as createtime")
-                ->where("user_id",$this->auth->id)
+                ->where($wh)
                 ->order("createtime","desc")
                 ->paginate($per_page);
         $this->success('',$list);
