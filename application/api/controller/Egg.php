@@ -18,6 +18,7 @@ class Egg extends Api
      * 蛋收盘价格表（定时器每个小时整点运行）
      */
     public function hours_price(){
+        echo '11aa';exit;
         $kind_where = array('id'=>array('lt',5));
         $egg_kind = Db::name("egg_kind")
             ->where($kind_where)
