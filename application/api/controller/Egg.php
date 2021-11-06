@@ -23,7 +23,15 @@ class Egg extends Api
             ->where($kind_where)
             ->order('id asc')
             ->select();
-        if(count($egg_kind)>0){
+echo date("H:".'00',time());exit;
+        $hours_where = array(
+            'day'=>array('eq',date("Y-m-d")),
+            'hours'=>array('eq',date("H:".'00',time()))
+        );
+        $hours_price_count = Db::name("egg_hours_price")
+            ->where($hours_where)
+            ->count();
+        if(count($egg_kind)>0 || $hours_price_count==0){
             foreach ($egg_kind as $k=>$v ){
                 //时间段最后一笔交易单价，如果为0的话就去配置蛋的价格
                 $order_where = array(
@@ -42,13 +50,14 @@ class Egg extends Api
                     'kind_name' => $v['name'],
                     'price' => $price,
                     'day' => date("Y-m-d"),
-                    'hours' => date("H:i",time()),
+                    'hours' => date("H:".'00',time()),
                     'createtime' => time(),
                 ];
             }
 
             Db::name("egg_hours_price")->insertAll($hours_price_data);
         }
+        $this->success('查询成功');
     }
 
     /**
