@@ -201,17 +201,17 @@ class Egg extends Api
 //            ->select();
 
 
-        $order_count = Db::name("egg_order")->where($order_where)->count();
-        if($order_count>($page*$limit)){
-            $has_next = 1;
-        }else{
-            $has_next = 0;
-        }
+//        $order_count = Db::name("egg_order")->where($order_where)->count();
+//        if($order_count>($page*$limit)){
+//            $has_next = 1;
+//        }else{
+//            $has_next = 0;
+//        }
 
         $list = array();
         $list['my_order'] = $my_order;
         $list['order'] = $order;
-        $list['has_next'] = $has_next;
+//        $list['has_next'] = $has_next;
         $this->success('查询成功',$list);
     }
 
