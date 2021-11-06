@@ -199,7 +199,7 @@ class Egg extends Api
             ->page($page, $limit)
             ->select();
 
-
+echo Db::name("egg_order")->getLastSql();exit;
         $order_count = Db::name("egg_order")->where($order_where)->count();
         if($order_count>($page*$limit)){
             $has_next = 1;
