@@ -92,13 +92,27 @@ class Egg extends Backend
             $params = $this->request->post("row/a");
             if ($params) {
                 $params = $this->preExcludeFields($params);
-                if(!is_numeric($params['change_number']) || strpos($params['change_number'],".") !== false){
-                    $this->error('变动数量需要为整数');
+                if(!is_numeric($params['change_number']) || $params['change_number']==0){
+                    $this->error('不能为0的数值');
                 }
-                $new_number = $row['number']+$params['change_number'];
+                if($params['type']==1){
+                    if(strpos($params['change_number'],".") !== false){
+                        $this->error('变动数值需为整数');
+                    }
+                    $new_number = $row['number']+$params['change_number'];
+                    $params['number'] = $new_number;
+                }else{
+                    if(!in_array($row['kind_id'],[1,2,3])){
+                        $this->error('添加蛋积分类型错误');
+                    }
+                    $new_number = $row['point']+intval($params['change_number']*10000)/10000;
+                    $params['point'] = $new_number;
+                }
+                
                 if($new_number < 0){                    
                     $this->error('变动数量超出已有的数量');
                 }
+
                 $result = false;
                 Db::startTrans();
                 try {
@@ -108,10 +122,14 @@ class Egg extends Backend
                         $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
                         $row->validateFailException(true)->validate($validate);
                     }
-                    $params['number'] = $new_number;
-                    $note = "管理员：".$this->auth->username." ".$params['note'];
                     $result = $row->allowField(true)->save($params);
-                    $log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$row['user_id'],'kind_id'=>$row['kind_id'],'type'=>4,'order_sn'=>'','number'=>$params['change_number'],'note'=>$note,'createtime'=>time()]);
+                    $note = "管理员：".$this->auth->username." ".$params['note'];
+                    if($params['type']==1){
+                        $log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$row['user_id'],'kind_id'=>$row['kind_id'],'type'=>4,'order_sn'=>'','number'=>$params['change_number'],'note'=>$note,'createtime'=>time()]);
+                    }else{
+                        $log = Db::name("egg_score_log")->insert(['user_id'=>$row['user_id'],'kind_id'=>$row['kind_id'],'type'=>3,'score'=>$params['change_number'],'memo'=>$note,'createtime'=>time()]);
+                    }
+
                     if ($result !== false && $log) {
                         Db::commit();
                         $this->success();

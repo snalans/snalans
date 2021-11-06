@@ -176,7 +176,7 @@ class OrderList extends Api
         $data['pay_time']            = time();
 
         $rs = Db::name("egg_order")->where("id",$order['id'])->update($data);
-        if($rs){            
+        if($rs){      
             \app\common\library\Hsms::send($order['sell_mobile'], '','order');
             $this->success('提交成功,等待确认');
         }else{
@@ -232,7 +232,6 @@ class OrderList extends Api
         if($ors && $grs && $log_rs){
             Db::commit();
             if($status == 1){
-                \app\common\library\Hsms::send($result['buy_mobile'], '','order');
                 $this->success('完成交易'); 
             }else{
                 $this->success('申诉成功,等待审核'); 

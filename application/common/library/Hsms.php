@@ -70,7 +70,6 @@ class Hsms
             $log_msg .= '您申请注册会员，验证码：'.$code.'。请不要把验证码泄漏给其他人，如非本人请勿操作。 ';
         }else if($event=='order'){
             $log_msg .= '您的订单已发生变化，请登录查看。';
-            return false;
         }
         $result = self::sendSms($mobile,$log_msg);
         if (!$result) {

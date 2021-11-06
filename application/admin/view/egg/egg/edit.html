@@ -14,8 +14,22 @@
     </div>
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Number')}:</label>
-        <div class="col-xs-12 col-sm-8">
+        <div class="col-xs-6 col-sm-3">
             <span class="form-control" disabled="true">{$row.number|htmlentities}</span>
+        </div>
+
+        <label class="control-label col-xs-12 col-sm-2">{:__('Point')}:</label>
+        <div class="col-xs-6 col-sm-3">
+            <span class="form-control" disabled="true">{$row.point|htmlentities}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">选择资产:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="radio">
+            <label for="row[type]-1"><input id="row[type]-1" name="row[type]" type="radio" value="1" checked /> 蛋</label> 
+            <label for="row[type]-2"><input id="row[type]-2" name="row[type]" type="radio" value="2"/> 蛋积分</label> 
+            </div>
         </div>
     </div>
     <div class="form-group">

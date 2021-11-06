@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'Number'        => '数量',
+    'Number'        => '蛋资产',
     'Eggkind.name'  => '蛋名称',
     'User.username' => '用户名',
     'User.mobile'   => '手机号',

@@ -166,11 +166,11 @@ class HoursPrice extends Backend
         $kind_id = 1;
 
         $datas = [];
-        $price1 = $min_price1 = 1.39;
-        $price2 = $min_price2 = 106.81;
-        $price3 = $min_price3 = 924.99;
-        $stime = strtotime("2021-10-25 09:00:00");
-        for ($i=1; $i < 9; $i++) { 
+        $price1 = $min_price1 = 0.53;
+        $price2 = $min_price2 = 53.36;
+        $price3 = $min_price3 = 580.92;
+        $stime = strtotime("2021-09-01 09:00:00");
+        for ($i=1; $i < 2; $i++) { 
             $time = strtotime("+$i day",$stime);
             $day  = date("Y-m-d",$time);
             $wh = [];
