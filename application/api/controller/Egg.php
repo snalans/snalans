@@ -23,6 +23,8 @@ class Egg extends Api
             ->where($kind_where)
             ->order('id asc')
             ->select();
+        echo '11aa';
+        echo date("H",time());
 echo date("H",time()).':00';exit;
         $hours_where = array(
             'day'=>array('eq',date("Y-m-d")),
