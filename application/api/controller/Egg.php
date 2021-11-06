@@ -31,7 +31,7 @@ class Egg extends Api
         $hours_price_count = Db::name("egg_hours_price")
             ->where($hours_where)
             ->count();
-
+echo Db::name("egg_hours_price")->getLastSql();exit;
         if(count($egg_kind)>0 && $hours_price_count==0){
             foreach ($egg_kind as $k=>$v ){
                 //时间段最后一笔交易单价，如果为0的话就去配置蛋的价格
