@@ -27,6 +27,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     [
                         {checkbox: true},
                         {field: 'user_id', title: __('User_id')},
+                        {field: 'user.serial_number', title: '会员编号', operate: 'LIKE'},
                         {field: 'user.username', title: __('User.username'), operate: 'LIKE'},
                         {field: 'name', title: __('Name'), operate: 'LIKE'},
                         {field: 'id_card', title: __('Id_card'), operate: 'LIKE'},

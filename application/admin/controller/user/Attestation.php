@@ -63,7 +63,7 @@ class Attestation extends Backend
 
             foreach ($list as $row) {
                 
-                $row->getRelation('user')->visible(['username','nickname','mobile','is_attestation']);
+                $row->getRelation('user')->visible(['username','serial_number','nickname','mobile','is_attestation']);
             }
 
             $result = array("total" => $list->total(), "rows" => $list->items());
