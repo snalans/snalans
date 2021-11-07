@@ -474,15 +474,17 @@ class User extends Api
         $wh = [];
         $wh['u.pid']            = $this->auth->id;
         $list = Db::name("user")->alias("u")
-                ->field("u.id,u.avatar,u.nickname,u.serial_number,l.title,u.is_attestation")
+                ->field("u.id,u.avatar,u.nickname,u.serial_number,l.title,u.is_attestation,u.createtime")
                 ->join("user_level_config l","l.level=u.level","LEFT")
                 ->where($wh)
+                ->order("u.createtime asc")
                 ->paginate($per_page)->each(function($item){
                     $item['avatar'] = $item['avatar']? cdnurl($item['avatar'], true) : letter_avatar($item['nickname']);
                     $item['team_number'] = Db::name("user")->where("pid",$item['id'])->count();
                     if($item['is_attestation'] != 1){
                         $item['title'] = "普通会员";
                     }
+                    $item['createtime'] = date("Y-m-d");
                     unset($item['id']);
                     unset($item['nickname']);
                     return $item;
