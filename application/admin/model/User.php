@@ -117,7 +117,7 @@ class User extends Model
     }
 
 
-    public function level()
+    public function levels()
     {
         return $this->belongsTo('app\admin\model\level\UserLevelConfig', 'level', 'level', [], 'LEFT')->setEagerlyType(0);
     }

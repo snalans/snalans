@@ -44,7 +44,7 @@ class User extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $list = $this->model
-                ->with(['group','puser','level'])
+                ->with(['group','puser','levels'])
                 ->where($where)
                 ->order($sort, $order)
                 ->paginate($limit);
@@ -52,7 +52,7 @@ class User extends Backend
                 $v->avatar = $v->avatar ? cdnurl($v->avatar, true) : letter_avatar($v->nickname);
                 $v->hidden(['password', 'salt']);
                 $v->getRelation('puser')->visible(['mobile']);
-                $v->getRelation('level')->visible(['title']);
+                $v->getRelation('levels')->visible(['title']);
                 $wh = [];
                 $wh['c.ancestral_id']   = $v->id;
                 $wh['c.level']          = ['<',4];
@@ -66,6 +66,9 @@ class User extends Backend
                 $wh['pid']              = $v->id;
                 $wh['is_attestation']   = 1;
                 $v->team_number = Db::name("user")->where($wh)->count();
+                if($v->is_attestation != 1){
+                    $v->levels['title'] = '普通会员';
+                }
             }
             $result = array("total" => $list->total(), "rows" => $list->items());
 

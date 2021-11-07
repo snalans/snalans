@@ -480,6 +480,9 @@ class User extends Api
                 ->paginate($per_page)->each(function($item){
                     $item['avatar'] = $item['avatar']? cdnurl($item['avatar'], true) : letter_avatar($item['nickname']);
                     $item['team_number'] = Db::name("user")->where("pid",$item['id'])->count();
+                    if($item['is_attestation'] != 1){
+                        $item['title'] = "普通会员";
+                    }
                     unset($item['id']);
                     unset($item['nickname']);
                     return $item;
