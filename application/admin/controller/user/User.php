@@ -64,7 +64,6 @@ class User extends Backend
                 $v->total_valid_number = $sum + $v->valid_number;
                 $wh = [];
                 $wh['pid']              = $v->id;
-                $wh['is_attestation']   = 1;
                 $v->team_number = Db::name("user")->where($wh)->count();
                 if($v->is_attestation != 1){
                     $v->levels['title'] = '普通会员';

@@ -51,9 +51,7 @@ class User extends Api
                     ->find();
         $result['avatar'] = $result['avatar'] ?  cdnurl($result['avatar'], true) : letter_avatar($result['nickname']);
 
-        if($result['is_attestation']==1){
-            $result['title'] = empty($result['title'])?'农民':$result['title'];
-        }else{
+        if($result['is_attestation'] != 1){
             $result['title'] = '普通用户';
         }
         $wh = [];
@@ -477,7 +475,7 @@ class User extends Api
                 ->field("u.id,u.avatar,u.nickname,u.serial_number,l.title,u.is_attestation,u.createtime")
                 ->join("user_level_config l","l.level=u.level","LEFT")
                 ->where($wh)
-                ->order("u.createtime asc")
+                ->order("u.createtime desc")
                 ->paginate($per_page)->each(function($item){
                     $item['avatar'] = $item['avatar']? cdnurl($item['avatar'], true) : letter_avatar($item['nickname']);
                     $item['team_number'] = Db::name("user")->where("pid",$item['id'])->count();
