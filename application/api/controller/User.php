@@ -482,7 +482,7 @@ class User extends Api
                     if($item['is_attestation'] != 1){
                         $item['title'] = "普通会员";
                     }
-                    $item['createtime'] = date("Y-m-d");
+                    $item['createtime'] = date("Y-m-d",$item['createtime']);
                     unset($item['id']);
                     unset($item['nickname']);
                     return $item;
