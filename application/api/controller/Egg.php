@@ -38,7 +38,6 @@ class Egg extends Api
                 $order_where = array(
                     'kind_id'=>array('eq',$v['id']),
                     'status'=>array('eq',1),
-                    'pay_time'=>array('between',[strtotime(date("Y-m-d")),time()]),
                 );
                 $order = Db::name('egg_order')->field('price')->where($order_where)->order("pay_time desc")->find();
                 if($order){
