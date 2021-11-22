@@ -381,7 +381,7 @@ class Egg extends Api
         }
 
         $auth = new \app\common\library\Auth();
-        if ($this->auth->password != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
+        if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
             $this->error('支付密码错误');
         }
 
@@ -400,7 +400,7 @@ class Egg extends Api
         $egg_where = [];
         $egg_where['user_id'] = $user_id;
         $egg_where['kind_id'] = $order['kind_id'];
-        $egg_num = Db::name("egg")->where($egg_where)->value('`number`-`frozen`');
+        $egg_num = Db::name("egg")->where($egg_where)->value('number');
 
         //蛋数量不够
         $total_egg = $order['number'] + $order['rate'];
@@ -806,7 +806,7 @@ class Egg extends Api
         }
 
         $auth = new \app\common\library\Auth();
-        if ($this->auth->password != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
+        if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
             $this->error('支付密码错误');
         }
 

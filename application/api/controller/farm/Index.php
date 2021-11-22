@@ -27,11 +27,12 @@ class Index extends Api
      * @ApiReturnParams   (name="kind_id", type="integer", description="名称id")
      * @ApiReturnParams   (name="name", type="string", description="名称")
      * @ApiReturnParams   (name="number", type="integer", description="蛋数量")
+     * @ApiReturnParams   (name="hatchable", type="integer", description="可孵化数量")
      * @ApiReturnParams   (name="point", type="integer", description="蛋积分")
      * 
      * @ApiReturnParams   (name="id", type="string", description="窝ID")
      * @ApiReturnParams   (name="name", type="string", description="窝名称")
-     * @ApiReturnParams   (name="status", type="integer", description="状态 1=空闲-提示可加蛋 0=孵化中")
+     * @ApiReturnParams   (name="status", type="integer", description="状态 1=空窝 0=孵化中")
      * @ApiReturnParams   (name="hatch_num", type="integer", description="孵化进度-天")
      * @ApiReturnParams   (name="surplus", type="integer", description="剩余时间")
      * @ApiReturnParams   (name="position", type="string", description="窝位置")
@@ -41,12 +42,28 @@ class Index extends Api
      */
     public function index()
     {
-        $data['egg_list'] = Db::name("egg")->alias("e")
-                    ->field("e.kind_id,ek.name,e.number,e.point")
+        $egg_list = Db::name("egg")->alias("e")
+                    ->field("e.kind_id,ek.name,e.number,e.hatchable,e.point")
                     ->join("egg_kind ek","ek.id=e.kind_id","LEFT")
                     ->where("e.user_id",$this->auth->id)
                     ->order("ek.weigh","DESC")
-                    ->select();
+                    ->select();           
+        if(!empty($egg_list)){
+            foreach ($egg_list as $k => $val) {
+                $wh = [];
+                $wh['ah.kind_id'] = $val['kind_id'];
+                $wh['ah.user_id'] = $this->auth->id;
+                $wh['ah.status']  = 0;
+                $wh['ah.shape']   = 2;
+                $add_num = Db::name("egg_hatch")->alias("ah")
+                            ->join("egg_hatch_config hc","hc.kind_id=ah.kind_id","LEFT")
+                            ->where($wh)
+                            ->value("sum((ah.hatch_num-hc.hatch_cycle) * 1/hc.raw_cycle)");
+                $egg_list[$k]['number'] = $val['number'] + $add_num;
+            }
+        }
+        $data['egg_list'] = $egg_list;
+
         $nest_list = Db::name("egg_hatch")->alias("eh")
                     ->join("egg_nest_kind en","en.id=eh.nest_kind_id","LEFT")
                     ->field("eh.id,en.name,eh.kind_id,eh.status,eh.hatch_num,eh.position,eh.shape,eh.is_reap,eh.uptime")
@@ -102,11 +119,11 @@ class Index extends Api
             $wh = [];
             $wh['user_id'] = $this->auth->id;
             $wh['kind_id'] = $result['kind_id'];
-            $total = Db::name("egg")->field("kind_id,number,frozen")->where($wh)->find();
-            if($total['number'] <= 0){
-                $this->error(__('Insufficient quantity'));
-            }else{
+            $total = Db::name("egg")->field("kind_id,number,frozen,hatchable")->where($wh)->find();
+            if(($total['kind_id'] == 1 && $total['number'] > 0) || (in_array($total['kind_id'],[2,3,4]) && $total['hatchable'] > 0)){
                 $this->hatchEgg($egg_hatch_id,$total);
+            }else{
+                $this->error(__('Insufficient quantity'));
             }
         }else{
             $this->checkCycle($result);
@@ -187,9 +204,15 @@ class Index extends Api
     {        
         Db::startTrans();
         $wh = [];
-        $wh['user_id'] = $this->auth->id;
-        $wh['kind_id'] = $result['kind_id'];
-        $reduce_rs = Db::name("egg")->where($wh)->setDec('number');
+        $wh['user_id']      = $this->auth->id;
+        $wh['kind_id']      = $result['kind_id'];
+        if($result['kind_id'] == 1){
+            $wh['number']    = ['>',0];
+            $reduce_rs = Db::name("egg")->where($wh)->setDec('number');
+        }else{            
+            $wh['hatchable']    = ['>',0];
+            $reduce_rs = Db::name("egg")->where($wh)->setDec('hatchable');
+        }
         if($result['frozen'] > 0){
             Db::name("egg")->where($wh)->setDec('frozen');
         }
@@ -253,7 +276,7 @@ class Index extends Api
         $paypwd         = $this->request->post('paypwd');
 
         $auth = new \app\common\library\Auth();
-        if ($this->auth->password != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
+        if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
             $this->error(__('Paypwd is incorrect'));
         }
 
@@ -277,7 +300,7 @@ class Index extends Api
         $wh = [];
         $wh['user_id'] = $this->auth->id;
         $wh['kind_id'] = $kind_id;
-        $total = Db::name("egg")->where($wh)->value('`number`-`frozen`');
+        $total = Db::name("egg")->where($wh)->value('number');
         if($total < ($number + $rate)){
             $this->error('数量不够,转账失败!');
         }

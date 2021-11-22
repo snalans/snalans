@@ -38,7 +38,7 @@ class Synthesis extends Api
         $config = Db::name("egg_synthesis_config")->where("kind_id",$kind_id)->select();     
         $egg_list = Db::name("egg")
                     ->where("user_id",$this->auth->id)
-                    ->column("(`number`-`frozen`) as number","kind_id");          
+                    ->column("number","kind_id");          
         $flag = true;
         foreach ($config as $key => $value) {
             if((intval($value['number'])*intval($number)) > $egg_list[$value['ch_kind_id']]){
@@ -51,19 +51,20 @@ class Synthesis extends Api
         
         Db::startTrans();
         try {
-            foreach ($config as $key => $value) {            
+            foreach ($config as $key => $value) {       
+                $dec_num = $value['number']*$number;     
                 $wh = [];
                 $wh['user_id'] = $this->auth->id;
                 $wh['kind_id'] = $value['ch_kind_id'];
-                Db::name("egg")->where($wh)->setDec('number',($value['number']*$number));
-                Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['ch_kind_id'],'type'=>3,'order_sn'=>'','number'=>-($value['number']*$number),'note'=>"合成扣减",'createtime'=>time()]);
+                Db::name("egg")->where($wh)->setDec('number',$dec_num);
+                Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['ch_kind_id'],'type'=>3,'order_sn'=>'','number'=>-$dec_num,'note'=>"合成扣减",'createtime'=>time()]);
             }
 
             $wh = [];
             $wh['user_id'] = $this->auth->id;
             $wh['kind_id'] = $kind_id;
-            Db::name("egg")->where($wh)->setInc('number',$number); 
-            Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>3,'order_sn'=>'','number'=>$number,'note'=>"合成获得",'createtime'=>time()]);
+            Db::name("egg")->where($wh)->setInc('hatchable',$number); 
+            Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>3,'order_sn'=>'','number'=>$number,'note'=>"合成获得可孵化的蛋",'createtime'=>time()]);
 
             Db::commit();
         } catch (\Exception $e) {
