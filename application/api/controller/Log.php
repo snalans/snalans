@@ -7,7 +7,7 @@ use think\Db;
 
 /**
  * 日志接口
- * @ApiWeigh   (26)
+ * @ApiWeigh   (33)
  */
 class Log extends Api
 {
@@ -69,6 +69,48 @@ class Log extends Api
                 ->where($wh)
                 ->order("createtime","desc")
                 ->paginate($per_page);
+        $this->success('',$list);
+    }
+
+
+    /**
+     * 获取团队有效值列表
+     * 
+     * @ApiMethod (GET)
+     * @ApiParams   (name="page", type="int", description="页码")
+     * @ApiParams   (name="per_page", type="int", description="数量")
+     * 
+     * @ApiReturnParams   (name="avatar", type="string", description="用户头像")
+     * @ApiReturnParams   (name="serial_number", type="string", description="用户编号")
+     * @ApiReturnParams   (name="title", type="string", description="等级名称")
+     * @ApiReturnParams   (name="valid_number", type="int", description="有效值")
+     * @ApiReturnParams   (name="is_attestation", type="string", description="是否认证 0=否 1=是 2=待审核 3=失败")
+     */
+    public function getTeamValid()
+    {
+        $page       = $this->request->get("page",1);
+        $per_page   = $this->request->get("per_page",15);
+
+        $wh = [];
+        $wh['c.ancestral_id'] = $this->auth->id;
+        $wh['c.level']        = ['<',4];
+        $list = Db::name("membership_chain")->alias("c")
+                ->field("u.id,u.nickname,u.avatar,u.serial_number,l.title,u.is_attestation,u.valid_number,u.createtime")
+                ->join("user u","u.id=c.user_id","LEFT")
+                ->join("user_level_config l","l.level=u.level","LEFT")
+                ->where($wh)
+                ->order("u.createtime","desc")
+                ->paginate($per_page)->each(function($item){
+                    $item['avatar'] = $item['avatar']? cdnurl($item['avatar'], true) : letter_avatar($item['nickname']);
+                    if($item['is_attestation'] != 1){
+                        $item['title'] = "普通会员";
+                    }
+                    $item['createtime'] = date("Y-m-d",$item['createtime']);
+                    unset($item['id']);
+                    unset($item['nickname']);
+                    return $item;
+                });
+
         $this->success('',$list);
     }
 }

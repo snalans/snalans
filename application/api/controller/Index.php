@@ -163,7 +163,7 @@ class Index extends Api
         }
 
         $auth = new \app\common\library\Auth();
-        if ($this->auth->password != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
+        if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
             $this->error('支付密码错误');
         }
 

@@ -1,21 +1,27 @@
 // 创建一个Socket实例
 var protocol = location.protocol === 'https:' ? 'wss://' : 'ws://';
-socket = new ReconnectingWebSocket(protocol + uinfo.socket_server);//创建Socket实例// 打开Socket 
+socket = new ReconnectingWebSocket(protocol + uinfo.socket_server);//创建Socket实例 打开Socket 
+socket.reconnectInterval = 2000;
+//每50秒ping服务器
+var heart = "";
+
 socket.onopen = function (res) {
-    layui.use(['layer'], function () {
-        var layer = layui.layer;
-        layer.ready(function () {
-            layer.msg('链接成功', {time: 2000});
-        });
-    });
     // 登录
     var login_data = '{"type":"init", "uid":"' + uinfo.id + '", "name" : "' + uinfo.nickname + '", "avatar" : "'
         + uinfo.avatar + '", "group": "' + uinfo.group + '"}';
     socket.send(login_data);
-    //每50秒ping服务器
-    setInterval(function(){
+   
+    layui.use(['layer'], function () {
+        var layer = layui.layer;
+        layer.ready(function () {
+            layer.msg('连接中...', {time: 2000});
+        });
+    });
+    
+    heart = setInterval(function(){
         socket.send('{"type":"ping"}');
     },50000);
+    heart
 };
 
 // 监听消息
@@ -53,9 +59,13 @@ socket.onmessage = function (res) {
     }
 };
 
-// 监听失败
-socket.onerror = function(err){
+// 断线重连
+socket.onclose = function(err){
+    clearInterval(heart)
+};
 
+// 监听失败
+socket.onerror = function(err){    
     layer.alert('连接失败,请联系管理员', {icon: 2, title: '错误提示'});
 };
 
