@@ -105,7 +105,7 @@ class Index extends Api
     public function hatchFeed()
     {
         $egg_hatch_id  = $this->request->post('egg_hatch_id');
-        
+
         $u_where = [];
         $u_where['status'] = 'normal';
         $u_where['is_attestation'] = 1;
@@ -287,18 +287,6 @@ class Index extends Api
         $number         = $this->request->post('number');
         $paypwd         = $this->request->post('paypwd');
 
-        $u_where = [];
-        $u_where['status'] = 'normal';
-        $u_where['is_attestation'] = 1;
-        $u_where['id'] = $this->auth->id;
-        $user_info = Db::name("user")
-            ->field("id,serial_number,mobile")
-            ->where($u_where)
-            ->find();
-        if(empty($user_info)){
-            $this->error("账号无效或者未认证");
-        }
-
         $auth = new \app\common\library\Auth();
         if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
             $this->error(__('Paypwd is incorrect'));
@@ -309,11 +297,12 @@ class Index extends Api
         }
 
         $wh = [];
-        $wh['serial_number'] = $serial_number;
-        $wh['status']       = 'normal';
+        $wh['serial_number']    = $serial_number;
+        $wh['status']           = 'normal';
+        $wh['is_attestation']   = 1;
         $user_id = Db::name("user")->where($wh)->value("id");
         if(empty($user_id)){
-            $this->error(__('User does not exist!'));
+            $this->error("账号无效或者未认证");
         }
         if($user_id == $this->auth->id){
             $this->error("不允许自己给自己转账");
