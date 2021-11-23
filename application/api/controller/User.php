@@ -526,10 +526,13 @@ class User extends Api
     public function getAttestationInfo()
     {
         $result = Db::name("egg_attestation")->alias("ea")
-                    ->field("ea.name,ea.id_card,ea.front_img,ea.reverse_img,ea.hand_img,ea.hands_img,ea.remark,u.is_attestation")
+                    ->field("ea.name,ea.id_card,ea.front_img,ea.reverse_img,ea.hand_img,ea.hands_img,u.is_attestation")
                     ->join("user u","u.id=ea.user_id","LEFT")
                     ->where("user_id",$this->auth->id)
                     ->find();
+        if(!empty($result)){
+            $result['remark'] = $result['is_attestation']==1?"审核通过":"审核不通过";
+        }
         $this->success('',$result);
     }
 

@@ -101,6 +101,17 @@ class Attestation extends Backend
                         $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
                         $row->validateFailException(true)->validate($validate);
                     }
+                    $note = "";
+                    if($params['is_attestation']==1){
+                        $note = "审核通过\n";
+                    }else if($params['is_attestation']==3){
+                        $note = "不通过\n";
+                    }else{
+                        $this->error('操作错误');
+                    }
+
+                    $params['note'] = date('Y-m-d H:i').":".$this->auth->username."审核结果：".$note.$row["note"];
+
                     $rs = Db::name("user")->where("id",$row['user_id'])->update(['is_attestation'=>$params['is_attestation']]);
                     if($rs && $params['is_attestation'] == 1){
                         $number = Config::get("site.valid_number");
