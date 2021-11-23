@@ -993,6 +993,7 @@ class Egg extends Api
                         $this->error("买家有效时间未打款自动退款订单失败");
                     } else {
                         \app\common\library\Hsms::send($v['buy_mobile'], '','order');
+                        \app\common\library\Hsms::send($v['sell_user_id'], '','order');
                         DB::commit();
                         continue;
                     }
