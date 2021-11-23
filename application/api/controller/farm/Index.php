@@ -280,8 +280,8 @@ class Index extends Api
             $this->error(__('Paypwd is incorrect'));
         }
 
-        if(!in_array($kind_id,[1,2,3,4])){
-            $this->error("此蛋不允许转账");
+        if(!in_array($kind_id,[1,2,3,4]) || $number<=0 || $number>80){
+            $this->error("参数错误");
         }
 
         $wh = [];
@@ -306,28 +306,34 @@ class Index extends Api
         }
 
         Db::startTrans();
-        $dec_rs = Db::name("egg")->where($wh)->setDec('number',($number+$rate));
-        //写入日志
-        $dec_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>2,'order_sn'=>'','number'=>-$number,'note'=>"转账给用户编号：".$serial_number." 减少",'createtime'=>time()]);
-        $rate_rs = true;    
-        if($rate>0){
+        try {
+            $wh['number']  = ['>=',($number+$rate)];
+            $dec_rs = Db::name("egg")->where($wh)->setDec('number',($number+$rate));
             //写入日志
-            $rate_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>9,'order_sn'=>'','number'=>-$rate,'note'=>"转账给用户编号：".$serial_number." 手续费",'createtime'=>time()]);
-        }
+            $dec_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>2,'order_sn'=>'','number'=>-$number,'note'=>"转账给用户编号：".$serial_number." 减少",'createtime'=>time()]);
+            $rate_rs = true;    
+            if($rate>0){
+                //写入日志
+                $rate_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>9,'order_sn'=>'','number'=>-$rate,'note'=>"转账给用户编号：".$serial_number." 手续费",'createtime'=>time()]);
+            }
 
-        $wh = [];
-        $wh['user_id'] = $user_id;
-        $wh['kind_id'] = $kind_id;
-        $inc_rs = Db::name("egg")->where($wh)->setInc('number',$number);
-        //写入日志
-        $inc_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$kind_id,'type'=>2,'order_sn'=>'','number'=>$number,'note'=>"用户编号：".$this->auth->serial_number." 转账获得",'createtime'=>time()]);
-        if($dec_rs && $dec_log && $rate_rs && $inc_rs && $inc_log){
-            Db::commit();
-            $this->success(__('Transfer succeeded'));
-        }else{
+            $wh = [];
+            $wh['user_id'] = $user_id;
+            $wh['kind_id'] = $kind_id;
+            $inc_rs = Db::name("egg")->where($wh)->setInc('number',$number);
+            //写入日志
+            $inc_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$kind_id,'type'=>2,'order_sn'=>'','number'=>$number,'note'=>"用户编号：".$this->auth->serial_number." 转账获得",'createtime'=>time()]);
+            if($dec_rs && $dec_log && $rate_rs && $inc_rs && $inc_log){
+                Db::commit();
+                $this->success(__('Transfer succeeded'));
+            }else{
+                Db::rollback();
+                $this->error(__('Transfer failed, please try again'));
+            }
+        } catch (\Exception $e) {
             Db::rollback();
-            $this->error(__('Transfer failed, please try again'));
-        }
+            $this->error($e->getMessage());
+        } 
     }
 
 }

@@ -32,7 +32,7 @@ class Synthesis extends Api
         $kind_id       = $this->request->post("kind_id",0);
         $number        = $this->request->post("number",1);
 
-        if(!in_array($kind_id,[2,3,4])){    
+        if(!in_array($kind_id,[2,3,4]) || $number<=0 || $number>20){    
             $this->error("合成目标蛋错误");
         }
         $config = Db::name("egg_synthesis_config")->where("kind_id",$kind_id)->select();     
@@ -43,6 +43,7 @@ class Synthesis extends Api
         foreach ($config as $key => $value) {
             if((intval($value['number'])*intval($number)) > $egg_list[$value['ch_kind_id']]){
                 $flag = false;
+                break;
             }
         }
         if(!$flag){
@@ -50,28 +51,39 @@ class Synthesis extends Api
         }
         
         Db::startTrans();
+        $dec_rs = true;
+        $dec_log = true;
         try {
             foreach ($config as $key => $value) {       
                 $dec_num = $value['number']*$number;     
                 $wh = [];
                 $wh['user_id'] = $this->auth->id;
                 $wh['kind_id'] = $value['ch_kind_id'];
-                Db::name("egg")->where($wh)->setDec('number',$dec_num);
-                Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['ch_kind_id'],'type'=>3,'order_sn'=>'','number'=>-$dec_num,'note'=>"合成扣减",'createtime'=>time()]);
+                $wh['number']  = ['>=',$dec_num];
+                $dec_rs = Db::name("egg")->where($wh)->setDec('number',$dec_num);
+                if(!$dec_rs){
+                    break;
+                }
+                $dec_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['ch_kind_id'],'type'=>3,'order_sn'=>'','number'=>-$dec_num,'note'=>"合成扣减",'createtime'=>time()]);
             }
 
             $wh = [];
             $wh['user_id'] = $this->auth->id;
             $wh['kind_id'] = $kind_id;
-            Db::name("egg")->where($wh)->setInc('hatchable',$number); 
-            Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>3,'order_sn'=>'','number'=>$number,'note'=>"合成获得可孵化的蛋",'createtime'=>time()]);
-
-            Db::commit();
+            $inc_rs = Db::name("egg")->where($wh)->setInc('hatchable',$number); 
+            $inc_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>3,'order_sn'=>'','number'=>$number,'note'=>"合成获得可孵化的蛋",'createtime'=>time()]);
+            if($dec_rs && $dec_log && $inc_rs && $inc_log){
+                Db::commit();
+                $this->success('合成成功!'); 
+            }else{
+                Db::rollback();
+                $this->error('合成成功!'); 
+            }
+            
         } catch (\Exception $e) {
             Db::rollback();
             $this->error($e->getMessage());
         }   
-        $this->success('合成成功!'); 
     }
 
 }
