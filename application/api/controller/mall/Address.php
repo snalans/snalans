@@ -146,12 +146,12 @@ class Address extends Api
             Db::name("user_address")->where("user_id",$this->auth->id)->update(['is_default'=>0]);
         }
 
-            $data = [];
-            $data['area']           = $area;
-            $data['address']        = $address;
-            $data['real_name']      = $real_name;
-            $data['phone']          = $phone;
-            $data['is_default']     = $is_default;
+        $data = [];
+        $data['area']           = $area;
+        $data['address']        = $address;
+        $data['real_name']      = $real_name;
+        $data['phone']          = $phone;
+        $data['is_default']     = $is_default;
         if(empty($id))
         {
             $data['user_id']        = $this->auth->id;

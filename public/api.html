@@ -527,7 +527,7 @@
                                                         <td>status</td>
                                                         <td>int</td>
                                                         <td>是</td>
-                                                        <td>状态 0=待付款 1=交易完成 2=待发货 3=待收货 5=申请退款 6=退款完成 9=全部订单</td>
+                                                        <td>状态 0=待付款 1=交易完成 2=待发货 3=待收货 5=申请退款 6=退款完成 7=申诉中 9=全部订单</td>
                                                     </tr>
                                                                                                         <tr>
                                                         <td>page</td>
@@ -569,7 +569,7 @@
                                                         </div>
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="status">status</label>
-                                                            <input type="int" class="form-control input-sm" id="status" required placeholder="状态 0=待付款 1=交易完成 2=待发货 3=待收货 5=申请退款 6=退款完成 9=全部订单" name="status">
+                                                            <input type="int" class="form-control input-sm" id="status" required placeholder="状态 0=待付款 1=交易完成 2=待发货 3=待收货 5=申请退款 6=退款完成 7=申诉中 9=全部订单" name="status">
                                                         </div>
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="page">page</label>
@@ -1150,7 +1150,7 @@
                                                         <td>status</td>
                                                         <td>int</td>
                                                         <td>是</td>
-                                                        <td>状态 1=交易完成 5=申请退款 6=确认退款</td>
+                                                        <td>状态 1=交易完成 5=申请退款 6=确认退款 7=拒绝退款</td>
                                                     </tr>
                                                                                                         <tr>
                                                         <td>note</td>
@@ -1186,7 +1186,7 @@
                                                         </div>
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="status">status</label>
-                                                            <input type="int" class="form-control input-sm" id="status" required placeholder="状态 1=交易完成 5=申请退款 6=确认退款" name="status">
+                                                            <input type="int" class="form-control input-sm" id="status" required placeholder="状态 1=交易完成 5=申请退款 6=确认退款 7=拒绝退款" name="status">
                                                         </div>
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="note">note</label>
@@ -1236,7 +1236,7 @@
                     <div class="panel-heading" id="heading-41">
                         <h4 class="panel-title">
                             <span class="label label-primary">POST</span>
-                            <a data-toggle="collapse" data-parent="#accordion41" href="#collapseOne41"> 下单购买 <span class="text-muted">/api/mall.order/market_sale</span></a>
+                            <a data-toggle="collapse" data-parent="#accordion41" href="#collapseOne41"> 下单购买 <span class="text-muted">/api/mall.order/makeOrder</span></a>
                         </h4>
                     </div>
                     <div id="collapseOne41" class="panel-collapse collapse">
@@ -1336,7 +1336,7 @@
                                                 </div>
                                                 </div>
                                                 <div class="panel-body">
-                                                    <form enctype="application/x-www-form-urlencoded" role="form" action="/api/mall.order/market_sale" method="Post" name="form41" id="form41">
+                                                    <form enctype="application/x-www-form-urlencoded" role="form" action="/api/mall.order/makeOrder" method="Post" name="form41" id="form41">
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="id">id</label>
                                                             <input type="integer" class="form-control input-sm" id="id" required placeholder="商品ID" name="id">
@@ -11454,7 +11454,7 @@
 
                 </div>
                 <div class="col-md-6" align="right">
-                    Generated on 2021-11-22 15:02:46 <a href="./" target="_blank">农场</a>
+                    Generated on 2021-11-24 00:07:35 <a href="./" target="_blank">农场</a>
                 </div>
             </div>
 

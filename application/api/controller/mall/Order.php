@@ -25,7 +25,7 @@ class Order extends Api
      *
      * @ApiMethod (GET)
      * @ApiParams   (name="type", type="integer", description="买卖类型默认： 1=买 2=卖")
-     * @ApiParams   (name="status", type="int", description="状态 0=待付款 1=交易完成 2=待发货 3=待收货 5=申请退款 6=退款完成 9=全部订单")
+     * @ApiParams   (name="status", type="int", description="状态 0=待付款 1=交易完成 2=待发货 3=待收货 5=申请退款 6=退款完成 7=申诉中 9=全部订单")
      * @ApiParams   (name="page", type="integer", description="页码")
      * @ApiParams   (name="per_page", type="integer", description="数量")
      * 
@@ -76,6 +76,8 @@ class Order extends Api
                             $item['status_str'] = "申请退款";
                         }else if($item['status'] == 6){
                             $item['status_str'] = "退款完成";
+                        }else if($item['status'] == 7){
+                            $item['status_str'] = "申诉中";
                         }else{
                             $item['status_str'] = "待付款";
                         }
@@ -113,7 +115,7 @@ class Order extends Api
      */
     public function getOrderDetail()
     {
-        $type       = $this->request->get('type',1);
+        $type       = $this->request->post('type',1);
         $order_sn   = $this->request->post("order_sn","");
         
         $wh = [];
@@ -142,6 +144,8 @@ class Order extends Api
                 $info['status_str'] = "申请退款";
             }else if($info['status'] == 6){
                 $info['status_str'] = "退款完成";
+            }else if($info['status'] == 7){
+                $info['status_str'] = "申诉中";
             }else{
                 $info['status_str'] = "待付款";
             }
@@ -173,14 +177,18 @@ class Order extends Api
         $wh = [];
         $wh['order_sn']     = $order_sn;
         $wh['sell_user_id'] = $this->auth->id;
-
-        $status = Db::name("mall_order")->where($wh)->value("status");
-        if($status!=2){            
-            $this->error("状态不允许,发货失败");
+        $wh['status']       = 2;
+        $info = Db::name("mall_order")->field("id,order_sn")->where($wh)->find();
+        if(empty($info)){            
+            $this->error("无效操作");
         }
 
-        $wh['status']   = 2;
-        $rs = Db::name("mall_order")->where($wh)->update(['express_name'=>$express_name,'express_no'=>$express_no]);
+        $data = [];
+        $data['status']         = 3;
+        $data['send_time']      = time();
+        $data['express_name']   = $express_name;
+        $data['express_no']     = $express_no;
+        $rs = Db::name("mall_order")->where($wh)->update($data);
         if($rs){
             $this->success("发货成功");
         }else{
@@ -194,7 +202,7 @@ class Order extends Api
      *
      * @ApiMethod (POST)
      * @ApiParams   (name="order_sn", type="string", description="订单号")
-     * @ApiParams   (name="status", type="int", description="状态 1=交易完成 5=申请退款 6=确认退款")
+     * @ApiParams   (name="status", type="int", description="状态 1=交易完成 5=申请退款 6=确认退款 7=拒绝退款")
      * @ApiParams   (name="note", type="string", description="申请理由")   
      */
     public function refund()
@@ -203,13 +211,50 @@ class Order extends Api
         $status         = $this->request->post("status",1);
         $note           = $this->request->post("note","");
 
-        if(empty($order_sn) || !in_array($status,[1,5,6])){            
+        if(empty($order_sn) || !in_array($status,[1,5,6,7])){            
             $this->error("参数不正确,请检查");
         }
 
         $wh = [];
         $wh['order_sn']     = $order_sn;
-        if($status == 5){
+        if(in_array($status,[1,5])){
+            if($status==1){
+                $wh['status'] = 3;
+            }else{
+                $wh['status'] = ['in',[2,3]];
+            }            
+            $wh['buy_user_id'] = $this->auth->id;
+        }else{
+            $wh['status'] = 5;
+            $wh['sell_user_id'] = $this->auth->id;
+        }
+        $result = Db::name("mall_order")->where($wh)->find();
+        if(empty($result)){
+            $this->error("无效操作");
+        }
+
+        $wh = [];
+        $wh['order_sn']     = $order_sn;
+        if($status == 1){
+            $wh['status'] = 3;
+            $wh['buy_user_id'] = $this->auth->id;
+            $rs = Db::name("mall_order")->where($wh)->update(['status'=>1,'received_time'=>time()]);
+
+            $wh = [];
+            $wh['user_id'] = $result['sell_user_id'];
+            $wh['kind_id'] = $result['kind_id'];
+            $grs = Db::name("egg")->where($wh)->setInc('number',$result['total_price']);
+
+            $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$result['sell_user_id'],'kind_id'=>$result['kind_id'],'type'=>1,'order_sn'=>$order_sn,'number'=>$result['total_price'],'note'=>"商城订单成交",'createtime'=>time()]);
+            if($rs && $grs && $log_rs){
+                Db::commit();
+                $this->success("交易成功");
+            }else{
+                Db::rollback();                 
+                $this->error("确认失败,请重试");
+            }
+        } else if($status == 5){
+            $wh['status'] = ['in',[2,3]];
             $wh['buy_user_id'] = $this->auth->id;
             $num = mb_strlen($note);
             if($num < 6 || $num > 200){
@@ -225,16 +270,41 @@ class Order extends Api
             }else{
                 $this->error("申请失败,请重试");
             }
-        } else if($status == 1){
-            $wh['buy_user_id'] = $this->auth->id;
+        } else if($status == 6){
+            DB::startTrans();  
+            $wh['status']       = 5;
+            $wh['sell_user_id'] = $this->auth->id;
+            $rs = Db::name("mall_order")->where($wh)->update(['status'=>6]);
 
-            $rs = Db::name("mall_order")->where($wh)->update(['status'=>1]);
-            if($rs){
-                $this->success("交易成功");
-            }else{
-                $this->error("确认失败,请重试");
+            $wh = [];
+            $wh['user_id'] = $result['buy_user_id'];
+            $wh['kind_id'] = $result['kind_id'];
+            $number = $result['total_price'] + $result['rate'];
+            $grs = Db::name("egg")->where($wh)->setInc('number',$number);
+
+            $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$result['buy_user_id'],'kind_id'=>$result['kind_id'],'type'=>1,'order_sn'=>$order_sn,'number'=>$result['total_price'],'note'=>"商城订单退款",'createtime'=>time()]);
+
+            $rate_rs = true;    
+            if($result['rate']>0){
+                $rate_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$result['buy_user_id'],'kind_id'=>$result['kind_id'],'type'=>9,'order_sn'=>$order_sn,'number'=>$result['rate'],'note'=>"商城订单退款,返还手续费",'createtime'=>time()]);
             }
-        }
+            if($rs && $grs && $log_rs && $rate_rs){
+                Db::commit();
+                $this->success("退款成功");
+            }else{
+                Db::rollback();   
+                $this->error("退款失败,请重试");              
+            }
+        } else if($status == 7){
+            $wh['status'] = 5;
+            $wh['sell_user_id'] = $this->auth->id;
+            $rs = Db::name("mall_order")->where($wh)->update(['status'=>7]);
+            if($rs){
+                $this->success("拒绝成功,转入申诉");
+            }else{
+                $this->error("拒绝失败,请重试");
+            }
+        } 
     }
 
     /**
@@ -246,11 +316,11 @@ class Order extends Api
      * @ApiParams   (name="address_id", type="integer", description="地址ID")
      * @ApiParams   (name="paypwd", type="string", description="支付密码")
     */
-    public function market_sale()
+    public function makeOrder()
     {
         $id         = $this->request->post("id",0);
         $address_id = $this->request->post("address_id",0);
-        $number     = $this->request->post("number",1);
+        $number     = $this->request->post("number/d",1);
         $paypwd     = $this->request->post('paypwd',"");
 
         //商品信息
@@ -258,14 +328,18 @@ class Order extends Api
         $wh['id']       = $id;
         $wh['status']   = 1;
         $info = Db::name("mall_product")->where($wh)->find();
-
         if(empty($info)){
             $this->error("无效商品");
         }
-
-        if($this->auth->is_attestation != 1){
-            $this->error("账号未认证无法交易");
+        if($info['stock']<=0){
+            Db::name("mall_product")->where("id",$id)->update(['status'=>0]);
         }
+        if($info['stock'] < $number){
+            $this->error("商品库存不够");
+        }
+
+        $ur = new \app\api\controller\User;
+        $ur->isValidUser();
 
         if($info['user_id'] == $this->auth->id){
             $this->error("不能购买给自己的产品");
@@ -274,15 +348,14 @@ class Order extends Api
         $egg_where = [];
         $egg_where['user_id'] = $this->auth->id;
         $egg_where['kind_id'] = $info['kind_id'];
-        $egg_num = Db::name("egg")->where($egg_where)->value('`number`-`frozen`');
+        $egg_num = Db::name("egg")->where($egg_where)->value('number');
 
         //蛋数量判断
         $total_egg = $info['price']*$number;
         $rate = 0;
         $rate_config = Db::name("egg_kind")->where("id",$info['kind_id'])->value("rate_config");
         $rate = ceil($total_egg/10)*$rate_config;
-        $total_egg = $total_egg+$rate;
-        if($total_egg > $egg_num){
+        if(($total_egg+$rate) > $egg_num){
             $this->error("您的可支付蛋数量不足".$total_egg.'个！');
         }
 
@@ -299,55 +372,66 @@ class Order extends Api
             $this->error('支付密码错误');
         }
 
-        DB::startTrans();        
-        //更新订单
-        $order_sn = \app\common\model\Order::getOrderSn();
-        
-        $img_arr = explode(",",$info['images']);
-        $data = [];
-        $data['buy_user_id']        = $this->auth->id;
-        $data['sell_user_id']       = $info['user_id'];
-        $data['product_id']         = $id;
-        $data['kind_id']            = $info['kind_id'];
-        $data['order_sn']           = $order_sn;
-        $data['image']              = $img_arr[0];
-        $data['title']              = $info['title'];
-        $data['price']              = $info['price'];
-        $data['number']             = $number;
-        $data['rate']               = $rate;
-        $data['total_price']        = $total_egg;
-        $data['contactor']          = $address['real_name'];
-        $data['contactor_phone']    = $address['phone'];
-        $data['address']            = $address['area']." ".$address['address'];
-        $data['status']             = 2;
-        $data['add_time']           = time();    
-        $rs = Db::name("mall_order")->insertGetId($data);
+        DB::startTrans();  
+        try {
+            $order_sn = \app\common\model\Order::getOrderSn();
+            
+            $img_arr = explode(",",$info['images']);
+            $data = [];
+            $data['buy_user_id']        = $this->auth->id;
+            $data['sell_user_id']       = $info['user_id'];
+            $data['product_id']         = $id;
+            $data['kind_id']            = $info['kind_id'];
+            $data['order_sn']           = $order_sn;
+            $data['image']              = $img_arr[0];
+            $data['title']              = $info['title'];
+            $data['price']              = $info['price'];
+            $data['number']             = $number;
+            $data['rate']               = $rate;
+            $data['total_price']        = $total_egg;
+            $data['contactor']          = $address['real_name'];
+            $data['contactor_phone']    = $address['phone'];
+            $data['address']            = $address['area']." ".$address['address'];
+            $data['status']             = 2;
+            $data['add_time']           = time();    
+            $rs = Db::name("mall_order")->insertGetId($data);
 
-        //扣除蛋
-        $egg_where = [
-            'user_id' => $this->auth->id,
-            'kind_id' => $info['kind_id'],
-            'number'  => ['egt',$total_egg],
-        ];        
-        $add_rs = Db::name("egg")->where($egg_where)->dec('number',$total_egg)->update();
+            //扣除蛋
+            $egg_where = [
+                'user_id' => $this->auth->id,
+                'kind_id' => $info['kind_id'],
+                'number'  => ['>=',$total_egg],
+            ];        
+            $add_rs = Db::name("egg")->where($egg_where)->dec('number',$total_egg)->update();
 
-        //蛋日志
-        $log = \app\admin\model\egg\Log::saveLog($this->auth->id,$info['kind_id'],1,$order_sn,'-'.$number,"商城消费");
+            //蛋日志
+            $log = \app\admin\model\egg\Log::saveLog($this->auth->id,$info['kind_id'],1,$order_sn,'-'.$number,"商城消费");
 
-        //蛋手续费
-        $log_fee = true;
-        if($rate > 0){
-            $log_fee = \app\admin\model\egg\Log::saveLog($this->auth->id,$info['kind_id'],9,$order_sn,'-'.$rate,"商城消费手续费");
-        }
+            //蛋手续费
+            $log_fee = true;
+            if($rate > 0){
+                $log_fee = \app\admin\model\egg\Log::saveLog($this->auth->id,$info['kind_id'],9,$order_sn,'-'.$rate,"商城消费手续费");
+            }
 
-        if ($rs && $add_rs && $log && $log_fee) {
-            DB::commit();
-            // 通知卖家
-            // \app\common\library\Hsms::send($info['user_id'], '','order');
-            $this->success('购买成功，等待对方发货');
-        } else {
-            DB::rollback();
-            $this->error("购买失败");
-        }
+            $wh = [];
+            $wh['id']       = $id;
+            $wh['status']   = 1;
+            $wh['stock']    = ['>=',$number];
+            $prs = Db::name("mall_product")->where($wh)->setDec('stock',$number);
+            if ($rs && $add_rs && $log && $log_fee && $prs) {
+                DB::commit();
+                // 通知卖家
+                // \app\common\library\Hsms::send($info['user_id'], '','order');
+            } else {
+                DB::rollback();
+                $this->error("购买失败");
+            }
+        } catch (\Exception $e) {
+            Db::rollback();
+            $this->error($e->getMessage());
+        }   
+        $this->success('购买成功，等待卖家发货');
     }
+
+
 }
