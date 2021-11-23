@@ -30,7 +30,7 @@ class Synthesis extends Api
     public function operate()
     {
         $kind_id       = $this->request->post("kind_id",0);
-        $number        = $this->request->post("number",1);
+        $number        = $this->request->post("number/d",0);
 
         if(!in_array($kind_id,[2,3,4]) || $number<=0 || $number>20){    
             $this->error("参数错误");

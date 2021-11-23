@@ -8,6 +8,7 @@ return [
     'User_id'       => '用户名',
     'Kind_id'       => '蛋类型',
     'Change_number' => '变动数量',
+    'Hatchable'     => '可孵化数量',
     'Frozen'        => '冻结数量',
     'Point'         => '蛋积分',
 ];

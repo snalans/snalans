@@ -105,7 +105,6 @@ class Dashboard extends Backend
         $this->assignconfig('column', array_keys($userlist));
         $this->assignconfig('userdata', array_values($userlist));
         $wh = [];
-        $wh['u.status']     = 'normal';
         $wh['e.number']     = ['>',0];
         $wh['e.kind_id']    = 1;
         $egglist1 = Db::name("egg")->alias("e")

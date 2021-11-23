@@ -32,6 +32,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
                         {field: 'eggkind.name', title: __('Eggkind.name'), operate: 'LIKE'},
                         {field: 'number', title: __('Number'), operate:false, sortable: true},
+                        {field: 'hatchable', title: __('Hatchable'), operate:false},
                         {field: 'frozen', title: __('Frozen'), operate:false},
                         {field: 'point', title: __('Point'), operate:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
