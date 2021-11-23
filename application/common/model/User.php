@@ -205,6 +205,7 @@ class User extends Model
                     }     
                     $ne = [];
                     $ne['user_id']    = $user_id;
+                    $ne['nest_kind_id'] = $val['id'];
                     $ne['type']       = 1;
                     $ne['number']     = $val['default'];
                     $ne['note']       = '注册赠送';
