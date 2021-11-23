@@ -106,17 +106,8 @@ class Index extends Api
     {
         $egg_hatch_id  = $this->request->post('egg_hatch_id');
 
-        $u_where = [];
-        $u_where['status'] = 'normal';
-        $u_where['is_attestation'] = 1;
-        $u_where['id'] = $this->auth->id;
-        $user_info = Db::name("user")
-            ->field("id,serial_number,mobile")
-            ->where($u_where)
-            ->find();
-        if(empty($user_info)){
-            $this->error("账号无效或者未认证");
-        }
+        $ur = new \app\api\controller\User;
+        $ur->isValidUser();
 
         $wh = [];
         $wh['id']       = $egg_hatch_id;
@@ -284,15 +275,10 @@ class Index extends Api
     {
         $serial_number  = $this->request->post('serial_number');
         $kind_id        = $this->request->post('kind_id');
-        $number         = $this->request->post('number');
+        $number         = $this->request->post('number/d',0);
         $paypwd         = $this->request->post('paypwd');
 
-        $auth = new \app\common\library\Auth();
-        if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
-            $this->error(__('Paypwd is incorrect'));
-        }
-
-        if(!in_array($kind_id,[1,2,3,4]) || $number<=0 || $number>80){
+        if(!in_array($kind_id,[1,2,3,4]) || $number<=0){
             $this->error("参数错误");
         }
 
@@ -307,6 +293,12 @@ class Index extends Api
         if($user_id == $this->auth->id){
             $this->error("不允许自己给自己转账");
         }
+
+        $auth = new \app\common\library\Auth();
+        if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
+            $this->error(__('Paypwd is incorrect'));
+        }
+
         $rate_config = Db::name("egg_kind")->where("id",$kind_id)->value("rate_config");
         $rate = ceil($number/10)*$rate_config;
 

@@ -35,18 +35,9 @@ class Synthesis extends Api
         if(!in_array($kind_id,[2,3,4]) || $number<=0 || $number>20){    
             $this->error("参数错误");
         }
-
-        $u_where = [];
-        $u_where['status'] = 'normal';
-        $u_where['is_attestation'] = 1;
-        $u_where['id'] = $this->auth->id;
-        $user_info = Db::name("user")
-            ->field("id,serial_number,mobile")
-            ->where($u_where)
-            ->find();
-        if(empty($user_info)){
-            $this->error("账号无效或者未认证");
-        }
+        
+        $ur = new \app\api\controller\User;
+        $ur->isValidUser();
 
         $config = Db::name("egg_synthesis_config")->where("kind_id",$kind_id)->select();     
         $egg_list = Db::name("egg")
