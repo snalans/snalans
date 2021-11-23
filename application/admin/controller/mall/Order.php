@@ -1,29 +1,28 @@
 <?php
 
-namespace app\admin\controller\user;
+namespace app\admin\controller\mall;
 
 use app\common\controller\Backend;
-use think\Config;
 use think\Db;
 
 /**
- * 用户认证信息
+ * 商品管理
  *
  * @icon fa fa-circle-o
  */
-class Attestation extends Backend
+class Order extends Backend
 {
     
     /**
-     * Attestation模型对象
-     * @var \app\admin\model\user\Attestation
+     * Order模型对象
+     * @var \app\admin\model\mall\Order
      */
     protected $model = null;
 
     public function _initialize()
     {
         parent::_initialize();
-        $this->model = new \app\admin\model\user\Attestation;
+        $this->model = new \app\admin\model\mall\Order;
 
     }
 
@@ -56,14 +55,15 @@ class Attestation extends Backend
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
 
             $list = $this->model
-                    ->with(['user'])
+                    ->with(['user','selluser'])
                     ->where($where)
                     ->order($sort, $order)
                     ->paginate($limit);
 
             foreach ($list as $row) {
                 
-                $row->getRelation('user')->visible(['username','serial_number','nickname','mobile','is_attestation']);
+                $row->getRelation('user')->visible(['serial_number','mobile']);
+                $row->getRelation('selluser')->visible(['serial_number','mobile']);
             }
 
             $result = array("total" => $list->total(), "rows" => $list->items());
@@ -101,40 +101,8 @@ class Attestation extends Backend
                         $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
                         $row->validateFailException(true)->validate($validate);
                     }
-                    $note = "";
-                    if($params['is_attestation']==1){
-                        $note = "审核通过\n";
-                    }else if($params['is_attestation']==3){
-                        $note = "不通过\n";
-                    }else{
-                        $this->error('操作错误');
-                    }
-
-                    $params['note'] = date('Y-m-d H:i').":".$this->auth->username."审核结果：".$note.$row["note"];
-
-                    $rs = Db::name("user")->where("id",$row['user_id'])->update(['is_attestation'=>$params['is_attestation']]);
-                    if($rs && $params['is_attestation'] == 1){
-                        $number = Config::get("site.valid_number");
-                        $wh = [];
-                        $wh['user_id'] = $row['user_id'];
-                        $wh['kind_id'] = 1;
-                        $add_rs = Db::name("egg")->where($wh)->inc("hatchable",$number)->inc("frozen",$number)->update();
-                        $add_log = \app\admin\model\egg\Log::saveLog($row['user_id'],1,0,'',$number,"赠送体验蛋");
-                        $userLevelConfig = new \app\common\model\UserLevelConfig();
-                        $userLevelConfig->update_vip($row['user_id']);
-                        //上级发放有效值
-                        $wh = [];
-                        $wh['user_id'] = $row['user_id'];
-                        $wh['level']   = ['<=',3];
-                        $plist = Db::name("membership_chain")->where($wh)->order("level","ASC")->select();
-                        if(!empty($plist)){
-                            foreach ($plist as $key => $value) {                         
-                                $userLevelConfig->update_vip($value['ancestral_id']);
-                            }
-                        }
-                        // 直推奖励
-                        \app\admin\model\egg\RewardConfig::getAward($row['user_id']);
-                    }
+                    $params['status']       = 3;
+                    $params['send_time']    = time();
                     $result = $row->allowField(true)->save($params);
                     Db::commit();
                 } catch (ValidateException $e) {
@@ -158,5 +126,4 @@ class Attestation extends Backend
         $this->view->assign("row", $row);
         return $this->view->fetch();
     }
-
 }
