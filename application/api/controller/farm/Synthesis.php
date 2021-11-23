@@ -33,12 +33,26 @@ class Synthesis extends Api
         $number        = $this->request->post("number",1);
 
         if(!in_array($kind_id,[2,3,4]) || $number<=0 || $number>20){    
-            $this->error("合成目标蛋错误");
+            $this->error("参数错误");
         }
+
+        $u_where = [];
+        $u_where['status'] = 'normal';
+        $u_where['is_attestation'] = 1;
+        $u_where['id'] = $this->auth->id;
+        $user_info = Db::name("user")
+            ->field("id,serial_number,mobile")
+            ->where($u_where)
+            ->find();
+        if(empty($user_info)){
+            $this->error("账号无效或者未认证");
+        }
+
         $config = Db::name("egg_synthesis_config")->where("kind_id",$kind_id)->select();     
         $egg_list = Db::name("egg")
                     ->where("user_id",$this->auth->id)
-                    ->column("number","kind_id");          
+                    ->column("number","kind_id");    
+
         $flag = true;
         foreach ($config as $key => $value) {
             if((intval($value['number'])*intval($number)) > $egg_list[$value['ch_kind_id']]){
@@ -46,6 +60,7 @@ class Synthesis extends Api
                 break;
             }
         }
+
         if(!$flag){
             $this->error("合成失败,数量不够,请检查.");
         }
@@ -74,16 +89,15 @@ class Synthesis extends Api
             $inc_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>3,'order_sn'=>'','number'=>$number,'note'=>"合成获得可孵化的蛋",'createtime'=>time()]);
             if($dec_rs && $dec_log && $inc_rs && $inc_log){
                 Db::commit();
-                $this->success('合成成功!'); 
             }else{
                 Db::rollback();
-                $this->error('合成成功!'); 
-            }
-            
+                $this->error('合成失败!'); 
+            }            
         } catch (\Exception $e) {
             Db::rollback();
             $this->error($e->getMessage());
         }   
+        $this->success('合成成功!'); 
     }
 
 }
