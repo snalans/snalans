@@ -50,16 +50,6 @@ class Index extends Api
                     ->select();           
         if(!empty($egg_list)){
             foreach ($egg_list as $k => $val) {
-                $wh = [];
-                $wh['ah.kind_id'] = $val['kind_id'];
-                $wh['ah.user_id'] = $this->auth->id;
-                $wh['ah.status']  = 0;
-                $wh['ah.shape']   = 2;
-                $add_num = Db::name("egg_hatch")->alias("ah")
-                            ->join("egg_hatch_config hc","hc.kind_id=ah.kind_id","LEFT")
-                            ->where($wh)
-                            ->value("sum((ah.hatch_num-hc.hatch_cycle) * 1/hc.raw_cycle)");
-                $egg_list[$k]['number'] = $val['number'] + $add_num;
                 if($val['kind_id']==1){
                     $egg_list[$k]['hatchable'] = $val['number'];
                 }
