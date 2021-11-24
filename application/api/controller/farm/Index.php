@@ -156,6 +156,19 @@ class Index extends Api
 
                 if($egg['is_reap'] == 1){
                     $add_number = 1/$result['raw_cycle'];
+                    // ========5天后去除============
+                    $wh = [];
+                    $wh['user_id']  = $this->auth->id;
+                    $wh['type']     = 0;
+                    $wh['hatch_id'] = $egg['id'];
+                    $wh['number']   = ['<>',1];
+                    $wh['note']     = '喂养获得';
+                    $info = Db::name("egg_log_".date("Y_m"))->where($wh)->find();
+                    if(empty($info)){
+                        $cy = ($egg['hatch_num']-$result['hatch_cycle'])%$result['raw_cycle']*$add_number;
+                        $add_number = $cy==0?1:$add_number;
+                    }
+                    // ========5天后去除============
                     Db::startTrans();    
                     $flag = false;
                     $kind_id = $egg['kind_id'] == 4?5:$egg['kind_id'];
@@ -163,7 +176,7 @@ class Index extends Api
                     $wh['user_id'] = $this->auth->id;
                     $wh['kind_id'] = $kind_id;
                     $inc_number = Db::name("egg")->where($wh)->setInc('number',$add_number);
-                    $add_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>0,'order_sn'=>'','number'=>$add_number,'note'=>"喂养获得",'createtime'=>time()]);
+                    $add_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'hatch_id'=>$egg['id'],'type'=>0,'number'=>$add_number,'note'=>"喂养获得",'createtime'=>time()]);
 
                     if($data['hatch_num'] > $result['grow_cycle']){
                         $data['hatch_num']  = 0;
@@ -220,7 +233,7 @@ class Index extends Api
             Db::name("egg")->where($wh)->setDec('frozen');
         }
         //写入日志
-        $reduce_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$result['kind_id'],'type'=>0,'order_sn'=>'','number'=>-1,'note'=>"农场进行孵化",'createtime'=>time()]);
+        $reduce_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$result['kind_id'],'hatch_id'=>$egg_hatch_id,'type'=>0,'number'=>-1,'note'=>"农场进行孵化",'createtime'=>time()]);
         $data = [];
         $data['status']     = 0;
         $data['hatch_num']  = 1;
