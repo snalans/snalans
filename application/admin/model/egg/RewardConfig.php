@@ -47,7 +47,7 @@ class RewardConfig extends Model
             $wh['pid'] = $pid;
             $wh['status'] = 'normal';
             $wh['is_attestation'] = 1;
-            $number = Db::name("user")->where("pid",$pid)->count();
+            $number = Db::name("user")->where($wh)->count();
 
             $wh = [];
             $wh['number'] = ['<=',$number];

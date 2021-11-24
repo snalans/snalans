@@ -118,7 +118,7 @@ class Attestation extends Backend
                         $wh = [];
                         $wh['user_id'] = $row['user_id'];
                         $wh['kind_id'] = 1;
-                        $add_rs = Db::name("egg")->where($wh)->inc("hatchable",$number)->inc("frozen",$number)->update();
+                        $add_rs = Db::name("egg")->where($wh)->inc("number",$number)->inc("frozen",$number)->update();
                         $add_log = \app\admin\model\egg\Log::saveLog($row['user_id'],1,0,'',$number,"赠送体验蛋");
                         $userLevelConfig = new \app\common\model\UserLevelConfig();
                         $userLevelConfig->update_vip($row['user_id']);

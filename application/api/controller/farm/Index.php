@@ -13,7 +13,7 @@ class Index extends Api
 {
     protected $noNeedLogin = [];
     protected $noNeedRight = '*';
-    public    $alldate = 3600*24;   //签到周期
+    public    $alldate = 5;//3600*24;   //签到周期
 
     public function _initialize()
     {
@@ -60,6 +60,9 @@ class Index extends Api
                             ->where($wh)
                             ->value("sum((ah.hatch_num-hc.hatch_cycle) * 1/hc.raw_cycle)");
                 $egg_list[$k]['number'] = $val['number'] + $add_num;
+                if($val['kind_id']==1){
+                    $egg_list[$k]['hatchable'] = $val['number'];
+                }
             }
         }
         $data['egg_list'] = $egg_list;
@@ -147,7 +150,8 @@ class Index extends Api
             $data['uptime']     = time();
             if($egg['shape'] == 0){
                 if($egg['hatch_num'] >= $result['hatch_cycle']){
-                    $data['shape']  = 1;
+                    $data['shape']      = 1;
+                    $data['is_reap']    = 1;
                 }
                 $rs = Db::name("egg_hatch")->where("id",$egg['id'])->update($data);
                 if($rs){
@@ -159,17 +163,22 @@ class Index extends Api
                 if($egg['shape'] == 1){
                     $data['shape']  = 2;
                 }
+
                 if($egg['is_reap'] == 1){
+                    $add_number = 1/$result['raw_cycle'];
                     Db::startTrans();    
                     $flag = false;
                     $kind_id = $egg['kind_id'] == 4?5:$egg['kind_id'];
                     $wh = [];
                     $wh['user_id'] = $this->auth->id;
                     $wh['kind_id'] = $kind_id;
-                    $inc_number = Db::name("egg")->where($wh)->setInc('number');
-                    $add_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>0,'order_sn'=>'','number'=>1,'note'=>"喂养获得",'createtime'=>time()]);
-                    $data['is_reap'] = 0;
+                    $inc_number = Db::name("egg")->where($wh)->setInc('number',$add_number);
+                    $add_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>0,'order_sn'=>'','number'=>$add_number,'note'=>"喂养获得",'createtime'=>time()]);
+
                     if($data['hatch_num'] > $result['grow_cycle']){
+                        $data['hatch_num']  = 0;
+                        $data['shape']      = 5;
+                        $data['is_reap']    = 0;
                         $data['status']     = 1;
                         $flag = true;
                     }
@@ -182,8 +191,8 @@ class Index extends Api
                         $this->error(__('Harvest and feeding failed, please try again')); 
                     }                    
                 }else{                    
-                    $reap = $data['hatch_num']-$result['hatch_cycle']-$result['raw_cycle'];
-                    if($reap >= 0 && ($reap % $result['raw_cycle']) == 0){
+                    $reap = $data['hatch_num']-$result['hatch_cycle'];
+                    if($reap >= 0){
                         $data['is_reap'] = 1;
                     }
                     $rs = Db::name("egg_hatch")->where("id",$egg['id'])->update($data);
