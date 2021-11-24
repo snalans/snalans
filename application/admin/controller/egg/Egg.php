@@ -96,9 +96,6 @@ class Egg extends Backend
                     $this->error('不能为0的数值');
                 }
                 if($params['type']==1){
-                    if(strpos($params['change_number'],".") !== false){
-                        $this->error('变动数值需为整数');
-                    }
                     $new_number = $row['number']+$params['change_number'];
                     $params['number'] = $new_number;
                 }else{
