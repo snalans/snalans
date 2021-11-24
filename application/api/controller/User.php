@@ -725,21 +725,4 @@ class User extends Api
         }        
         $this->success('',$list);
     }
-
-    /**
-     * 判断会员有效
-     * @ApiInternal
-     *
-     */
-    public function isValidUser()
-    {
-        $wh = [];
-        $wh['id']              = $this->auth->id;
-        $wh['status']          = 'normal';
-        $wh['is_attestation']  = 1;
-        $user_info = Db::name("user")->field("id,mobile")->where($wh)->find();
-        if(empty($user_info)){
-            $this->error("账号无效或者未认证");
-        }
-    }
 }

@@ -174,6 +174,10 @@ class Order extends Api
             $this->error("参数不正确,请检查");
         }
 
+        if($this->auth->status != 'normal' || $this->auth->is_attestation != 1){
+            $this->error("账号无效或者未认证");
+        }
+        
         $wh = [];
         $wh['order_sn']     = $order_sn;
         $wh['sell_user_id'] = $this->auth->id;
@@ -338,8 +342,9 @@ class Order extends Api
             $this->error("商品库存不够");
         }
 
-        $ur = new \app\api\controller\User;
-        $ur->isValidUser();
+        if($this->auth->status != 'normal' || $this->auth->is_attestation != 1){
+            $this->error("账号无效或者未认证");
+        }
 
         if($info['user_id'] == $this->auth->id){
             $this->error("不能购买给自己的产品");

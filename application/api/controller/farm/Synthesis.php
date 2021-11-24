@@ -36,8 +36,9 @@ class Synthesis extends Api
             $this->error("参数错误");
         }
         
-        $ur = new \app\api\controller\User;
-        $ur->isValidUser();
+        if($this->auth->status != 'normal' || $this->auth->is_attestation != 1){
+            $this->error("账号无效或者未认证");
+        }
 
         $config = Db::name("egg_synthesis_config")->where("kind_id",$kind_id)->select();     
         $egg_list = Db::name("egg")

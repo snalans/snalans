@@ -246,6 +246,10 @@ class Product extends Api
             $this->error("参数不正确,请检查");
         }
 
+        if($this->auth->status != 'normal' || $this->auth->is_attestation != 1){
+            $this->error("账号无效或者未认证");
+        }
+
         $wh = [];
         $wh['user_id'] = $this->auth->id;
         $wh['status']  = ['<>',-1];
@@ -253,7 +257,6 @@ class Product extends Api
         if($num > 10){
             $this->error("不能多于10个商品");
         }
-
 
         $data = [];
         $data['title']          = $title;

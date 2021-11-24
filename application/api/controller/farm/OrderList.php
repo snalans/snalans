@@ -205,7 +205,11 @@ class OrderList extends Api
             if($num < 6 || $num > 200){
                 $this->error("理由字符数需要在6~200之间");
             }
-        } 
+        }         
+        
+        if($this->auth->status != 'normal' || $this->auth->is_attestation != 1){
+            $this->error("账号无效或者未认证");
+        }
 
         $wh = [];
         $wh['order_sn']     = $order_sn;
