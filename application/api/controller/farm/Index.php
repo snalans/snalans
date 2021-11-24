@@ -166,7 +166,7 @@ class Index extends Api
                     $info = Db::name("egg_log_".date("Y_m"))->where($wh)->find();
                     if(empty($info)){
                         $cy = ($egg['hatch_num']-$result['hatch_cycle'])%$result['raw_cycle']*$add_number;
-                        $add_number = $cy==0?1:$add_number;
+                        $add_number = $cy==0?1:$cy*$add_number;
                     }
                     // ========5天后去除============
                     Db::startTrans();    
