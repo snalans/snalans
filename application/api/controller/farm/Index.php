@@ -230,6 +230,7 @@ class Index extends Api
             $reduce_rs = Db::name("egg")->where($wh)->setDec('hatchable');
         }
         if($result['frozen'] > 0){
+            $wh['frozen']      = ['>',0];
             Db::name("egg")->where($wh)->setDec('frozen');
         }
         //写入日志
