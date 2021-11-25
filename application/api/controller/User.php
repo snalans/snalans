@@ -54,7 +54,7 @@ class User extends Api
 
         if($result['is_attestation'] == 0){
             $result['title'] = '普通用户';
-            $result['is_attestation_str'] = "未认证";
+            $result['is_attestation_str'] = "实名认证";
         }else if($result['is_attestation'] == 1){
             $result['is_attestation_str'] = "认证成功";
         }else if($result['is_attestation'] == 2){
