@@ -24,7 +24,7 @@ class Log extends Api
      * 获取有效值日志
      * 
      * @ApiMethod (GET)
-     * @ApiParams   (name="is_team", type="int", description="是否团队有效值 1=是 0=不是")
+     * @ApiParams   (name="is_team", type="int", description="0=个人有效值 1=团队有效值")
      * @ApiParams   (name="page", type="int", description="页码")
      * @ApiParams   (name="per_page", type="int", description="数量")
      * 
