@@ -542,7 +542,15 @@ class User extends Api
                     ->where("user_id",$this->auth->id)
                     ->find();
         if(!empty($result)){
-            $result['remark'] = $result['is_attestation']==1?"审核通过":"审核不通过";
+            if($result['is_attestation'] == 0){
+                $result['remark'] = "未认证";
+            }else if($result['is_attestation'] == 1){
+                $result['remark'] = "认证成功";
+            }else if($result['is_attestation'] == 2){
+                $result['remark'] = "待审核";
+            }else {
+                $result['remark'] = "认证失败";
+            }
         }
         $this->success('',$result);
     }
