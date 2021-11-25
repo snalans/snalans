@@ -41,6 +41,7 @@ class User extends Api
      * @ApiReturnParams   (name="valid_number", type="integer", description="个人有效值")
      * @ApiReturnParams   (name="total_valid_number", type="integer", description="团队有效值")
      * @ApiReturnParams   (name="is_paypwd", type="integer", description="是否配置过密码 1=是 0=否")
+     * @ApiReturnParams   (name="is_attestation_str", type="string", description="认证情况")
      */
     public function index()
     {
@@ -51,8 +52,15 @@ class User extends Api
                     ->find();
         $result['avatar'] = $result['avatar'] ?  cdnurl($result['avatar'], true) : letter_avatar($result['nickname']);
 
-        if($result['is_attestation'] != 1){
+        if($result['is_attestation'] == 0){
             $result['title'] = '普通用户';
+            $result['is_attestation_str'] = "未认证";
+        }else if($result['is_attestation'] == 1){
+            $result['is_attestation_str'] = "认证成功";
+        }else if($result['is_attestation'] == 2){
+            $result['is_attestation_str'] = "待审核";
+        }else {
+            $result['is_attestation_str'] = "认证失败";
         }
         $wh = [];
         $wh['c.ancestral_id'] = $this->auth->id;

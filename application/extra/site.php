@@ -55,6 +55,6 @@ return array (
   'is_open' => '1',
   'order_start_time' => '9',
   'order_end_time' => '24',
-  'valid_number' => '3',
+  'valid_number' => '1',
   'invite_url' => 'http://h5.snalans.com',
 );
