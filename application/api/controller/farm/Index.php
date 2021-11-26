@@ -154,7 +154,7 @@ class Index extends Api
                     $data['shape']  = 2;
                 }
 
-                if($egg['is_reap'] == 1){
+                if($egg['is_reap'] == 1 || true){
                     $add_number = 1/$result['raw_cycle'];
                     // ========5天后去除============
                     $wh = [];
