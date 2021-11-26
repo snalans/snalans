@@ -51,7 +51,7 @@ class Index extends Api
         if(!empty($egg_list)){
             foreach ($egg_list as $k => $val) {
                 if($val['kind_id']==1){
-                    $egg_list[$k]['hatchable'] = $val['number'];
+                    $egg_list[$k]['hatchable'] = intval($val['number']);
                 }
             }
         }
