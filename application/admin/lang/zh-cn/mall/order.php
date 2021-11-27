@@ -19,6 +19,7 @@ return [
     'Send_time'          => '发货时间',
     'Received_time'      => '收货时间',
     'Add_time'           => '下单时间',
+    'Order_sn'           => '订单号',
     'User.serial_number' => '会员编号或邀请码',
     'User.mobile'        => '手机号'
 ];

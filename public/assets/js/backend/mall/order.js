@@ -8,6 +8,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     index_url: 'mall/order/index' + location.search,
                     add_url: 'mall/order/add',
                     edit_url: 'mall/order/edit',
+                    edit_appeal: 'mall/order/appeal',
                     del_url: 'mall/order/del',
                     multi_url: 'mall/order/multi',
                     import_url: 'mall/order/import',
@@ -41,9 +42,17 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'address', title: __('Address'), operate: false},
                         {field: 'express_name', title: __('Express_name'), operate: 'LIKE'},
                         {field: 'express_no', title: __('Express_no'), operate: 'LIKE'}, 
-                        {field: 'status', title: __('Status'), operate: false, formatter: Table.api.formatter.normal, searchList: {0: '待付款',1: '完成',2: '待发货',3: '待收货',5: '申请退款',6: '确认退款'}},
+                        {field: 'status', title: __('Status'), operate: false, formatter: Table.api.formatter.normal, searchList: {0: '待付款',1: '完成',2: '待发货',3: '待收货',5: '申请退款',6: '确认退款',7: '申诉'}},
                         {field: 'add_time', title: __('Add_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'operate', title: __('Operate'), table: table, buttons:[
+                            {name: 'appeal', text: '审核', title: '审核', icon: 'fa fa-star', classname: 'btn btn-xs btn-success btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_appeal
+                                ,visible:function(row){
+                                    if(row.status == 7){ 
+                                        return true; 
+                                    }
+                                },
+                                extend: 'data-area=\'["500px", "450px"]\''
+                            },
                             {name: 'edit', text: '发货', title: '发货', icon: 'fa fa-truck', classname: 'btn btn-xs btn-info btn-editone btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url,
                                 hidden:function(row){
                                     if(row.status==2 && row.sell_user_id==0){
@@ -65,6 +74,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Controller.api.bindevent();
         },
         edit: function () {
+            Controller.api.bindevent();
+        },
+        appeal: function () {
             Controller.api.bindevent();
         },
         api: {
