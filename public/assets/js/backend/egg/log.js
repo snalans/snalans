@@ -43,7 +43,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'eggkind.name', title: __('Eggkind.name'), operate: 'LIKE'},
                         {field: 'type', title: __('Type'), formatter: Table.api.formatter.normal, searchList: {0: '农场', 1: '订单', 2: '互转', 3: '合成', 4: '管理员操作', 5: '积分兑换', 9: '手续费',10:'农场主等级升级'}},
                         {field: 'order_sn', title: __('Order_sn'), operate: 'LIKE'},
+                        {field: 'before', title: '变动前', operate: false},
                         {field: 'number', title: __('Number'), operate: false},
+                        {field: 'after', title: '变动后', operate: false},
                         {field: 'note', title: __('Note'), operate: false},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                     ]

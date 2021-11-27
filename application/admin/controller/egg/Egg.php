@@ -122,7 +122,7 @@ class Egg extends Backend
                     $result = $row->allowField(true)->save($params);
                     $note = "管理员：".$this->auth->username." ".$params['note'];
                     if($params['type']==1){
-                        $log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$row['user_id'],'kind_id'=>$row['kind_id'],'type'=>4,'order_sn'=>'','number'=>$params['change_number'],'note'=>$note,'createtime'=>time()]);
+                        $log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$row['user_id'],'kind_id'=>$row['kind_id'],'type'=>4,'number'=>$params['change_number'],'before'=>($new_number-$params['change_number']),'after'=>$new_number,'note'=>$note,'createtime'=>time()]);
                     }else{
                         $log = Db::name("egg_score_log")->insert(['user_id'=>$row['user_id'],'kind_id'=>$row['kind_id'],'type'=>3,'score'=>$params['change_number'],'memo'=>$note,'createtime'=>time()]);
                     }

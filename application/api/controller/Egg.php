@@ -453,10 +453,10 @@ class Egg extends Api
             $add_rs = Db::name("egg")->where($egg_where)->dec('number',$total_egg)->update();
 
             //蛋日志
-            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$order['kind_id'],1,$order_sn,'-'.$order['number'],"出售");
+            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$order['kind_id'],1,$order_sn,'-'.$order['number'],$egg_num,($egg_num-$order['number']),"出售");
 
             //蛋手续费
-            $log_fee_add = \app\admin\model\egg\Log::saveLog($user_id,$order['kind_id'],9,$order['order_sn'],'-'.$order['rate'],"农贸市场交易手续费");
+            $log_fee_add = \app\admin\model\egg\Log::saveLog($user_id,$order['kind_id'],9,$order['order_sn'],'-'.$order['rate'],($egg_num-$order['number']),($egg_num-$total_egg),"农贸市场交易手续费");
 
             if ($re == false || $add_rs == false ||  $log_add == false || $log_fee_add == false ) {
                 DB::rollback();
@@ -504,7 +504,7 @@ class Egg extends Api
             ->where($order_where)
             ->find();
 
-        if(count($order)== 0  || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0){
+        if(empty($order) || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0){
             $this->error("无效订单");
         }
 
@@ -526,6 +526,7 @@ class Egg extends Api
         $data['attestation_image'] = $charge_code['image'];
         $data['attestation_account'] = $charge_code['account'];
         $data['pay_img'] = $pay_img;
+        $data['pay_time'] = time();
         $data['status'] = 2;
         $re = Db::name("egg_order")->where('order_sn',$order_sn)->data($data)->update();
         if ($re == true){
@@ -566,6 +567,7 @@ class Egg extends Api
             //更新订单
             $data =array();
             $data['status'] = 1;
+            $data['over_time'] = time();
             $re = Db::name("egg_order")->where('order_sn',$order_sn)->data($data)->update();
 
             //蛋给买家
@@ -573,10 +575,11 @@ class Egg extends Api
                 'user_id'=>array('eq',$order['buy_user_id']),
                 'kind_id'=>array('eq',$order['kind_id']),
             );
+            $before = Db::name("egg")->where($egg_where)->value('number');
             $add_rs = Db::name("egg")->where($egg_where)->inc('number',$order['number'])->update();
 
             //买家获得蛋日志
-            $log_add = \app\admin\model\egg\Log::saveLog($order['buy_user_id'],$order['kind_id'],1,$order_sn,$order['number'],"农场市场卖家确认支付");
+            $log_add = \app\admin\model\egg\Log::saveLog($order['buy_user_id'],$order['kind_id'],1,$order_sn,$order['number'],$before,($before+$order['number']),"农场市场卖家确认支付");
 
             //增加买家有效值
 //            $egg_info = Db::name("egg_kind")
@@ -736,10 +739,11 @@ class Egg extends Api
                         'user_id'=>array('eq',$v['buy_user_id']),
                         'kind_id'=>array('eq',$v['kind_id']),
                     );
+                    $before = Db::name("egg")->where($egg_where)->value('number');
                     $add_rs = Db::name("egg")->where($egg_where)->inc('number',$v['number'])->update();
 
                     //买家获得蛋日志
-                    $log_add = \app\admin\model\egg\Log::saveLog($v['buy_user_id'],$v['kind_id'],1,$v['order_sn'],$v['number'],"农场市场卖家确认支付");
+                    $log_add = \app\admin\model\egg\Log::saveLog($v['buy_user_id'],$v['kind_id'],1,$v['order_sn'],$v['number'],$before,($before+$v['number']),"农场市场卖家确认支付");
 
 
                     //增加买家有效值
@@ -902,7 +906,7 @@ class Egg extends Api
             $add_rs = Db::name("egg")->where($egg_where)->dec('number',$number)->update();
 
             //蛋日志
-            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$kind_id,1,$order_sn,'-'.$number,"出售");
+            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$kind_id,1,$order_sn,'-'.$number,$egg_num,($egg_num-$number),"出售");
 
             if ($re == false || $res == false || $add_rs==false || $log_add==false ) {
                 DB::rollback();
@@ -979,13 +983,14 @@ class Egg extends Api
                         'user_id'=>array('eq',$v['sell_user_id']),
                         'kind_id'=>array('eq',$v['kind_id'])
                     );
+                    $before = Db::name("egg")->where($egg_where)->value('number');
                     $add_rs = Db::name("egg")->where($egg_where)->inc('number',$number)->update();
 
                     //卖家出售蛋返还日志
-                    $log_add = \app\admin\model\egg\Log::saveLog($v['sell_user_id'],$v['kind_id'],1,$v['order_sn'],$v['number'],"超时未付款返还出售");
+                    $log_add = \app\admin\model\egg\Log::saveLog($v['sell_user_id'],$v['kind_id'],1,$v['order_sn'],$v['number'],$before,($before+$v['number']),"超时未付款返还出售");
 
                     //卖家手续费蛋返还日志
-                    $log_fee = \app\admin\model\egg\Log::saveLog($v['sell_user_id'],$v['kind_id'],9,$v['order_sn'],$v['rate'],"超时未付款返还手续费");
+                    $log_fee = \app\admin\model\egg\Log::saveLog($v['sell_user_id'],$v['kind_id'],9,$v['order_sn'],$v['rate'],($before+$v['number']),($before+$number),"超时未付款返还手续费");
 
 
                     if ($re == false || $add_rs == false ||  $log_add == false || $log_fee = false || $res_user == false || $res_user_update == false) {

@@ -96,6 +96,10 @@ class Order extends Backend
                         $row->validateFailException(true)->validate($validate);
                     }
                     $number = 0;
+                    $wh = [];
+                    $wh['user_id'] = $user_id;
+                    $wh['kind_id'] = $row['kind_id'];
+                    $before = Db::name("egg")->where($wh)->value('number');
                     if($params['status'] == 1){
                         $note = "申诉通过";
                         $number = $row['number'];
@@ -105,16 +109,14 @@ class Order extends Backend
                         $number = $row['number'] + $row['rate'];
                         $user_id = $row['sell_user_id'];
                         //写入日志
-                        $log_re = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>9,'order_sn'=>$row['order_sn'],'number'=>$row['rate'],'note'=>$note.",返还手续费",'createtime'=>time()]);
+                        $log_re = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>9,'order_sn'=>$row['order_sn'],'number'=>$row['rate'],'before'=>$before,'after'=>($before+$row['rate']),'note'=>$note.",返还手续费",'createtime'=>time()]);
+                        $before = $before+$row['rate'];
                     }else{
                         $this->error("无效操作");
                     }
-                    $wh = [];
-                    $wh['user_id'] = $user_id;
-                    $wh['kind_id'] = $row['kind_id'];
                     $inc_rs = Db::name("egg")->where($wh)->setInc('number',$number);
                     //写入日志
-                    $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>1,'order_sn'=>$row['order_sn'],'number'=>$row['number'],'note'=>$note,'createtime'=>time()]);
+                    $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>1,'order_sn'=>$row['order_sn'],'number'=>$row['number'],'before'=>$before,'after'=>($before+$row['number']),'note'=>$note,'createtime'=>time()]);
 
                     $result = $row->allowField(true)->save($params);
                     if ($result !== false && $inc_rs && $log_rs && $log_re) {  

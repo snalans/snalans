@@ -183,7 +183,7 @@ class Index extends Api
             $wh['kind_id']      = $kind_id;
             $num_rs = Db::name("egg")->where($wh)->inc("number",$number)->dec("point",$score)->update();
             //写入日志
-            $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>5,'order_sn'=>'','number'=>$number,'note'=>"蛋积分兑换",'createtime'=>time()]);
+            $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>5,'number'=>$number,'before'=>$info['number'],'after'=>($info['number']+$number),'note'=>"蛋积分兑换",'createtime'=>time()]);
             $score_log = Db::name("egg_score_log")->insert(['user_id' => $this->auth->id, 'score' => -$score, 'kind_id' => $kind_id, 'type'=>2,'memo' => "积分兑换:".$number."个".$kinfo['name'],'createtime'=>time()]);
             $dec = Db::name('egg_kind')->where("id",$kind_id)->dec("stock",$number)->update();
             if($num_rs && $log_rs && $score_log && $dec){

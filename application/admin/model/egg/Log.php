@@ -35,7 +35,7 @@ class Log extends Model
      * user_id :用户id  kind_id ：蛋类型 类型 type : 0=农场 1=订单 2=互转 3=合成 4=管理员操作 9=手续费
      * order_sn : 订单号 number : 数量 note : 备注
      */
-    public static function saveLog($user_id,$kind_id,$type=0,$order_sn='',$number=0,$note='')
+    public static function saveLog($user_id,$kind_id,$type=0,$order_sn='',$number=0,$before=0,$after=0,$note='')
     {
         $data = [];
         $data['user_id']    = $user_id;
@@ -43,6 +43,8 @@ class Log extends Model
         $data['type']       = $type;
         $data['order_sn']   = $order_sn;
         $data['number']     = $number;
+        $data['before']     = $before;
+        $data['after']      = $after;
         $data['note']       = $note;
         $data['createtime'] = time();
         $rs = Db::name("egg_log_".date("Y_m"))->insert($data);

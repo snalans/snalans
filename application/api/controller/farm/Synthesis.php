@@ -71,14 +71,16 @@ class Synthesis extends Api
                 if(!$dec_rs){
                     break;
                 }
-                $dec_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['ch_kind_id'],'type'=>3,'order_sn'=>'','number'=>-$dec_num,'note'=>"合成扣减",'createtime'=>time()]);
+                $before = $egg_list[$value['ch_kind_id']];
+                $dec_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['ch_kind_id'],'type'=>3,'number'=>-$dec_num,'before'=>$before,'after'=>($before-$dec_num),'note'=>"合成扣减",'createtime'=>time()]);
             }
 
             $wh = [];
             $wh['user_id'] = $this->auth->id;
             $wh['kind_id'] = $kind_id;
+            $before = Db::name("egg")->where($wh)->value('hatchable');
             $inc_rs = Db::name("egg")->where($wh)->setInc('hatchable',$number); 
-            $inc_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>3,'order_sn'=>'','number'=>$number,'note'=>"合成获得可孵化的蛋",'createtime'=>time()]);
+            $inc_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>3,'number'=>$number,'before'=>$before,'after'=>($before+$number),'note'=>"合成获得可孵化的蛋",'createtime'=>time()]);
             if($dec_rs && $dec_log && $inc_rs && $inc_log){
                 Db::commit();
             }else{
