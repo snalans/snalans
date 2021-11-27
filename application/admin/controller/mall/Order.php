@@ -162,16 +162,13 @@ class Order extends Backend
                     }
                     $number = 0;
                     if($params['status'] == 1){
-                        $note = "申诉通过";
+                        $note = $row['note']."\n 申诉通过";
                         $number = $row['number'];
-                        $user_id = $row['buy_user_id'];
-                    }else if($params['status'] == 6){
-                        $note = " 申诉不通过. ";
-                        $number = $row['number'] + $row['rate'];
                         $user_id = $row['sell_user_id'];
-                        //写入日志
-                        $log_re = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>9,'order_sn'=>$row['order_sn'],'number'=>$row['rate'],'before'=>$before,'after'=>($before+$row['rate']),'note'=>$note.",返还手续费",'createtime'=>time()]);
-                        $before = $before+$row['rate'];
+                    }else if($params['status'] == 6){
+                        $note = $row['note']."\n 申诉不通过";
+                        $number = $row['number'] + $row['rate'];
+                        $user_id = $row['buy_user_id'];
                     }else{
                         $this->error("无效操作");
                     }
@@ -182,6 +179,11 @@ class Order extends Backend
                     $inc_rs = Db::name("egg")->where($wh)->setInc('number',$number);
                     //写入日志
                     $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>1,'order_sn'=>$row['order_sn'],'number'=>$row['number'],'before'=>$before,'after'=>($before+$row['number']),'note'=>$note,'createtime'=>time()]);
+
+                    if($params['status'] == 6 && $row['rate']>0){         
+                        //手续费写入日志
+                        $log_re = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>9,'order_sn'=>$row['order_sn'],'number'=>$row['rate'],'before'=>($before+$row['number']),'after'=>($before+$number),'note'=>$note.",返还手续费",'createtime'=>time()]);
+                    }
 
                     $result = $row->allowField(true)->save($params);
                     if ($result !== false && $inc_rs && $log_rs && $log_re) {  
