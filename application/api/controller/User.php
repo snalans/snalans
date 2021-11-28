@@ -472,6 +472,7 @@ class User extends Api
      * 
      * @ApiReturnParams   (name="avatar", type="string", description="用户头像")
      * @ApiReturnParams   (name="serial_number", type="string", description="用户编号")
+     * @ApiReturnParams   (name="valid_number", type="string", description="有效值")
      * @ApiReturnParams   (name="title", type="string", description="等级名称")
      * @ApiReturnParams   (name="is_attestation", type="string", description="是否认证 0=否 1=是 2=待审核 3=失败")
      * @ApiReturnParams   (name="team_number", type="int", description="下级-直推人数")
@@ -483,7 +484,7 @@ class User extends Api
         $wh = [];
         $wh['u.pid']            = $this->auth->id;
         $list = Db::name("user")->alias("u")
-                ->field("u.id,u.avatar,u.nickname,u.serial_number,l.title,u.is_attestation,u.createtime")
+                ->field("u.id,u.avatar,u.nickname,u.serial_number,l.title,u.valid_number,u.is_attestation,u.createtime")
                 ->join("user_level_config l","l.level=u.level","LEFT")
                 ->where($wh)
                 ->order("u.createtime desc")
