@@ -54,18 +54,14 @@ class Log extends Backend
             }
             $filter = json_decode($this->request->get('filter'),true);
             $op = json_decode($this->request->get('op'),true);
-            $stime = strtotime(date("Y_m"));
-            $etime = strtotime("+1 month",$stime);
             $table = "egg_log_".date("Y_m");
             if(isset($filter['month'])){
-                $stime = strtotime($filter['month']);
-                $etime = strtotime("+1 month",$stime);
                 $table = "egg_log_".date("Y_m",strtotime($filter['month']));
                 unset($filter['month']);
                 unset($op['month']);
-                $this->request->get(['filter'=>json_encode($filter)]);
-                $this->request->get(['filter'=>json_encode($op)]);
             }
+            $this->request->get(['filter'=>json_encode($filter)]);
+            $this->request->get(['op'=>json_encode($op)]);
 
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
 

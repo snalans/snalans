@@ -34,7 +34,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'number', title: __('Number'), operate:false, sortable: true},
                         {field: 'hatchable', title: __('Hatchable'), operate:false},
                         {field: 'frozen', title: __('Frozen'), operate:false},
-                        {field: 'point', title: __('Point'), operate:false},
+                        {field: 'point', title: __('Point'), operate:false, sortable: true},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
