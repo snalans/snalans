@@ -35,6 +35,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'price', title: __('Price'), operate:false},
                         {field: 'eggkind.name', title: "蛋类型", operate: false},
                         {field: 'stock', title: __('Stock'), operate: false},
+                        {field: 'sell_num', title: __('Sell_num'), operate: false},
+                        {field: 'virtual_sales', title: __('Virtual_sales'), operate: false},
                         {field: 'status', title: __('Status'), operate: false, formatter: Table.api.formatter.normal, searchList: {1: '上架',0: '下架',2: '待审核'}},
                         {field: 'weigh', title: __('Weigh'), operate: false},
                         {field: 'add_time', title: __('Add_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
