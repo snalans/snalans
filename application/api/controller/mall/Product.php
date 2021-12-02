@@ -33,7 +33,8 @@ class Product extends Api
      * @ApiReturnParams   (name="id", type="int", description="商品ID")
      * @ApiReturnParams   (name="title", type="string", description="商品名称")
      * @ApiReturnParams   (name="images", type="string", description="商品图片")     
-     * @ApiReturnParams   (name="sell_num", type="integer", description="商品销量")      
+     * @ApiReturnParams   (name="sell_num", type="integer", description="商品销量") 
+     * @ApiReturnParams   (name="egg_image", type="string", description="蛋图片")       
      * @ApiReturnParams   (name="price_str", type="integer", description="产品价格")     
      * @ApiReturnParams   (name="price", type="integer", description="支付价格")        
      * @ApiReturnParams   (name="name", type="string", description="蛋名称")         
@@ -60,7 +61,7 @@ class Product extends Api
             $wh['p.title'] = ['like',"%".$title."%"];
         }
         $list = Db::name("mall_product")->alias('p')
-                    ->field("p.id,p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,u.avatar,u.serial_number")
+                    ->field("p.id,p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,u.avatar,u.serial_number")
                     ->join("user u","u.id=p.user_id","LEFT")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
                     ->where($wh)
@@ -89,6 +90,7 @@ class Product extends Api
      * @ApiReturnParams   (name="title", type="integer", description="商品名称")
      * @ApiReturnParams   (name="images", type="string", description="商品图片")     
      * @ApiReturnParams   (name="sell_num", type="integer", description="商品销量")  
+     * @ApiReturnParams   (name="egg_image", type="string", description="蛋图片")    
      * @ApiReturnParams   (name="price_str", type="integer", description="产品价格")       
      * @ApiReturnParams   (name="price", type="integer", description="支付价格")       
      * @ApiReturnParams   (name="name", type="string", description="蛋名称")         
@@ -103,7 +105,7 @@ class Product extends Api
         $id = $this->request->post("id","");
         
         $info = Db::name("mall_product")->alias('p')
-                    ->field("p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,p.stock,p.content,p.add_time,u.avatar,u.serial_number")
+                    ->field("p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,p.stock,p.content,p.add_time,u.avatar,u.serial_number")
                     ->join("user u","u.id=p.user_id","LEFT")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
                     ->where("p.id",$id)
