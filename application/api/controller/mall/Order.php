@@ -424,7 +424,7 @@ class Order extends Api
             $wh['id']       = $id;
             $wh['status']   = 1;
             $wh['stock']    = ['>=',$number];
-            $prs = Db::name("mall_product")->where($wh)->setDec('stock',$number);
+            $prs = Db::name("mall_product")->where($wh)->dec('stock',$number)->inc("sell_num",$number)->update();
             if ($rs && $add_rs && $log && $log_fee && $prs) {
                 DB::commit();
                 // 通知卖家

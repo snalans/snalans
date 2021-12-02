@@ -157,17 +157,17 @@ class Index extends Api
                 if($egg['is_reap'] == 1 || true){
                     $add_number = 1/$result['raw_cycle'];
                     // ========5天后去除============
-                    $wh = [];
-                    $wh['user_id']  = $this->auth->id;
-                    $wh['type']     = 0;
-                    $wh['hatch_id'] = $egg['id'];
-                    $wh['number']   = ['<>',1];
-                    $wh['note']     = '喂养获得';
-                    $info = Db::name("egg_log_".date("Y_m"))->where($wh)->find();
-                    if(empty($info)){
-                        $cy = ($egg['hatch_num']-$result['hatch_cycle'])%$result['raw_cycle']*$add_number;
-                        $add_number = $cy==0?1:$cy;
-                    }
+                    // $wh = [];
+                    // $wh['user_id']  = $this->auth->id;
+                    // $wh['type']     = 0;
+                    // $wh['hatch_id'] = $egg['id'];
+                    // $wh['number']   = ['<>',1];
+                    // $wh['note']     = '喂养获得';
+                    // $info = Db::name("egg_log_".date("Y_m"))->where($wh)->find();
+                    // if(empty($info)){
+                    //     $cy = ($egg['hatch_num']-$result['hatch_cycle'])%$result['raw_cycle']*$add_number;
+                    //     $add_number = $cy==0?1:$cy;
+                    // }
                     // ========5天后去除============
                     Db::startTrans();    
                     $flag = false;

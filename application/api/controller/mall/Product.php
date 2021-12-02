@@ -32,7 +32,8 @@ class Product extends Api
      * 
      * @ApiReturnParams   (name="id", type="int", description="商品ID")
      * @ApiReturnParams   (name="title", type="string", description="商品名称")
-     * @ApiReturnParams   (name="images", type="string", description="商品图片")       
+     * @ApiReturnParams   (name="images", type="string", description="商品图片")     
+     * @ApiReturnParams   (name="sell_num", type="integer", description="商品销量")      
      * @ApiReturnParams   (name="price_str", type="integer", description="产品价格")     
      * @ApiReturnParams   (name="price", type="integer", description="支付价格")        
      * @ApiReturnParams   (name="name", type="string", description="蛋名称")         
@@ -59,7 +60,7 @@ class Product extends Api
             $wh['p.title'] = ['like',"%".$title."%"];
         }
         $list = Db::name("mall_product")->alias('p')
-                    ->field("p.id,p.title,p.images,p.price,ek.name,u.avatar,u.serial_number")
+                    ->field("p.id,p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,u.avatar,u.serial_number")
                     ->join("user u","u.id=p.user_id","LEFT")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
                     ->where($wh)
@@ -86,7 +87,8 @@ class Product extends Api
      * @ApiParams   (name="id", type="integer", description="商品ID") 
      * 
      * @ApiReturnParams   (name="title", type="integer", description="商品名称")
-     * @ApiReturnParams   (name="images", type="string", description="商品图片")    
+     * @ApiReturnParams   (name="images", type="string", description="商品图片")     
+     * @ApiReturnParams   (name="sell_num", type="integer", description="商品销量")  
      * @ApiReturnParams   (name="price_str", type="integer", description="产品价格")       
      * @ApiReturnParams   (name="price", type="integer", description="支付价格")       
      * @ApiReturnParams   (name="name", type="string", description="蛋名称")         
@@ -101,7 +103,7 @@ class Product extends Api
         $id = $this->request->post("id","");
         
         $info = Db::name("mall_product")->alias('p')
-                    ->field("p.title,p.images,p.price,ek.name,p.stock,p.content,p.add_time,u.avatar,u.serial_number")
+                    ->field("p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,p.stock,p.content,p.add_time,u.avatar,u.serial_number")
                     ->join("user u","u.id=p.user_id","LEFT")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
                     ->where("p.id",$id)
@@ -139,6 +141,7 @@ class Product extends Api
      * @ApiReturnParams   (name="id", type="int", description="商品ID")
      * @ApiReturnParams   (name="title", type="string", description="商品名称")
      * @ApiReturnParams   (name="images", type="string", description="商品图片")      
+     * @ApiReturnParams   (name="sell_num", type="integer", description="商品销量")   
      * @ApiReturnParams   (name="price", type="integer", description="支付价格") 
      * @ApiReturnParams   (name="name", type="string", description="蛋名称")          
      * @ApiReturnParams   (name="price_str", type="integer", description="产品价格")       
@@ -154,7 +157,7 @@ class Product extends Api
         $wh['p.status']  = $status;
 
         $list = Db::name("mall_product")->alias('p')
-                    ->field("p.id,p.title,p.images,p.price,ek.name")
+                    ->field("p.id,p.title,p.images,p.sell_num,p.price,ek.name")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
                     ->where($wh)
                     ->order("p.add_time desc")
@@ -179,7 +182,8 @@ class Product extends Api
      * @ApiReturnParams   (name="images", type="string", description="商品图片")      
      * @ApiReturnParams   (name="kind_id", type="integer", description="蛋类型ID")       
      * @ApiReturnParams   (name="price", type="integer", description="支付价格")       
-     * @ApiReturnParams   (name="stock", type="integer", description="商品库存")       
+     * @ApiReturnParams   (name="stock", type="integer", description="商品库存")      
+     * @ApiReturnParams   (name="sell_num", type="integer", description="商品销量")     
      * @ApiReturnParams   (name="status", type="integer", description="状态 0=下架 1=上架  2=审核")          
      * @ApiReturnParams   (name="content", type="string", description="商品内容")    
      */
@@ -191,7 +195,7 @@ class Product extends Api
         $wh['id']       = $id;
         $wh['user_id']  = $this->auth->id;
         $info = Db::name("mall_product")
-                    ->field("title,images,kind_id,price,stock,status,content")
+                    ->field("title,images,kind_id,price,stock,sell_num,status,content")
                     ->where($wh)
                     ->find();
 
