@@ -166,14 +166,11 @@ class Team extends Api
                     DB::rollback();
                 } else{
                     DB::commit();
-                    $result['status'] = true;
+                    $this->success("更新成功");
                 }
-                return $result;
             } catch (\Exception $e) {
                 DB::rollback();
-                $this->error($e->getMessage());
-                $result['msg'] = "bonus_commission:".$e->getMessage();
-                return $result;
+                $this->error("bonus_commission:".$e->getMessage());
             }
 
         }
@@ -256,16 +253,11 @@ class Team extends Api
                         DB::rollback();
                     }else{
                         DB::commit();
-                        $result['status'] = true;
+                        $this->success("更新成功");
                     }
-
-                    return $result;
                 } catch (\Exception $e) {
                     DB::rollback();
-
-                    $result['status'] = false;
-                    $result['msg'] = $e->getMessage();
-                    return $result;
+                    $this->error("bonus_commission:".$e->getMessage());
                 }
             }
         }
@@ -324,16 +316,11 @@ class Team extends Api
                     DB::rollback();
                 }else{
                     DB::commit();
-                    $result['status'] = true;
+                    $this->success("更新成功");
                 }
-
-                return $result;
             } catch (\Exception $e) {
                 DB::rollback();
-
-                $result['status'] = false;
-                $result['msg'] = $e->getMessage();
-                return $result;
+                $this->error("bonus_commission:".$e->getMessage());
             }
         }
 
