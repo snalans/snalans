@@ -46,6 +46,7 @@ class Address extends Api
      *
      * @ApiMethod (POST)
      * @ApiParams   (name="id", type="integer", description="地址ID") 
+     * @ApiParams   (name="is_default", type="integer", description="是否默认 0=否 1=是") 
      * 
      * @ApiReturnParams   (name="real_name", type="string", description="姓名")      
      * @ApiReturnParams   (name="phone", type="string", description="手机号")      
@@ -56,9 +57,15 @@ class Address extends Api
     public function getDetail()
     {
         $id = $this->request->post("id","");
+        $is_default = $this->request->post("is_default","");
 
         $wh = [];
-        $wh['id']       = $id;
+        if(!empty($id)){
+            $wh['id']       = $id;
+        }
+        if($is_default != ""){
+            $wh['is_default'] = $is_default;
+        }
         $wh['user_id']  = $this->auth->id;
         $info = Db::name("user_address")->field(["user_id","create_time"],true)->where($wh)->find();
         $this->success('',$info);
@@ -76,7 +83,7 @@ class Address extends Api
         $id = $this->request->post("id","");
 
         $rs = Db::name("user_address")->where("user_id",$this->auth->id)->update(['is_default'=>0]);
-        if($rs){
+        if($rs!==false){
             $wh = [];
             $wh['id']       = $id;
             $wh['user_id']  = $this->auth->id;
