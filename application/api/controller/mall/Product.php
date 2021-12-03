@@ -24,8 +24,7 @@ class Product extends Api
      * 获取商品列表
      *
      * @ApiMethod (GET)
-     * @ApiParams   (name="serial_number", type="string", description="卖家编号")
-     * @ApiParams   (name="title", type="string", description="商品名称")
+     * @ApiParams   (name="title", type="string", description="商品名称或者卖家编号")
      * @ApiParams   (name="cate_id", type="int", description="商品分类ID")
      * @ApiParams   (name="page", type="integer", description="页码")
      * @ApiParams   (name="per_page", type="integer", description="数量")
@@ -43,7 +42,6 @@ class Product extends Api
      */
     public function getList()
     {
-        $serial_number  = $this->request->get('serial_number',"");
         $title          = $this->request->get('title',"");
         $cate_id        = $this->request->get('cate_id',"");
         $page           = $this->request->get("page",1);        
@@ -54,17 +52,19 @@ class Product extends Api
         if(!empty($cate_id)){
             $wh['p.cate_id'] = $cate_id;
         }
-        if(!empty($serial_number)){
-            $wh['u.serial_number'] = $serial_number;
-        }
         if(!empty($title)){
             $wh['p.title'] = ['like',"%".$title."%"];
+        }
+        $whs = [];
+        if(!empty($title)){
+            $whs['u.serial_number'] = $title;
         }
         $list = Db::name("mall_product")->alias('p')
                     ->field("p.id,p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,u.avatar,u.serial_number")
                     ->join("user u","u.id=p.user_id","LEFT")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
                     ->where($wh)
+                    ->whereOr($whs)
                     ->order("p.weigh desc,p.add_time desc")
                     ->paginate($per_page)->each(function($item){
                         if(!empty($item['images'])){                            
