@@ -163,7 +163,7 @@ class Index extends Api
                     // $wh['hatch_id'] = $egg['id'];
                     // $wh['number']   = ['<>',1];
                     // $wh['note']     = '喂养获得';
-                    // $info = Db::name("egg_log_".date("Y_m"))->where($wh)->find();
+                    // $info = Db::name("egg_log")->where($wh)->find();
                     // if(empty($info)){
                     //     $cy = ($egg['hatch_num']-$result['hatch_cycle'])%$result['raw_cycle']*$add_number;
                     //     $add_number = $cy==0?1:$cy;
@@ -177,7 +177,7 @@ class Index extends Api
                     $wh['kind_id'] = $kind_id;
                     $before = Db::name("egg")->where($wh)->value('number');
                     $inc_number = Db::name("egg")->where($wh)->setInc("number",$add_number);
-                    $add_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'hatch_id'=>$egg['id'],'type'=>0,'number'=>$add_number,'before'=>$before,'after'=>($before+$add_number),'note'=>"喂养获得",'createtime'=>time()]);
+                    $add_log = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'hatch_id'=>$egg['id'],'type'=>0,'number'=>$add_number,'before'=>$before,'after'=>($before+$add_number),'note'=>"喂养获得",'createtime'=>time()]);
 
                     if($data['hatch_num'] > $result['grow_cycle']){
                         $data['hatch_num']  = 0;
@@ -243,7 +243,7 @@ class Index extends Api
             Db::name("egg")->where($wh)->setDec('frozen');
         }
         //写入日志
-        $reduce_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$result['kind_id'],'hatch_id'=>$egg_hatch_id,'type'=>0,'number'=>-1,'before'=>$before,'after'=>$after,'note'=>"农场进行孵化",'createtime'=>time()]);
+        $reduce_log = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$result['kind_id'],'hatch_id'=>$egg_hatch_id,'type'=>0,'number'=>-1,'before'=>$before,'after'=>$after,'note'=>"农场进行孵化",'createtime'=>time()]);
         $data = [];
         $data['status']     = 0;
         $data['hatch_num']  = 1;
@@ -339,11 +339,11 @@ class Index extends Api
             $dec_rs = Db::name("egg")->where($wh)->setDec('number',($number+$rate));
             //写入日志
             $after = $total-$number;
-            $dec_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>2,'order_sn'=>'','number'=>-$number,'before'=>$total,'after'=>$after,'note'=>"转账给用户编号：".$serial_number." 减少",'createtime'=>time()]);
+            $dec_log = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>2,'order_sn'=>'','number'=>-$number,'before'=>$total,'after'=>$after,'note'=>"转账给用户编号：".$serial_number." 减少",'createtime'=>time()]);
             $rate_rs = true;    
             if($rate>0){
                 //写入日志
-                $rate_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>9,'number'=>-$rate,'before'=>$after,'after'=>($after-$rate),'note'=>"转账给用户编号：".$serial_number." 手续费",'createtime'=>time()]);
+                $rate_rs = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'type'=>9,'number'=>-$rate,'before'=>$after,'after'=>($after-$rate),'note'=>"转账给用户编号：".$serial_number." 手续费",'createtime'=>time()]);
             }
 
             $wh = [];
@@ -352,7 +352,7 @@ class Index extends Api
             $before = Db::name("egg")->where($wh)->value('number');
             $inc_rs = Db::name("egg")->where($wh)->setInc('number',$number);
             //写入日志
-            $inc_log = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$kind_id,'type'=>2,'number'=>$number,'before'=>$before,'after'=>($before-$number),'note'=>"用户编号：".$this->auth->serial_number." 转账获得",'createtime'=>time()]);
+            $inc_log = Db::name("egg_log")->insert(['user_id'=>$user_id,'kind_id'=>$kind_id,'type'=>2,'number'=>$number,'before'=>$before,'after'=>($before-$number),'note'=>"用户编号：".$this->auth->serial_number." 转账获得",'createtime'=>time()]);
             if($dec_rs && $dec_log && $rate_rs && $inc_rs && $inc_log){
                 Db::commit();
             }else{

@@ -46,7 +46,7 @@ class Dashboard extends Backend
 
         $dbTableList = Db::query("SHOW TABLE STATUS");
 
-        $degg = Db::name("egg_log_".date("Y_m"))
+        $degg = Db::name("egg_log")
                     ->whereTime('createtime', 'd')
                     ->group("kind_id")
                     ->column("kind_id,sum(number)");
@@ -69,7 +69,7 @@ class Dashboard extends Backend
         }
         $total = Db::name("egg_log_all")->group("kind_id")->column("kind_id,sum(number)");
 
-        $megg = Db::name("egg_log_".date("Y_m"))
+        $megg = Db::name("egg_log")
                     ->whereTime('createtime', 'month')
                     ->group("kind_id")
                     ->column("kind_id,sum(number)");

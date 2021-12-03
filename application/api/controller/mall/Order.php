@@ -250,7 +250,7 @@ class Order extends Api
             $before = Db::name("egg")->where($wh)->value('number');
             $grs = Db::name("egg")->where($wh)->setInc('number',$result['total_price']);
 
-            $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$result['sell_user_id'],'kind_id'=>$result['kind_id'],'type'=>1,'order_sn'=>$order_sn,'number'=>$result['total_price'],'before'=>$before,'after'=>($before+$result['total_price']),'note'=>"商城订单成交",'createtime'=>time()]);
+            $log_rs = Db::name("egg_log")->insert(['user_id'=>$result['sell_user_id'],'kind_id'=>$result['kind_id'],'type'=>1,'order_sn'=>$order_sn,'number'=>$result['total_price'],'before'=>$before,'after'=>($before+$result['total_price']),'note'=>"商城订单成交",'createtime'=>time()]);
             if($rs && $grs && $log_rs){
                 Db::commit();
                 $this->success("交易成功");
@@ -288,11 +288,11 @@ class Order extends Api
             $before = Db::name("egg")->where($wh)->value('number');
             $grs = Db::name("egg")->where($wh)->setInc('number',$number);
 
-            $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$result['buy_user_id'],'kind_id'=>$result['kind_id'],'type'=>1,'order_sn'=>$order_sn,'number'=>$result['total_price'],'before'=>$before,'after'=>($before+$result['total_price']),'note'=>"商城订单退款",'createtime'=>time()]);
+            $log_rs = Db::name("egg_log")->insert(['user_id'=>$result['buy_user_id'],'kind_id'=>$result['kind_id'],'type'=>1,'order_sn'=>$order_sn,'number'=>$result['total_price'],'before'=>$before,'after'=>($before+$result['total_price']),'note'=>"商城订单退款",'createtime'=>time()]);
 
             $rate_rs = true;    
             if($result['rate']>0){
-                $rate_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$result['buy_user_id'],'kind_id'=>$result['kind_id'],'type'=>9,'order_sn'=>$order_sn,'number'=>$result['rate'],'before'=>($before+$result['total_price']),'after'=>($before+$number),'note'=>"商城订单退款,返还手续费",'createtime'=>time()]);
+                $rate_rs = Db::name("egg_log")->insert(['user_id'=>$result['buy_user_id'],'kind_id'=>$result['kind_id'],'type'=>9,'order_sn'=>$order_sn,'number'=>$result['rate'],'before'=>($before+$result['total_price']),'after'=>($before+$number),'note'=>"商城订单退款,返还手续费",'createtime'=>time()]);
             }
             if($rs && $grs && $log_rs && $rate_rs){
                 Db::commit();

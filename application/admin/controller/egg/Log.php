@@ -52,16 +52,16 @@ class Log extends Backend
             if ($this->request->request('keyField')) {
                 return $this->selectpage();
             }
-            $filter = json_decode($this->request->get('filter'),true);
-            $op = json_decode($this->request->get('op'),true);
-            $table = "egg_log_".date("Y_m");
-            if(isset($filter['month'])){
-                $table = "egg_log_".date("Y_m",strtotime($filter['month']));
-                unset($filter['month']);
-                unset($op['month']);
-            }
-            $this->request->get(['filter'=>json_encode($filter)]);
-            $this->request->get(['op'=>json_encode($op)]);
+            // $filter = json_decode($this->request->get('filter'),true);
+            // $op = json_decode($this->request->get('op'),true);
+            // $table = "egg_log_".date("Y_m");
+            // if(isset($filter['month'])){
+            //     $table = "egg_log_".date("Y_m",strtotime($filter['month']));
+            //     unset($filter['month']);
+            //     unset($op['month']);
+            // }
+            // $this->request->get(['filter'=>json_encode($filter)]);
+            // $this->request->get(['op'=>json_encode($op)]);
 
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
 

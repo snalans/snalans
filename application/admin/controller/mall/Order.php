@@ -178,11 +178,11 @@ class Order extends Backend
                     $before = Db::name("egg")->where($wh)->value('number');
                     $inc_rs = Db::name("egg")->where($wh)->setInc('number',$number);
                     //写入日志
-                    $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>1,'order_sn'=>$row['order_sn'],'number'=>$row['number'],'before'=>$before,'after'=>($before+$row['number']),'note'=>$note,'createtime'=>time()]);
+                    $log_rs = Db::name("egg_log")->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>1,'order_sn'=>$row['order_sn'],'number'=>$row['number'],'before'=>$before,'after'=>($before+$row['number']),'note'=>$note,'createtime'=>time()]);
 
                     if($params['status'] == 6 && $row['rate']>0){         
                         //手续费写入日志
-                        $log_re = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>9,'order_sn'=>$row['order_sn'],'number'=>$row['rate'],'before'=>($before+$row['number']),'after'=>($before+$number),'note'=>$note.",返还手续费",'createtime'=>time()]);
+                        $log_re = Db::name("egg_log")->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>9,'order_sn'=>$row['order_sn'],'number'=>$row['rate'],'before'=>($before+$row['number']),'after'=>($before+$number),'note'=>$note.",返还手续费",'createtime'=>time()]);
                     }
 
                     $result = $row->allowField(true)->save($params);

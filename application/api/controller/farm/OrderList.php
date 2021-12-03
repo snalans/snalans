@@ -233,7 +233,7 @@ class OrderList extends Api
                 $before = Db::name("egg")->where($wh)->value('number');
                 $grs = Db::name("egg")->where($wh)->setInc('number',$result['number']);
 
-                $log_rs = Db::name("egg_log_".date("Y_m"))->insert(['user_id'=>$result['buy_user_id'],'kind_id'=>$result['kind_id'],'type'=>1,'order_sn'=>$order_sn,'number'=>$result['number'],'before'=>$before,'after'=>($before+$result['number']),'note'=>"订单成交",'createtime'=>time()]);
+                $log_rs = Db::name("egg_log")->insert(['user_id'=>$result['buy_user_id'],'kind_id'=>$result['kind_id'],'type'=>1,'order_sn'=>$order_sn,'number'=>$result['number'],'before'=>$before,'after'=>($before+$result['number']),'note'=>"订单成交",'createtime'=>time()]);
             }
             if($ors && $grs && $log_rs){
                 Db::commit();                
