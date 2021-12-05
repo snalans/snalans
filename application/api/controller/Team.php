@@ -88,7 +88,8 @@ class Team extends Api
                         'type'=>array('eq',9),
                         'kind_id'=>array('eq',$vi['id'])
                     );
-                    $total_number = Db::name("egg_log_".date("Y_m",strtotime("-1 day")))
+                    //$total_number = Db::name("egg_log_".date("Y_m",strtotime("-1 day")))
+                    $total_number = Db::name("egg_log")
                         ->where($fee_where)
                         ->sum('number');
 
