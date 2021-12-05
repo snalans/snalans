@@ -31,7 +31,7 @@ class Product extends Api
      * 
      * @ApiReturnParams   (name="id", type="int", description="商品ID")
      * @ApiReturnParams   (name="title", type="string", description="商品名称")
-     * @ApiReturnParams   (name="images", type="string", description="商品图片")     
+     * @ApiReturnParams   (name="image", type="string", description="商品图片")     
      * @ApiReturnParams   (name="sell_num", type="integer", description="商品销量") 
      * @ApiReturnParams   (name="egg_image", type="string", description="蛋图片")       
      * @ApiReturnParams   (name="price_str", type="integer", description="产品价格")     
@@ -60,18 +60,13 @@ class Product extends Api
             $whs['u.serial_number'] = $title;
         }
         $list = Db::name("mall_product")->alias('p')
-                    ->field("p.id,p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,u.avatar,u.serial_number")
+                    ->field("p.id,p.title,p.image,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,u.avatar,u.serial_number")
                     ->join("user u","u.id=p.user_id","LEFT")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
                     ->where($wh)
                     ->whereOr($whs)
                     ->order("p.weigh desc,p.add_time desc")
                     ->paginate($per_page)->each(function($item){
-                        if(!empty($item['images'])){                            
-                            $img_arr = explode(",",$item['images']);
-                            $item['image'] = $img_arr[0];
-                            unset($item['images']);
-                        }
                         if(empty($item['serial_number'])){
                             $item['serial_number'] = '平台';
                         }
@@ -88,7 +83,8 @@ class Product extends Api
      * @ApiParams   (name="id", type="integer", description="商品ID") 
      * 
      * @ApiReturnParams   (name="title", type="integer", description="商品名称")
-     * @ApiReturnParams   (name="images", type="string", description="商品图片")     
+     * @ApiReturnParams   (name="image", type="string", description="商品单图")    
+     * @ApiReturnParams   (name="images", type="string", description="商品多图")     
      * @ApiReturnParams   (name="sell_num", type="integer", description="商品销量")  
      * @ApiReturnParams   (name="egg_image", type="string", description="蛋图片")    
      * @ApiReturnParams   (name="price_str", type="integer", description="产品价格")       
@@ -105,7 +101,7 @@ class Product extends Api
         $id = $this->request->post("id","");
         
         $info = Db::name("mall_product")->alias('p')
-                    ->field("p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,p.stock,p.content,p.add_time,u.avatar,u.serial_number")
+                    ->field("p.title,p.image,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,p.stock,p.content,p.add_time,u.avatar,u.serial_number")
                     ->join("user u","u.id=p.user_id","LEFT")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
                     ->where("p.id",$id)
@@ -142,7 +138,7 @@ class Product extends Api
      * 
      * @ApiReturnParams   (name="id", type="int", description="商品ID")
      * @ApiReturnParams   (name="title", type="string", description="商品名称")
-     * @ApiReturnParams   (name="images", type="string", description="商品图片")      
+     * @ApiReturnParams   (name="image", type="string", description="商品单图")      
      * @ApiReturnParams   (name="sell_num", type="integer", description="商品销量")  
      * @ApiReturnParams   (name="egg_image", type="string", description="蛋图片")     
      * @ApiReturnParams   (name="price", type="integer", description="支付价格") 
@@ -162,15 +158,11 @@ class Product extends Api
         $wh['p.status']  = $status;
 
         $list = Db::name("mall_product")->alias('p')
-                    ->field("p.id,p.title,p.images,p.sell_num,p.price,ek.name,ek.image as egg_image")
+                    ->field("p.id,p.title,p.image,p.sell_num,p.price,ek.name,ek.image as egg_image")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
                     ->where($wh)
                     ->order("p.add_time desc")
                     ->paginate($per_page)->each(function($item){
-                        if(!empty($item['images'])){                            
-                            $img_arr = explode(",",$item['images']);
-                            $item['images'] = $img_arr[0];
-                        }
                         $item['price_str'] = $item['price']." ".$item['name'];
                         return $item;
                     });        
@@ -196,7 +188,8 @@ class Product extends Api
      * @ApiParams   (name="id", type="integer", description="商品ID") 
      * 
      * @ApiReturnParams   (name="title", type="integer", description="商品名称")
-     * @ApiReturnParams   (name="images", type="string", description="商品图片")      
+     * @ApiReturnParams   (name="image", type="string", description="商品单图")      
+     * @ApiReturnParams   (name="images", type="string", description="商品多图")      
      * @ApiReturnParams   (name="kind_id", type="integer", description="蛋类型ID")       
      * @ApiReturnParams   (name="price", type="integer", description="支付价格")       
      * @ApiReturnParams   (name="stock", type="integer", description="商品库存")      
@@ -212,7 +205,7 @@ class Product extends Api
         $wh['id']       = $id;
         $wh['user_id']  = $this->auth->id;
         $info = Db::name("mall_product")
-                    ->field("title,images,kind_id,price,stock,sell_num,status,content")
+                    ->field("title,image,images,kind_id,price,stock,sell_num,status,content")
                     ->where($wh)
                     ->find();
 
@@ -245,8 +238,9 @@ class Product extends Api
      *
      * @ApiMethod (POST)
      * @ApiParams   (name="id", type="integer", description="商品ID（编辑时候传）")
-     * @ApiParams   (name="title", type="string", description="商品名称")      
-     * @ApiParams   (name="images", type="string", description="图片")        
+     * @ApiParams   (name="title", type="string", description="商品名称")    
+     * @ApiParams   (name="image", type="string", description="商品单图")           
+     * @ApiParams   (name="images", type="string", description="商品多图")        
      * @ApiParams   (name="kind_id", type="integer", description="蛋类型ID")   
      * @ApiParams   (name="price", type="string", description="支付价格")
      * @ApiParams   (name="stock", type="string", description="库存")   
@@ -256,6 +250,7 @@ class Product extends Api
     {
         $id         = $this->request->post("id","");
         $title      = $this->request->post("title","");
+        $image      = $this->request->post("image","");
         $images     = $this->request->post("images","");
         $price      = $this->request->post("price",0);
         $kind_id    = $this->request->post("kind_id",1);
@@ -280,12 +275,13 @@ class Product extends Api
         }
 
         $data = [];
-        $data['title']          = $title;
-        $data['images']         = $images;
-        $data['price']          = $price;
-        $data['kind_id']        = $kind_id;
-        $data['stock']          = $stock;
-        $data['content']        = $content;
+        $data['title']      = $title;
+        $data['image']      = $image;
+        $data['images']     = $images;
+        $data['price']      = $price;
+        $data['kind_id']    = $kind_id;
+        $data['stock']      = $stock;
+        $data['content']    = $content;
         // $data['status']         = 2;
 
         if(empty($id))
