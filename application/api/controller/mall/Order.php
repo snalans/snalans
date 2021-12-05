@@ -31,7 +31,8 @@ class Order extends Api
      * 
      * @ApiReturnParams   (name="order_sn", type="int", description="订单号")
      * @ApiReturnParams   (name="title", type="string", description="商品名称")
-     * @ApiReturnParams   (name="image", type="string", description="商品图片")      
+     * @ApiReturnParams   (name="image", type="string", description="商品图片")    
+     * @ApiReturnParams   (name="egg_image", type="string", description="蛋图片")     
      * @ApiReturnParams   (name="price", type="integer", description="支付价格")   
      * @ApiReturnParams   (name="number", type="integer", description="兑换数量")     
      * @ApiReturnParams   (name="rate", type="integer", description="手续费")   
@@ -60,7 +61,7 @@ class Order extends Api
             $wh['mo.status'] = $status;
         }
         $list = Db::name("mall_order")->alias("mo")
-                    ->field("mo.order_sn,mo.title,mo.image,mo.price,mo.rate,mo.total_price,mo.status,u.avatar,u.serial_number,ek.name")
+                    ->field("mo.order_sn,mo.title,mo.image,mo.price,mo.rate,mo.total_price,mo.status,u.avatar,u.serial_number,ek.name,ek.image as egg_image")
                     ->join("user u","u.id=$wh_str","LEFT")
                     ->join("egg_kind ek","ek.id=mo.kind_id","LEFT")
                     ->where($wh)
@@ -95,12 +96,14 @@ class Order extends Api
      * 
      * @ApiReturnParams   (name="order_sn", type="int", description="订单号")
      * @ApiReturnParams   (name="title", type="string", description="商品名称")
-     * @ApiReturnParams   (name="image", type="string", description="商品图片")      
+     * @ApiReturnParams   (name="image", type="string", description="商品图片")    
+     * @ApiReturnParams   (name="egg_image", type="string", description="蛋图片")     
      * @ApiReturnParams   (name="price", type="integer", description="支付价格")   
      * @ApiReturnParams   (name="name", type="string", description="价格单位")     
      * @ApiReturnParams   (name="rate", type="integer", description="手续费")   
      * @ApiReturnParams   (name="total_price", type="integer", description="总价格") 
-     * @ApiReturnParams   (name="number", type="integer", description="兑换数量")        
+     * @ApiReturnParams   (name="number", type="integer", description="兑换数量")   
+     * @ApiReturnParams   (name="status", type="int", description="状态 0=待付款 1=交易完成 2=待发货 3=待收货 5=申请退款 6=退款完成 7=申诉中")     
      * @ApiReturnParams   (name="status_str", type="string", description="状态名称") 
      * @ApiReturnParams   (name="contactor", type="integer", description="联系人姓名")
      * @ApiReturnParams   (name="contactor_phone", type="integer", description="联系电话")
@@ -128,7 +131,7 @@ class Order extends Api
         }
 
         $info = Db::name("mall_order")->alias('mo')
-                    ->field("mo.order_sn,mo.title,mo.image,mo.price,mo.number,mo.rate,mo.total_price,ek.name,mo.status,mo.contactor,mo.contactor_phone,mo.address,mo.express_name,mo.express_no,mo.received_time,mo.send_time,mo.add_time,u.avatar,u.serial_number")
+                    ->field("mo.order_sn,mo.title,mo.image,mo.price,mo.number,mo.rate,mo.total_price,ek.name,ek.image as egg_image,mo.status,mo.contactor,mo.contactor_phone,mo.address,mo.express_name,mo.express_no,mo.received_time,mo.send_time,mo.add_time,u.avatar,u.serial_number")
                     ->join("user u","u.id=$wh_str","LEFT")
                     ->join("egg_kind ek","ek.id=mo.kind_id","LEFT")
                     ->where($wh)
