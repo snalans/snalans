@@ -42,6 +42,9 @@ class User extends Api
      * @ApiReturnParams   (name="total_valid_number", type="integer", description="团队有效值")
      * @ApiReturnParams   (name="is_paypwd", type="integer", description="是否配置过密码 1=是 0=否")
      * @ApiReturnParams   (name="is_attestation_str", type="string", description="认证情况")
+     * @ApiReturnParams   (name="release", type="string", description="发布数量")
+     * @ApiReturnParams   (name="buy_num", type="string", description="买到数量")
+     * @ApiReturnParams   (name="sell_num", type="string", description="卖出数量")
      */
     public function index()
     {
@@ -72,6 +75,19 @@ class User extends Api
         $result['total_valid_number'] = $result['valid_number'] + $sum;
         $result['is_paypwd'] = empty($result['paypwd'])?0:1;
         unset($result['paypwd']);
+
+        $wh = [];
+        $wh['user_id'] = $this->auth->id;
+        $wh['status']  = 1;
+        $result['release'] = Db::name("mall_product")->where($wh)->count();
+        $wh = [];
+        $wh['buy_user_id'] = $this->auth->id;
+        $wh['buy_del']     = 0;
+        $result['buy_num'] = Db::name("mall_order")->where($wh)->count();
+        $wh = [];
+        $wh['sell_user_id'] = $this->auth->id;
+        $wh['sell_del']     = 0;
+        $result['sell_num'] = Db::name("mall_order")->where($wh)->count();
         $this->success('', $result);
     }
 
