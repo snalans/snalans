@@ -176,7 +176,7 @@ class Product extends Api
                     });        
         $list = json_encode($list);
         $list = json_decode($list,1);
-        
+
         $wh = [];
         $wh['user_id'] = $this->auth->id;
         $wh['status'] = 1;
@@ -311,5 +311,46 @@ class Product extends Api
             } 
         }
 
+    }
+
+
+    /**
+     * 商品上下架
+     *
+     * @ApiMethod (POST)
+     * @ApiParams   (name="id", type="integer", description="商品ID")
+     * @ApiParams   (name="status", type="integer", description="状态 0=下架 1=上架")    
+     */
+    public function updateOnOff()
+    {
+        $id         = $this->request->post("id","");
+        $status     = $this->request->post("status/d",0);
+
+        if(empty($id) || !in_array($status,[0,1]))
+        {            
+            $this->error("参数不正确,请检查");
+        }
+
+        if($this->auth->status != 'normal' || $this->auth->is_attestation != 1){
+            $this->error("账号无效或者未认证");
+        }
+
+        $wh = [];
+        $wh['id']      = $id;
+        $wh['user_id'] = $this->auth->id;
+        $info = Db::name("mall_product")->where($wh)->find();
+        if(empty($info)){
+            $this->error("商品不存在");
+        }
+        if($info['status'] == $status){
+            $rs = true;
+        }else{
+            $rs = Db::name("mall_product")->where("id",$id)->update(['status'=>$status]);
+        }
+        if($rs){
+            $this->success("更新成功");
+        } else{
+            $this->error("更新失败,请重试");
+        } 
     }
 }
