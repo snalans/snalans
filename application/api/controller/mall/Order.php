@@ -52,14 +52,17 @@ class Order extends Api
         $wh = [];
         if($type == 1){
             $wh['mo.buy_user_id'] = $this->auth->id; 
+            $wh['mo.buy_del']     = 0; 
             $wh_str = "mo.buy_user_id";
         }else{
             $wh['mo.sell_user_id'] = $this->auth->id;
+            $wh['mo.sell_del']     = 0; 
             $wh_str = "mo.sell_user_id";
         }
         if($status != 9){
             $wh['mo.status'] = $status;
         }
+
         $list = Db::name("mall_order")->alias("mo")
                     ->field("mo.order_sn,mo.title,mo.image,mo.price,mo.rate,mo.total_price,mo.status,u.avatar,u.serial_number,ek.name,ek.image as egg_image")
                     ->join("user u","u.id=$wh_str","LEFT")
@@ -444,4 +447,47 @@ class Order extends Api
     }
 
 
+    /**
+     * 订单删除
+     *
+     * @ApiMethod (POST)
+     * @ApiParams   (name="order_sn", type="string", description="订单号")
+     * @ApiParams   (name="type", type="integer", description="买卖类型默认： 1=买 2=卖")
+     */
+    public function orderDel()
+    {
+        $order_sn       = $this->request->post("order_sn","");
+        $type           = $this->request->post("type",1);
+
+        if(empty($order_sn) || empty($type)){            
+            $this->error("参数不正确,请检查");
+        }
+
+        if($this->auth->status != 'normal' || $this->auth->is_attestation != 1){
+            $this->error("账号无效或者未认证");
+        }
+        
+        $wh = [];
+        $wh['order_sn']     = $order_sn;
+        if($type == 1){
+            $wh['buy_user_id'] = $this->auth->id;
+        }else{
+            $wh['sell_user_id'] = $this->auth->id;
+        }
+        $wh['status']       = ['in',[1,6]];
+        $info = Db::name("mall_order")->field("id,order_sn")->where($wh)->find();
+        if(empty($info)){            
+            $this->error("无效操作");
+        }
+        if($type == 1){
+            $rs = Db::name("mall_order")->where("id",$info['id'])->update(['buy_del'=>1]);
+        }else{
+            $rs = Db::name("mall_order")->where("id",$info['id'])->update(['sell_del'=>1]);
+        }        
+        if($rs){
+            $this->success("删除成功");
+        }else{
+            $this->error("删除失败,请重试");
+        }
+    }
 }
