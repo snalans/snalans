@@ -143,10 +143,13 @@ class Product extends Api
      * @ApiReturnParams   (name="id", type="int", description="商品ID")
      * @ApiReturnParams   (name="title", type="string", description="商品名称")
      * @ApiReturnParams   (name="images", type="string", description="商品图片")      
-     * @ApiReturnParams   (name="sell_num", type="integer", description="商品销量")   
+     * @ApiReturnParams   (name="sell_num", type="integer", description="商品销量")  
+     * @ApiReturnParams   (name="egg_image", type="string", description="蛋图片")     
      * @ApiReturnParams   (name="price", type="integer", description="支付价格") 
      * @ApiReturnParams   (name="name", type="string", description="蛋名称")          
-     * @ApiReturnParams   (name="price_str", type="integer", description="产品价格")       
+     * @ApiReturnParams   (name="price_str", type="integer", description="产品价格")    
+     * @ApiReturnParams   (name="on_num", type="integer", description="在售数量")     
+     * @ApiReturnParams   (name="off_num", type="integer", description="下架数量")        
      */
     public function getSellList()
     {
@@ -159,7 +162,7 @@ class Product extends Api
         $wh['p.status']  = $status;
 
         $list = Db::name("mall_product")->alias('p')
-                    ->field("p.id,p.title,p.images,p.sell_num,p.price,ek.name")
+                    ->field("p.id,p.title,p.images,p.sell_num,p.price,ek.name,ek.image as egg_image")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
                     ->where($wh)
                     ->order("p.add_time desc")
@@ -170,7 +173,19 @@ class Product extends Api
                         }
                         $item['price_str'] = $item['price']." ".$item['name'];
                         return $item;
-                    });
+                    });        
+        $list = json_encode($list);
+        $list = json_decode($list,1);
+        
+        $wh = [];
+        $wh['user_id'] = $this->auth->id;
+        $wh['status'] = 1;
+        $list['on_num'] = Db::name("mall_product")->where($wh)->count();
+        $wh = [];
+        $wh['user_id'] = $this->auth->id;
+        $wh['status'] = 0;
+        $list['off_num'] = Db::name("mall_product")->where($wh)->count();
+
         $this->success('',$list);
     }
 
