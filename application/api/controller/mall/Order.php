@@ -125,6 +125,7 @@ class Order extends Api
         $order_sn   = $this->request->post("order_sn","");
         
         $wh = [];
+        $wh['mo.order_sn'] = $order_sn;
         if($type == 1){
             $wh['mo.buy_user_id'] = $this->auth->id; 
             $wh['mo.buy_del']     = 0; 
