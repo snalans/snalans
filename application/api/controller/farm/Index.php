@@ -352,7 +352,7 @@ class Index extends Api
             $before = Db::name("egg")->where($wh)->value('number');
             $inc_rs = Db::name("egg")->where($wh)->setInc('number',$number);
             //写入日志
-            $inc_log = Db::name("egg_log")->insert(['user_id'=>$user_id,'kind_id'=>$kind_id,'type'=>2,'number'=>$number,'before'=>$before,'after'=>($before-$number),'note'=>"用户编号：".$this->auth->serial_number." 转账获得",'createtime'=>time()]);
+            $inc_log = Db::name("egg_log")->insert(['user_id'=>$user_id,'kind_id'=>$kind_id,'type'=>2,'number'=>$number,'before'=>$before,'after'=>($before+$number),'note'=>"用户编号：".$this->auth->serial_number." 转账获得",'createtime'=>time()]);
             if($dec_rs && $dec_log && $rate_rs && $inc_rs && $inc_log){
                 Db::commit();
             }else{
