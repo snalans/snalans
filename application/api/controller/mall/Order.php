@@ -127,9 +127,11 @@ class Order extends Api
         $wh = [];
         if($type == 1){
             $wh['mo.buy_user_id'] = $this->auth->id; 
+            $wh['mo.buy_del']     = 0; 
             $wh_str = "mo.buy_user_id";
         }else{
             $wh['mo.sell_user_id'] = $this->auth->id;
+            $wh['mo.sell_del']     = 0; 
             $wh_str = "mo.sell_user_id";
         }
 
