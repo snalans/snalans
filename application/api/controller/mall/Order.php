@@ -481,7 +481,7 @@ class Order extends Api
         $wh['status']       = ['in',[1,6]];
         $info = Db::name("mall_order")->field("id,order_sn")->where($wh)->find();
         if(empty($info)){            
-            $this->error("无效操作".json_encode($wh));
+            $this->error("无效操作");
         }
         if($type == 1){
             $rs = Db::name("mall_order")->where("id",$info['id'])->update(['buy_del'=>1]);
