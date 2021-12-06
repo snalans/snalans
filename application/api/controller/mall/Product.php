@@ -291,7 +291,7 @@ class Product extends Api
         $data['kind_id']        = $kind_id;
         $data['stock']          = $stock;
         $data['content']        = $content;
-        // $data['status']         = 2;
+        $data['status']         = 1;
 
         if(empty($id))
         {
