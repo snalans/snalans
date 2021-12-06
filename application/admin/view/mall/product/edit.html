@@ -30,7 +30,7 @@
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Price')}:</label>
         <div class="col-xs-6 col-sm-3">
-            <input id="c-price" data-rule="required" class="form-control" name="row[price]" type="number" value="{$row.price|htmlentities}">
+            <input id="c-price" data-rule="required" class="form-control" name="row[price]" type="number" step="0.01" value="{$row.price|htmlentities}">
         </div>
 
         <label class="control-label col-xs-12 col-sm-2">{:__('Kind_id')}:</label>
@@ -41,18 +41,7 @@
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Stock')}:</label>
         <div class="col-xs-6 col-sm-3">
-            <input id="c-price" data-rule="required" class="form-control" name="row[price]" type="number" value="{$row.stock|htmlentities}">
-        </div>
-
-        <label class="control-label col-xs-12 col-sm-2">{:__('Weigh')}:</label>
-        <div class="col-xs-6 col-sm-3">
-            <input id="c-weigh" class="form-control" name="row[weigh]" type="number" value="{$row.weigh|htmlentities}">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Sell_num')}:</label>
-        <div class="col-xs-6 col-sm-3">
-            <input id="c-sell_num" class="form-control" name="row[sell_num]" type="number" value="{$row.sell_num|htmlentities}">
+            <input id="c-stock" data-rule="required" class="form-control" name="row[stock]" type="number" value="{$row.stock|htmlentities}">
         </div>
 
         <label class="control-label col-xs-12 col-sm-2">{:__('Virtual_sales')}:</label>
@@ -69,6 +58,10 @@
             <label for="row[status]-0"><input id="row[status]-0" name="row[status]" type="radio" value="0" {in name="$row.status" value="0"}checked{/in} /> 下架</label> 
             </div>
 
+        </div>
+        <label class="control-label col-xs-12 col-sm-2">{:__('Weigh')}:</label>
+        <div class="col-xs-6 col-sm-3">
+            <input id="c-weigh" class="form-control" name="row[weigh]" type="number" value="{$row.weigh|htmlentities}">
         </div>
     </div>
     <div class="form-group">
