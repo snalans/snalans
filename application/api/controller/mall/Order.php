@@ -405,7 +405,7 @@ class Order extends Api
             $data['price']              = $info['price'];
             $data['number']             = $number;
             $data['rate']               = $rate;
-            $data['total_price']        = $egg_num;
+            $data['total_price']        = $sell_egg;
             $data['contactor']          = $address['real_name'];
             $data['contactor_phone']    = $address['phone'];
             $data['address']            = $address['area']." ".$address['address'];
@@ -422,7 +422,7 @@ class Order extends Api
             $add_rs = Db::name("egg")->where($egg_where)->dec('number',$total_egg)->update();
 
             //蛋日志
-            $log = \app\admin\model\egg\Log::saveLog($this->auth->id,$info['kind_id'],1,$order_sn,'-'.$number,$egg_num,($egg_num-$sell_egg),"商城消费");
+            $log = \app\admin\model\egg\Log::saveLog($this->auth->id,$info['kind_id'],1,$order_sn,'-'.$sell_egg,$egg_num,($egg_num-$sell_egg),"商城消费");
 
             //蛋手续费
             $log_fee = true;
