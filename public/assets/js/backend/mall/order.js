@@ -31,7 +31,25 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'order_sn', title: '订单号', operate: 'LIKE'},
                         {field: 'user.mobile', title: '买家手机号', operate: 'LIKE'},
                         {field: 'selluser.mobile', title: '卖家手机号', operate: 'LIKE'},
-                        {field: 'title', title: __('Title'), operate:false},
+                        {field: 'title', title: __('Title'), operate:false,
+                            cellStyle:function(value,row,index){
+                                return {
+                                    css:{
+                                        "min-width":"80px",
+                                        "white-space":"nowrap",
+                                        "text-overflow":"ellipsis",
+                                        "overflow":"hidden",
+                                        "max-width":"220px"
+                                    }
+                                }
+                            },
+                            formatter:function paramsMatter(value,row,index){
+                                var span = document.createElement("span");
+                                span.setAttribute("title",value);
+                                span.innerHTML = value;
+                                return span.outerHTML;
+                            }
+                        },
                         {field: 'image', title: __('Image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'price', title: __('Price'), operate:false},
                         {field: 'number', title: __('Number'), operate:false},
@@ -43,6 +61,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'express_name', title: __('Express_name'), operate: 'LIKE'},
                         {field: 'express_no', title: __('Express_no'), operate: 'LIKE'}, 
                         {field: 'status', title: __('Status'), operate: false, formatter: Table.api.formatter.normal, searchList: {0: '待付款',1: '完成',2: '待发货',3: '待收货',5: '申请退款',6: '确认退款',7: '申诉'}},
+                        {field: 'send_time', title: __('Send_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
+                        {field: 'received_time', title: __('Received_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'add_time', title: __('Add_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'operate', title: __('Operate'), table: table, buttons:[
                             {name: 'appeal', text: '审核', title: '审核', icon: 'fa fa-star', classname: 'btn btn-xs btn-success btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_appeal

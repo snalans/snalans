@@ -29,7 +29,25 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {checkbox: true},
                         {field: 'id', title: __('Id'), operate: false},
                         {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
-                        {field: 'title', title: __('Title'), operate: 'LIKE'},
+                        {field: 'title', title: __('Title'), operate: 'LIKE',
+                            cellStyle:function(value,row,index){
+                                return {
+                                    css:{
+                                        "min-width":"80px",
+                                        "white-space":"nowrap",
+                                        "text-overflow":"ellipsis",
+                                        "overflow":"hidden",
+                                        "max-width":"220px"
+                                    }
+                                }
+                            },
+                            formatter:function paramsMatter(value,row,index){
+                                var span = document.createElement("span");
+                                span.setAttribute("title",value);
+                                span.innerHTML = value;
+                                return span.outerHTML;
+                            }
+                        },
                         {field: 'cate.title', title: "分类名称", operate: 'LIKE'},
                         {field: 'images', title: __('Images'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.images},
                         {field: 'price', title: __('Price'), operate:false},
