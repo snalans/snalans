@@ -267,7 +267,7 @@ class Product extends Api
         $stock      = $this->request->post("stock",1);
         $content    = $this->request->post("content","");
 
-        if(empty($title) || empty($price) || empty($stock) || !in_array($kind_id,[1,2,3]))
+        if(empty($title) || $price<=0 || $stock<=0 || !in_array($kind_id,[1,2,3]))
         {            
             $this->error("参数不正确,请检查");
         }

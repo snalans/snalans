@@ -367,11 +367,12 @@ class Order extends Api
         $egg_num = Db::name("egg")->where($egg_where)->value('number');
 
         //蛋数量判断
-        $total_egg = $info['price']*$number;
+        $sell_egg = $info['price']*$number;
         $rate = 0;
         $rate_config = Db::name("egg_kind")->where("id",$info['kind_id'])->value("rate_config");
         $rate = ceil($total_egg/10)*$rate_config;
-        if(($total_egg+$rate) > $egg_num){
+        $total_egg = $sell_egg + $rate;
+        if($total_egg > $egg_num){
             $this->error("您的可支付蛋数量不足".$total_egg.'个！');
         }
 
@@ -404,7 +405,7 @@ class Order extends Api
             $data['price']              = $info['price'];
             $data['number']             = $number;
             $data['rate']               = $rate;
-            $data['total_price']        = $total_egg;
+            $data['total_price']        = $egg_num;
             $data['contactor']          = $address['real_name'];
             $data['contactor_phone']    = $address['phone'];
             $data['address']            = $address['area']." ".$address['address'];
@@ -421,12 +422,12 @@ class Order extends Api
             $add_rs = Db::name("egg")->where($egg_where)->dec('number',$total_egg)->update();
 
             //蛋日志
-            $log = \app\admin\model\egg\Log::saveLog($this->auth->id,$info['kind_id'],1,$order_sn,'-'.$number,"商城消费");
+            $log = \app\admin\model\egg\Log::saveLog($this->auth->id,$info['kind_id'],1,$order_sn,'-'.$number,$egg_num,($egg_num-$sell_egg),"商城消费");
 
             //蛋手续费
             $log_fee = true;
             if($rate > 0){
-                $log_fee = \app\admin\model\egg\Log::saveLog($this->auth->id,$info['kind_id'],9,$order_sn,'-'.$rate,"商城消费手续费");
+                $log_fee = \app\admin\model\egg\Log::saveLog($this->auth->id,$info['kind_id'],9,$order_sn,'-'.$rate,($egg_num-$sell_egg),($egg_num-$total_egg),"商城消费手续费");
             }
 
             $wh = [];
