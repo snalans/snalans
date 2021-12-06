@@ -648,6 +648,13 @@ class User extends Api
                     ->field(['user_id','add_time'],true)
                     ->where("user_id",$this->auth->id)
                     ->select();
+        if(!empty($result)){
+            foreach ($result as $key => $value) {
+                if(!empty($value['image'])){
+                    $result[$key]['image'] = cdnurl($value['image'], true);
+                }
+            }
+        }
         $this->success('',$result);
     }
 
