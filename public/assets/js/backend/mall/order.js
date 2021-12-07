@@ -67,7 +67,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'operate', title: __('Operate'), table: table, buttons:[
                             {name: 'appeal', text: '审核', title: '申请申诉/申请退款', icon: 'fa fa-star', classname: 'btn btn-xs btn-success btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_appeal
                                 ,visible:function(row){
-                                    if(row.status == 5 || row.status == 7){ 
+                                    if((row.status == 5 && row.sell_user_id == 0)|| row.status == 7){ 
                                         return true; 
                                     }
                                 },
