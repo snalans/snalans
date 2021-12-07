@@ -65,9 +65,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'received_time', title: __('Received_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'add_time', title: __('Add_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'operate', title: __('Operate'), table: table, buttons:[
-                            {name: 'appeal', text: '审核', title: '审核', icon: 'fa fa-star', classname: 'btn btn-xs btn-success btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_appeal
+                            {name: 'appeal', text: '审核', title: '申请申诉/申请退款', icon: 'fa fa-star', classname: 'btn btn-xs btn-success btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_appeal
                                 ,visible:function(row){
-                                    if(row.status == 7){ 
+                                    if(row.status == 5 || row.status == 7){ 
                                         return true; 
                                     }
                                 },

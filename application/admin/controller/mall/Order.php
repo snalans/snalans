@@ -147,7 +147,7 @@ class Order extends Backend
             $params = $this->request->post("row/a");
             if ($params) {
                 $params = $this->preExcludeFields($params);
-                if($row['status'] != 7){
+                if(!in_array($row['status'],[5,7])){
                     $this->error('订单状态不允许执行');
                 }
                 $result = false;
