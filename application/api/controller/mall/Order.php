@@ -253,11 +253,17 @@ class Order extends Api
             $wh['buy_user_id'] = $this->auth->id;
             $rs = Db::name("mall_order")->where($wh)->update(['status'=>1,'received_time'=>time()]);
 
-            $wh = [];
-            $wh['user_id'] = $result['sell_user_id'];
-            $wh['kind_id'] = $result['kind_id'];
-            $before = Db::name("egg")->where($wh)->value('number');
-            $grs = Db::name("egg")->where($wh)->setInc('number',$result['total_price']);
+            if($result['sell_user_id'] > 0)
+            {
+                $wh = [];
+                $wh['user_id'] = $result['sell_user_id'];
+                $wh['kind_id'] = $result['kind_id'];
+                $before = Db::name("egg")->where($wh)->value('number');
+                $grs = Db::name("egg")->where($wh)->setInc('number',$result['total_price']);
+            }else{
+                $before = 0;
+                $grs = true;
+            }
 
             $log_rs = Db::name("egg_log")->insert(['user_id'=>$result['sell_user_id'],'kind_id'=>$result['kind_id'],'type'=>1,'order_sn'=>$order_sn,'number'=>$result['total_price'],'before'=>$before,'after'=>($before+$result['total_price']),'note'=>"商城订单成交",'createtime'=>time()]);
             if($rs && $grs && $log_rs){
