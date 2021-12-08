@@ -26,6 +26,7 @@ return array (
     'email' => 'Email',
     'dictionary' => 'Dictionary',
     'egg' => 'Egg',
+    'mall' => 'Mall',
     'user' => 'User',
     'example' => 'Example',
   ),
@@ -57,4 +58,7 @@ return array (
   'order_end_time' => '24',
   'valid_number' => '1',
   'invite_url' => 'http://h5.snalans.com',
+  'issue_number' => '0',
+  'send_hours' => '0',
+  'mall_hours' => '0',
 );

@@ -3,6 +3,7 @@ namespace app\api\controller\mall;
 
 use app\common\controller\Api;
 use think\Validate;
+use think\Config;
 use think\Db;
 
 /**
@@ -95,7 +96,8 @@ class Product extends Api
      * @ApiReturnParams   (name="price_str", type="integer", description="产品价格")       
      * @ApiReturnParams   (name="price", type="integer", description="支付价格")       
      * @ApiReturnParams   (name="name", type="string", description="蛋名称")         
-     * @ApiReturnParams   (name="stock", type="integer", description="商品库存")          
+     * @ApiReturnParams   (name="stock", type="integer", description="商品库存")    
+     * @ApiReturnParams   (name="is_virtual", type="integer", description="是否虚拟商品 0=否 1=是")           
      * @ApiReturnParams   (name="content", type="string", description="商品内容")     
      * @ApiReturnParams   (name="add_time", type="string", description="商品发布时间")        
      * @ApiReturnParams   (name="avatar", type="string", description="卖家头像")    
@@ -106,7 +108,7 @@ class Product extends Api
         $id = $this->request->post("id","");
         
         $info = Db::name("mall_product")->alias('p')
-                    ->field("p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,p.stock,p.content,p.add_time,u.avatar,u.serial_number")
+                    ->field("p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,p.stock,p.is_virtual,p.content,p.add_time,u.avatar,u.serial_number")
                     ->join("user u","u.id=p.user_id","LEFT")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
                     ->where("p.id",$id)
@@ -267,13 +269,21 @@ class Product extends Api
         $stock      = $this->request->post("stock",1);
         $content    = $this->request->post("content","");
 
-        if(empty($title) || $price<=0 || $stock<=0 || !in_array($kind_id,[1,2,3]))
+        if(empty($title) || $stock<=0 || !in_array($kind_id,[1,2,3]))
         {            
             $this->error("参数不正确,请检查");
+        }
+        if($price < 1){
+            $this->error("价格不能小于1");
         }
 
         if($this->auth->status != 'normal' || $this->auth->is_attestation != 1){
             $this->error("账号无效或者未认证");
+        }
+
+        $issue_number = Config::get("site.issue_number");
+        if($issue_number > 0 && $this->auth->valid_number > $issue_number){
+            $this->error("有效值未达到标准，不能发布商品");
         }
 
         $wh = [];

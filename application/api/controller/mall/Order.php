@@ -25,7 +25,7 @@ class Order extends Api
      *
      * @ApiMethod (GET)
      * @ApiParams   (name="type", type="integer", description="买卖类型默认： 1=买 2=卖")
-     * @ApiParams   (name="status", type="int", description="状态 0=待付款 1=交易完成 2=待发货 3=待收货 5=申请退款 6=退款完成 7=申诉中 9=全部订单")
+     * @ApiParams   (name="status", type="int", description="状态 9=全部订单 2=待发货 3=待收货 1=交易完成 8=售后订单")
      * @ApiParams   (name="page", type="integer", description="页码")
      * @ApiParams   (name="per_page", type="integer", description="数量")
      * 
@@ -37,9 +37,10 @@ class Order extends Api
      * @ApiReturnParams   (name="number", type="integer", description="兑换数量")     
      * @ApiReturnParams   (name="rate", type="integer", description="手续费")   
      * @ApiReturnParams   (name="name", type="string", description="价格单位")  
-     * @ApiReturnParams   (name="total_price", type="integer", description="总价格")      
+     * @ApiReturnParams   (name="total_price", type="integer", description="总价格")     
+     * @ApiReturnParams   (name="is_virtual", type="integer", description="是否虚拟商品 0=否 1=是")      
+     * @ApiReturnParams   (name="status", type="string", description="状态 1=交易完成 2=待发货 3=待收货 5=申请退款 6=退款完成 7=申诉中")     
      * @ApiReturnParams   (name="status_str", type="string", description="状态名称") 
-     * @ApiReturnParams   (name="avatar", type="string", description="会员头像")      
      * @ApiReturnParams   (name="serial_number", type="string", description="会员编号")  
      */
     public function getOrderList()
@@ -60,11 +61,17 @@ class Order extends Api
             $wh_str = "mo.sell_user_id";
         }
         if($status != 9){
-            $wh['mo.status'] = $status;
+            if($status == 8){
+                $wh['mo.status'] = ['in',[5,7]];
+            }else if($status == 1){
+                $wh['mo.status'] = ['in',[1,6]];
+            }else{
+                $wh['mo.status'] = $status;
+            }            
         }
 
         $list = Db::name("mall_order")->alias("mo")
-                    ->field("mo.order_sn,mo.title,mo.image,mo.price,mo.rate,mo.total_price,mo.status,u.avatar,u.serial_number,ek.name,ek.image as egg_image")
+                    ->field("mo.order_sn,mo.title,mo.image,mo.price,mo.number,mo.rate,mo.total_price,mo.status,mo.is_virtual,u.serial_number,ek.name,ek.image as egg_image")
                     ->join("user u","u.id=$wh_str","LEFT")
                     ->join("egg_kind ek","ek.id=mo.kind_id","LEFT")
                     ->where($wh)
@@ -106,7 +113,7 @@ class Order extends Api
      * @ApiReturnParams   (name="rate", type="integer", description="手续费")   
      * @ApiReturnParams   (name="total_price", type="integer", description="总价格") 
      * @ApiReturnParams   (name="number", type="integer", description="兑换数量")   
-     * @ApiReturnParams   (name="status", type="int", description="状态 0=待付款 1=交易完成 2=待发货 3=待收货 5=申请退款 6=退款完成 7=申诉中")     
+     * @ApiReturnParams   (name="status", type="int", description="状态 1=交易完成 2=待发货 3=待收货 5=申请退款 6=退款完成 7=申诉中")     
      * @ApiReturnParams   (name="status_str", type="string", description="状态名称") 
      * @ApiReturnParams   (name="contactor", type="integer", description="联系人姓名")
      * @ApiReturnParams   (name="contactor_phone", type="integer", description="联系电话")
@@ -116,7 +123,7 @@ class Order extends Api
      * @ApiReturnParams   (name="received_time", type="string", description="收货时间")    
      * @ApiReturnParams   (name="send_time", type="integer", description="发货时间")       
      * @ApiReturnParams   (name="add_time", type="string", description="下单时间")   
-     * @ApiReturnParams   (name="avatar", type="string", description="会员头像")      
+     * @ApiReturnParams   (name="mobile", type="string", description="手机号")      
      * @ApiReturnParams   (name="serial_number", type="string", description="会员编号")  
      */
     public function getOrderDetail()
@@ -137,7 +144,7 @@ class Order extends Api
         }
 
         $info = Db::name("mall_order")->alias('mo')
-                    ->field("mo.order_sn,mo.title,mo.image,mo.price,mo.number,mo.rate,mo.total_price,ek.name,ek.image as egg_image,mo.status,mo.contactor,mo.contactor_phone,mo.address,mo.express_name,mo.express_no,mo.received_time,mo.send_time,mo.add_time,u.avatar,u.serial_number")
+                    ->field("mo.order_sn,mo.title,mo.image,mo.sell_user_id,mo.price,mo.number,mo.rate,mo.total_price,ek.name,ek.image as egg_image,mo.status,mo.contactor,mo.contactor_phone,mo.address,mo.express_name,mo.express_no,mo.received_time,mo.send_time,mo.add_time,u.mobile,u.serial_number")
                     ->join("user u","u.id=$wh_str","LEFT")
                     ->join("egg_kind ek","ek.id=mo.kind_id","LEFT")
                     ->where($wh)
@@ -150,7 +157,12 @@ class Order extends Api
             }else if($info['status'] == 3){
                 $info['status_str'] = "待收货";
             }else if($info['status'] == 5){
-                $info['status_str'] = "申请退款";
+                if($info['sell_user_id'] == 0){
+                    $info['status_str'] = "申请退款";
+                }else{
+                    $info['status_str'] = "申请退款,请联系卖家";
+                }
+                unset($info['sell_user_id']);
             }else if($info['status'] == 6){
                 $info['status_str'] = "退款完成";
             }else if($info['status'] == 7){
@@ -274,6 +286,9 @@ class Order extends Api
                 $this->error("确认失败,请重试");
             }
         } else if($status == 5){
+            if($result['is_virtual'] == 1){
+                $this->error("虚拟商品不允许退款");
+            }
             $wh['status'] = ['in',[2,3]];
             $wh['buy_user_id'] = $this->auth->id;
             $num = mb_strlen($note);
@@ -328,6 +343,46 @@ class Order extends Api
         } 
     }
 
+
+    /**
+     * 取消退款申请
+     *
+     * @ApiMethod (POST)
+     * @ApiParams   (name="order_sn", type="string", description="订单号")
+     */
+    public function cancelRefund()
+    {
+        $order_sn = $this->request->post("order_sn","");
+
+        if(empty($order_sn)){            
+            $this->error("参数不正确,请检查");
+        }
+
+        if($this->auth->status != 'normal' || $this->auth->is_attestation != 1){
+            $this->error("账号无效或者未认证");
+        }
+        
+        $wh = [];
+        $wh['order_sn']     = $order_sn;
+        $wh['buy_user_id']  = $this->auth->id;
+        $wh['status']       = 5;
+        $info = Db::name("mall_order")->field("id,order_sn")->where($wh)->find();
+        if(empty($info)){            
+            $this->error("无效操作");
+        }
+        if(empty($info['express_no'])){
+            $data['status'] = 2;
+        }else{
+            $data['status'] = 3;
+        }
+        $rs = Db::name("mall_order")->where($wh)->update($data);
+        if($rs){
+            $this->success("取消成功");
+        }else{
+            $this->error("取消失败,请重试");
+        }
+    }
+
     /**
      * 下单购买
      *
@@ -335,12 +390,14 @@ class Order extends Api
      * @ApiParams   (name="id", type="integer", description="商品ID")
      * @ApiParams   (name="number", type="integer", description="数量")
      * @ApiParams   (name="address_id", type="integer", description="地址ID")
+     * @ApiParams   (name="recharge_account", type="string", description="充值账户")
      * @ApiParams   (name="paypwd", type="string", description="支付密码")
     */
     public function makeOrder()
     {
         $id         = $this->request->post("id",0);
         $address_id = $this->request->post("address_id",0);
+        $recharge_account = $this->request->post("recharge_account","");
         $number     = $this->request->post("number/d",1);
         $paypwd     = $this->request->post('paypwd',"");
 
@@ -381,12 +438,14 @@ class Order extends Api
         if($total_egg > $egg_num){
             $this->error("您的可支付蛋数量不足".$total_egg.'个！');
         }
-
+        if($info['is_virtual'] == 1 && empty($recharge_account)){
+            $this->error("充值账户不能为空");        
+        }
         $wh = [];
         $wh['id']      = $address_id;
         $wh['user_id'] = $this->auth->id;
         $address = Db::name("user_address")->where($wh)->find();
-        if(empty($address)){
+        if(empty($address) && $info['is_virtual'] == 0){
             $this->error("请选择配送地址");            
         }
 
@@ -409,6 +468,8 @@ class Order extends Api
             $data['image']              = $img_arr[0];
             $data['title']              = $info['title'];
             $data['price']              = $info['price'];
+            $data['recharge_account']   = $recharge_account;
+            $data['is_virtual']         = $info['is_virtual'];
             $data['number']             = $number;
             $data['rate']               = $rate;
             $data['total_price']        = $sell_egg;

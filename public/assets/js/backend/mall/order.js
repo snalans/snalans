@@ -60,7 +60,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'address', title: __('Address'), operate: false},
                         {field: 'express_name', title: __('Express_name'), operate: 'LIKE'},
                         {field: 'express_no', title: __('Express_no'), operate: 'LIKE'}, 
-                        {field: 'status', title: __('Status'), operate: false, formatter: Table.api.formatter.normal, searchList: {0: '待付款',1: '完成',2: '待发货',3: '待收货',5: '申请退款',6: '确认退款',7: '申诉'}},
+                        {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {0: '待付款',1: '完成',2: '待发货',3: '待收货',5: '申请退款',6: '确认退款',7: '申诉'}},
                         {field: 'send_time', title: __('Send_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'received_time', title: __('Received_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'add_time', title: __('Add_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},

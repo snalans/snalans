@@ -9,6 +9,7 @@ return [
     'Stock'             => '库存',
     'Sell_num'          => '销售数量',
     'Virtual_sales'     => '虚拟销量',
+    'Is_virtual'        => '虚拟商品',
     'Status'            => '状态',
     'Content'           => '内容',
     'Weigh'             => '权重',

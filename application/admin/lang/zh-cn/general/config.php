@@ -77,6 +77,7 @@ return [
     'This is a test mail'         => '这是一封来自%s的邮件',
     'Please input your email'     => '请输入测试接收者邮箱',
     'Please input correct email'  => '请输入正确的邮箱地址',
+    'Mall'                        => '商城配置',
     'Egg'                         => '蛋信息配置',
     'Rate config'                 => '蛋交易手续费(%)',
     'Android url'                 => '安卓apk下载地址',

@@ -55,8 +55,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'stock', title: __('Stock'), operate: false},
                         {field: 'sell_num', title: __('Sell_num'), operate: false},
                         {field: 'virtual_sales', title: __('Virtual_sales'), operate: false},
-                        {field: 'status', title: __('Status'), operate: false, formatter: Table.api.formatter.normal, searchList: {1: '上架',0: '下架',2: '待审核'}},
-                        {field: 'weigh', title: __('Weigh'), operate: false},
+                        {field: 'is_virtual', title: __('Is_virtual'), formatter: Table.api.formatter.normal, searchList: {1: '是',0: '否'}},
+                        {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {1: '上架',0: '下架',2: '待审核'}},
                         {field: 'add_time', title: __('Add_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
