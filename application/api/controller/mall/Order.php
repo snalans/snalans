@@ -121,6 +121,7 @@ class Order extends Api
      * @ApiReturnParams   (name="express_name", type="integer", description="快递名称")          
      * @ApiReturnParams   (name="express_no", type="string", description="快递单号")      
      * @ApiReturnParams   (name="received_time", type="string", description="收货时间")    
+     * @ApiReturnParams   (name="is_virtual", type="integer", description="是否虚拟商品 0=否 1=是")  
      * @ApiReturnParams   (name="send_time", type="integer", description="发货时间")       
      * @ApiReturnParams   (name="add_time", type="string", description="下单时间")   
      * @ApiReturnParams   (name="mobile", type="string", description="手机号")      
@@ -144,7 +145,7 @@ class Order extends Api
         }
 
         $info = Db::name("mall_order")->alias('mo')
-                    ->field("mo.order_sn,mo.title,mo.image,mo.sell_user_id,mo.price,mo.number,mo.rate,mo.total_price,ek.name,ek.image as egg_image,mo.status,mo.contactor,mo.contactor_phone,mo.address,mo.express_name,mo.express_no,mo.received_time,mo.send_time,mo.add_time,u.mobile,u.serial_number")
+                    ->field("mo.order_sn,mo.title,mo.image,mo.sell_user_id,mo.price,mo.number,mo.rate,mo.total_price,ek.name,ek.image as egg_image,mo.status,mo.contactor,mo.contactor_phone,mo.address,mo.express_name,mo.express_no,mo.is_virtual,mo.received_time,mo.send_time,mo.add_time,u.mobile,u.serial_number")
                     ->join("user u","u.id=$wh_str","LEFT")
                     ->join("egg_kind ek","ek.id=mo.kind_id","LEFT")
                     ->where($wh)
