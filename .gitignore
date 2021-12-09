@@ -1,7 +1,8 @@
 /nbproject/
 /runtime/*
 /public/uploads/*
-application/extra/site.php
+/application/extra/site.php
+/application/config.php
 .idea
 composer.lock
 *.log

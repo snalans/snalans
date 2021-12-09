@@ -3,6 +3,7 @@ namespace app\api\controller\farm;
 
 use app\common\controller\Api;
 use think\Config;
+use think\Log;
 use think\Db;
 
 /**
@@ -156,19 +157,6 @@ class Index extends Api
 
                 if($egg['is_reap'] == 1 || true){
                     $add_number = 1/$result['raw_cycle'];
-                    // ========5天后去除============
-                    // $wh = [];
-                    // $wh['user_id']  = $this->auth->id;
-                    // $wh['type']     = 0;
-                    // $wh['hatch_id'] = $egg['id'];
-                    // $wh['number']   = ['<>',1];
-                    // $wh['note']     = '喂养获得';
-                    // $info = Db::name("egg_log")->where($wh)->find();
-                    // if(empty($info)){
-                    //     $cy = ($egg['hatch_num']-$result['hatch_cycle'])%$result['raw_cycle']*$add_number;
-                    //     $add_number = $cy==0?1:$cy;
-                    // }
-                    // ========5天后去除============
                     Db::startTrans();    
                     $flag = false;
                     $kind_id = $egg['kind_id'] == 4?5:$egg['kind_id'];
@@ -180,6 +168,7 @@ class Index extends Api
                     $add_log = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'hatch_id'=>$egg['id'],'type'=>0,'number'=>$add_number,'before'=>$before,'after'=>($before+$add_number),'note'=>"喂养获得",'createtime'=>time()]);
 
                     if($data['hatch_num'] > $result['grow_cycle']){
+                        $data['is_give']    = 0;
                         $data['hatch_num']  = 0;
                         $data['shape']      = 5;
                         $data['is_reap']    = 0;
@@ -189,6 +178,7 @@ class Index extends Api
                     $rs = Db::name("egg_hatch")->where("id",$egg['id'])->update($data);
                     if($inc_number && $add_log && $rs){
                         Db::commit();
+                        $this->feedReward($this->auth->id,$kind_id,$add_number);
                         $this->success($flag?__('Feeding finished'):__('Harvest success'),['seconds'=>$this->alldate]); 
                     }else{
                         Db::rollback();
@@ -210,6 +200,55 @@ class Index extends Api
         }else{
             $seconds = $egg['uptime'] + $this->alldate - time();
             $this->error($egg['shape']==0?__('Already in incubation'):__('Already fed'),['seconds'=>$seconds<=0?0:$seconds]); 
+        }
+    }
+
+
+    /**
+     * 喂养奖励
+     * @ApiInternal
+     * 会员获得蛋的时候上级用户需要窝里面有蛋或者鸡才能获得奖励
+     */
+    public function feedReward($user_id=0,$kind_id=0,$reward=0)
+    {        
+        $pInfo = Db::name("user")->field("pid,serial_number")->where('id',$user_id)->find();
+        if(!empty($pInfo['pid']) && $reward>0){
+            $pid = $pInfo['pid'];
+            $wh = [];
+            $wh['user_id']   = $pid;
+            $wh['kind_id']   = $kind_id;
+            $wh['status']    = 0;
+            $result = Db::name("egg_hatch")->where($wh)->find();
+            $note = "会员编号：".$pInfo['serial_number']."喂养奖励";
+            if(!empty($result)){
+                $per_reward = Db::name("egg_kind")->where("id",$kind_id)->value("per_reward");
+                if($result['is_give']==0 && $per_reward>0){
+                    Db::startTrans();
+                    try {
+                        $add_num = $reward*$per_reward/100;
+                        $wh = [];
+                        $wh['user_id'] = $pid;
+                        $wh['kind_id'] = $kind_id;
+                        $before = Db::name("egg")->where($wh)->value('number');
+                        $inc_rs = Db::name("egg")->where($wh)->setInc('number',$add_num); 
+                        $inc_log = Db::name("egg_log")->insert(['user_id'=>$pid,'kind_id'=>$kind_id,'type'=>0,'number'=>$add_num,'before'=>$before,'after'=>($before+$add_num),'note'=>$note,'createtime'=>time()]);
+                        if($inc_rs && $inc_log){
+                            Db::commit();
+                            Log::record('喂养发放成功。'.$note,'reward');
+                        }else{
+                            Db::rollback();
+                            Log::record('喂养发放失败。'.$note,'reward');
+                        }
+                    } catch (\Exception $e) {
+                        Db::rollback();
+                        Log::record("error:".$e->getMessage(),'reward');
+                    }  
+                }else{
+                    Log::record('喂养发放失败。is_give:'.$result['is_give']."==per_reward:".$per_reward,'reward');
+                }
+            }else{
+                Log::record('喂养发放失败。上级没有孵化或者喂养'.$note,'reward');
+            }
         }
     }
 
@@ -235,16 +274,17 @@ class Index extends Api
             $before = $assets['hatchable'];
             $after = $assets['hatchable']-1;
         }
+        //写入日志
+        $reduce_log = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$result['kind_id'],'hatch_id'=>$egg_hatch_id,'type'=>0,'number'=>-1,'before'=>$before,'after'=>$after,'note'=>"农场进行孵化",'createtime'=>time()]);
+        $data = [];
         if($result['frozen'] > 0){
             $wh = [];
             $wh['user_id']      = $this->auth->id;
             $wh['kind_id']      = $result['kind_id'];
             $wh['frozen']       = ['>',0];
             Db::name("egg")->where($wh)->setDec('frozen');
+            $data['is_give']    = 1;
         }
-        //写入日志
-        $reduce_log = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$result['kind_id'],'hatch_id'=>$egg_hatch_id,'type'=>0,'number'=>-1,'before'=>$before,'after'=>$after,'note'=>"农场进行孵化",'createtime'=>time()]);
-        $data = [];
         $data['status']     = 0;
         $data['hatch_num']  = 1;
         $data['shape']      = 0;
