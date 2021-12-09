@@ -101,8 +101,17 @@ class Order extends Backend
                         $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
                         $row->validateFailException(true)->validate($validate);
                     }
-                    $params['status']       = 3;
-                    $params['send_time']    = time();
+                    if($row['is_virtual'] == 1){
+                        if($params['sure'] != 1){
+                            $this->error("确认失败");
+                        }
+                        $params['status']           = 1;
+                        $params['received_time']    = time();
+                        $params['send_time']        = time();
+                    }else{
+                        $params['status']       = 3;
+                        $params['send_time']    = time();
+                    }                    
                     $result = $row->allowField(true)->save($params);
                     Db::commit();
                 } catch (ValidateException $e) {
