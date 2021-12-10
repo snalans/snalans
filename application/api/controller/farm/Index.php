@@ -178,7 +178,9 @@ class Index extends Api
                     $rs = Db::name("egg_hatch")->where("id",$egg['id'])->update($data);
                     if($inc_number && $add_log && $rs){
                         Db::commit();
-                        $this->feedReward($this->auth->id,$kind_id,$add_number);
+                        if($egg['is_give'] == 0){
+                            $this->feedReward($this->auth->id,$kind_id,$add_number);
+                        }
                         $this->success($flag?__('Feeding finished'):__('Harvest success'),['seconds'=>$this->alldate]); 
                     }else{
                         Db::rollback();
@@ -218,11 +220,11 @@ class Index extends Api
             $wh['user_id']   = $pid;
             $wh['kind_id']   = $kind_id;
             $wh['status']    = 0;
-            $result = Db::name("egg_hatch")->where($wh)->find();
+            $result = Db::name("egg_hatch")->field("id,position")->where($wh)->find();
             $note = "会员编号：".$pInfo['serial_number']."喂养奖励";
             if(!empty($result)){
                 $per_reward = Db::name("egg_kind")->where("id",$kind_id)->value("per_reward");
-                if($result['is_give']==0 && $per_reward>0){
+                if($per_reward>0){
                     Db::startTrans();
                     try {
                         $add_num = $reward*$per_reward/100;
@@ -244,7 +246,7 @@ class Index extends Api
                         Log::record("error:".$e->getMessage(),'reward');
                     }  
                 }else{
-                    Log::record('喂养发放失败。is_give:'.$result['is_give']."==per_reward:".$per_reward,'reward');
+                    Log::record('喂养发放失败。==per_reward:'.$per_reward,'reward');
                 }
             }else{
                 Log::record('喂养发放失败。上级没有孵化或者喂养'.$note,'reward');
