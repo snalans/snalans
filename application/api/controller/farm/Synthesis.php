@@ -105,31 +105,38 @@ class Synthesis extends Api
         $pInfo = Db::name("user")->field("pid,serial_number")->where('id',$user_id)->find();
         if(!empty($pInfo['pid'])){
             $pid = $pInfo['pid'];      
-            foreach ($config as $key => $value) {
-                if($value['per_reward']>0){
-                    Db::startTrans();
-                    try {
-                        $note = "会员编号：".$pInfo['serial_number']."合成奖励";
-                        $add_num = $value['number']*$num*$value['per_reward']/100;
-                        $wh = [];
-                        $wh['user_id'] = $pid;
-                        $wh['kind_id'] = $value['ch_kind_id'];
-                        $before = Db::name("egg")->where($wh)->value('number');
-                        $inc_rs = Db::name("egg")->where($wh)->setInc('number',$add_num); 
-                        $inc_log = Db::name("egg_log")->insert(['user_id'=>$pid,'kind_id'=>$value['ch_kind_id'],'type'=>3,'number'=>$add_num,'before'=>$before,'after'=>($before+$add_num),'note'=>$note,'createtime'=>time()]);
-                        if($inc_rs && $inc_log){
-                            Db::commit();
-                        }else{
+            $wh = [];
+            $wh['user_id']   = $pid;
+            $wh['kind_id']   = $kind_id;
+            $wh['status']    = 0;
+            $result = Db::name("egg_hatch")->field("id,position")->where($wh)->find();
+            if(!empty($result)){                
+                foreach ($config as $key => $value) {
+                    if($value['per_reward']>0){
+                        Db::startTrans();
+                        try {
+                            $note = "会员编号：".$pInfo['serial_number']."合成奖励";
+                            $add_num = $value['number']*$num*$value['per_reward']/100;
+                            $wh = [];
+                            $wh['user_id'] = $pid;
+                            $wh['kind_id'] = $value['ch_kind_id'];
+                            $before = Db::name("egg")->where($wh)->value('number');
+                            $inc_rs = Db::name("egg")->where($wh)->setInc('number',$add_num); 
+                            $inc_log = Db::name("egg_log")->insert(['user_id'=>$pid,'kind_id'=>$value['ch_kind_id'],'type'=>3,'number'=>$add_num,'before'=>$before,'after'=>($before+$add_num),'note'=>$note,'createtime'=>time()]);
+                            if($inc_rs && $inc_log){
+                                Db::commit();
+                            }else{
+                                Db::rollback();
+                                Log::record('奖励发放失败。'.$note,'reward');
+                            }
+                        } catch (\Exception $e) {
                             Db::rollback();
-                            Log::record('奖励发放失败。'.$note,'reward');
-                        }
-                    } catch (\Exception $e) {
-                        Db::rollback();
-                        Log::record($e->getMessage(),'reward');
-                    }  
-                    Log::record('奖励发放成功。'.$note,'reward');
-                }   
-            }            
+                            Log::record($e->getMessage(),'reward');
+                        }  
+                        Log::record('奖励发放成功。'.$note,'reward');
+                    }   
+                }            
+            }
         }
     }
 }
