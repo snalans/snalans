@@ -76,9 +76,6 @@ class Product extends Api
                         if(empty($item['serial_number'])){
                             $item['serial_number'] = '平台';
                         }
-                        if(!empty($item['egg_image'])){
-                            $item['image'] = cdnurl($item['egg_image'], false);
-                        }
                         $item['price_str'] = $item['price']." ".$item['name'];
                         return $item;
                     });
@@ -120,9 +117,6 @@ class Product extends Api
             if(!empty($info['images'])){                            
                 $img_arr = explode(",",$info['images']);
                 $info['image'] = cdnurl($img_arr[0], false);
-            }
-            if(!empty($info['egg_image'])){
-                $info['image'] = cdnurl($info['egg_image'], false);
             }
             $info['price_str'] = $info['price']." ".$info['name'];
             $info['add_time']  = date("Y-m-d H:i",$info['add_time']);
@@ -183,10 +177,7 @@ class Product extends Api
                         if(!empty($item['images'])){                            
                             $img_arr = explode(",",$item['images']);
                             $item['images'] = cdnurl($img_arr[0], false);
-                        }                        
-                        if(!empty($item['egg_image'])){
-                            $item['image'] = cdnurl($item['egg_image'], false);
-                        }
+                        }          
                         $item['price_str'] = $item['price']." ".$item['name'];
                         return $item;
                     });        
