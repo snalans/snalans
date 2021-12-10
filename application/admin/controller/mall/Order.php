@@ -163,6 +163,8 @@ class Order extends Backend
                 Db::startTrans();
                 try {
                     $log_re = true;
+                    $inc_rs = true;
+                    $log_rs = true;
                     //是否采用模型验证
                     if ($this->modelValidate) {
                         $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
@@ -172,34 +174,38 @@ class Order extends Backend
                     $number = 0;
                     if($params['status'] == 1){
                         if($row['status'] == 5){
-                            $note = $row['note']."\n 申请失败";
+                            $note = $row['note']."\n 申请退款失败";
                         }else{
-                            $note = $row['note']."\n 申诉失败";
+                            $note = $row['note']."\n 申诉成功";
                         }                        
                         $number = $row['total_price'];
                         $user_id = $row['sell_user_id'];
                     }else if($params['status'] == 6){
                         if($row['status'] == 5){
-                            $note = $row['note']."\n 申请成功";
+                            $note = $row['note']."\n 申请退款成功返还消费";
                         }else{
-                            $note = $row['note']."\n 申诉成功";
+                            $note = $row['note']."\n 申诉失败返还消费";
                         }  
                         $number = $row['total_price'] + $row['rate'];
                         $user_id = $row['buy_user_id'];
                     }else{
                         $this->error("无效操作");
                     }
-                    $wh = [];
-                    $wh['user_id'] = $user_id;
-                    $wh['kind_id'] = $row['kind_id'];
-                    $before = Db::name("egg")->where($wh)->value('number');
-                    $inc_rs = Db::name("egg")->where($wh)->setInc('number',$number);
-                    //写入日志
-                    $log_rs = Db::name("egg_log")->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>1,'order_sn'=>$row['order_sn'],'number'=>$row['total_price'],'before'=>$before,'after'=>($before+$row['total_price']),'note'=>$note,'createtime'=>time()]);
 
-                    if($params['status'] == 6 && $row['rate']>0){         
-                        //手续费写入日志
-                        $log_re = Db::name("egg_log")->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>9,'order_sn'=>$row['order_sn'],'number'=>$row['rate'],'before'=>($before+$row['total_price']),'after'=>($before+$number),'note'=>$note.",返还手续费",'createtime'=>time()]);
+                    if($user_id > 0)
+                    {                        
+                        $wh = [];
+                        $wh['user_id'] = $user_id;
+                        $wh['kind_id'] = $row['kind_id'];
+                        $before = Db::name("egg")->where($wh)->value('number');
+                        $inc_rs = Db::name("egg")->where($wh)->setInc('number',$number);
+                        //写入日志
+                        $log_rs = Db::name("egg_log")->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>1,'order_sn'=>$row['order_sn'],'number'=>$row['total_price'],'before'=>$before,'after'=>($before+$row['total_price']),'note'=>$note,'createtime'=>time()]);
+
+                        if($params['status'] == 6 && $row['rate']>0){         
+                            //手续费写入日志
+                            $log_re = Db::name("egg_log")->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>9,'order_sn'=>$row['order_sn'],'number'=>$row['rate'],'before'=>($before+$row['total_price']),'after'=>($before+$number),'note'=>$note.",返还手续费",'createtime'=>time()]);
+                        }
                     }
 
                     $result = $row->allowField(true)->save($params);

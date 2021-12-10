@@ -7,12 +7,18 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('审核结果')}:</label>
+        <label class="control-label col-xs-12 col-sm-2">备注:</label>
+        <div class="col-xs-12 col-sm-8">
+            <span class="form-control">{$row.note|htmlentities}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{$row.status==5?"买家申请退款":"卖家申诉"}:</label>
         <div class="col-xs-12 col-sm-8">
             <select id="c-status" class="form-control selectpicker" name="row[status]"  data-rule="required">
                 <option value="">选择结果</option>
-                <option value="1">审核通过,完成</option>
-                <option value="6">审核不通过,退款</option>
+                <option value="1">{$row.status==5?"不通过,订单完成":"通过,订单完成"}</option>
+                <option value="6">{$row.status==5?"通过,订单退款":"不通过,订单退款"}</option>
             </select>
         </div>
     </div>
