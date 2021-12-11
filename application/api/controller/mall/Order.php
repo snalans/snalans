@@ -464,7 +464,9 @@ class Order extends Api
                 $this->error("请选择配送地址");            
             }
         }else{
-            $this->error("充值账户不能为空"); 
+            if(empty($recharge_account)){
+                $this->error("充值账户不能为空"); 
+            }
         }
 
         $auth = new \app\common\library\Auth();
