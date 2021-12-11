@@ -467,6 +467,9 @@ class Order extends Api
             if(empty($recharge_account)){
                 $this->error("充值账户不能为空"); 
             }
+            if($number != 1){
+                $this->error("虚拟商品一单只能购买一件"); 
+            }
         }
 
         $auth = new \app\common\library\Auth();
