@@ -127,6 +127,7 @@ class Order extends Api
      * @ApiReturnParams   (name="add_time", type="string", description="下单时间")   
      * @ApiReturnParams   (name="mobile", type="string", description="手机号")      
      * @ApiReturnParams   (name="serial_number", type="string", description="会员编号")  
+     * @ApiReturnParams   (name="is_platform", type="string", description="是否平台商品订单 1=是 0=否")  
      */
     public function getOrderDetail()
     {
@@ -152,6 +153,7 @@ class Order extends Api
                     ->where($wh)
                     ->find();
         if(!empty($info)){
+            $info['is_platform'] = $info['sell_user_id']==0?1:0;
             if($info['status'] == 1){
                 $info['status_str'] = "交易完成";
             }else if($info['status'] == 2){
@@ -160,9 +162,9 @@ class Order extends Api
                 $info['status_str'] = "待收货";
             }else if($info['status'] == 5){
                 if($info['sell_user_id'] == 0){
-                    $info['status_str'] = "申请退款";
+                    $info['status_str'] = "申请中,有问题请联系客服";
                 }else{
-                    $info['status_str'] = "申请退款,请联系卖家";
+                    $info['status_str'] = "申请中,有问题请联系卖家";
                 }
                 unset($info['sell_user_id']);
             }else if($info['status'] == 6){
