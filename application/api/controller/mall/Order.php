@@ -453,8 +453,10 @@ class Order extends Api
         $wh['id']      = $address_id;
         $wh['user_id'] = $this->auth->id;
         $address = Db::name("user_address")->where($wh)->find();
-        if($info['is_virtual'] == 0 && empty($address)){
-            $this->error("请选择配送地址");            
+        if($info['is_virtual'] == 0){
+            if(empty($address)){
+                $this->error("请选择配送地址");            
+            }
         }
 
         $auth = new \app\common\library\Auth();
