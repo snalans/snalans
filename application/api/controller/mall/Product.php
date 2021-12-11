@@ -261,6 +261,8 @@ class Product extends Api
      */
     public function save()
     {
+        $this->error("发布商品功能还未开放,敬请期待");
+        exit;
         $id         = $this->request->post("id","");
         $title      = $this->request->post("title","");
         $images     = $this->request->post("images","");
