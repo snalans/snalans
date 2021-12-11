@@ -3,6 +3,7 @@ namespace app\api\controller\mall;
 
 use app\common\controller\Api;
 use think\Validate;
+use think\Config;
 use think\Db;
 
 /**
@@ -399,6 +400,9 @@ class Order extends Api
     */
     public function makeOrder()
     {
+        if(empty(Config::get("site.mall_is_open"))){
+            $this->error("商城维护中,稍后再来...");
+        }
         $id         = $this->request->post("id",0);
         $address_id = $this->request->post("address_id",0);
         $recharge_account = $this->request->post("recharge_account","");

@@ -60,5 +60,6 @@ return array (
   'invite_url' => 'http://h5.snalans.com',
   'issue_number' => '0',
   'send_hours' => '0',
-  'mall_hours' => '0',
+  'voer_hours' => '0',
+  'mall_is_open' => '1',
 );
