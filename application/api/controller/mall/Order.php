@@ -379,7 +379,7 @@ class Order extends Api
         $wh['order_sn']     = $order_sn;
         $wh['buy_user_id']  = $this->auth->id;
         $wh['status']       = 5;
-        $info = Db::name("mall_order")->field("id,order_sn")->where($wh)->find();
+        $info = Db::name("mall_order")->field("id,order_sn,express_no")->where($wh)->find();
         if(empty($info)){            
             $this->error("无效操作");
         }
