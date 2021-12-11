@@ -170,7 +170,7 @@ class Order extends Api
             }else if($info['status'] == 6){
                 $info['status_str'] = "退款完成";
             }else if($info['status'] == 7){
-                $info['status_str'] = "申诉中,有问题请联系客服";
+                $info['status_str'] = "申诉中,有问题请联系对方";
             }else{
                 $info['status_str'] = "待付款";
             }
