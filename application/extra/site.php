@@ -61,5 +61,5 @@ return array (
   'issue_number' => '0',
   'send_hours' => '0',
   'voer_hours' => '0',
-  'mall_is_open' => '1',
+  'mall_is_open' => '0',
 );

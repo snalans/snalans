@@ -401,7 +401,7 @@ class Order extends Api
     public function makeOrder()
     {
         if(empty(Config::get("site.mall_is_open"))){
-            $this->error("商城维护中,稍后再来...");
+            $this->error("商城维护中,稍后再来交易...");
         }
         $id         = $this->request->post("id",0);
         $address_id = $this->request->post("address_id",0);

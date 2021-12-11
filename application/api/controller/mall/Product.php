@@ -4,6 +4,7 @@ namespace app\api\controller\mall;
 use app\common\controller\Api;
 use think\Validate;
 use think\Config;
+use think\Cookie;
 use think\Db;
 
 /**
@@ -19,7 +20,6 @@ class Product extends Api
     {
         parent::_initialize();
     }
-
 
     /**
      * 获取商品列表
@@ -48,11 +48,33 @@ class Product extends Api
         $page           = $this->request->get("page",1);        
         $per_page       = $this->request->get("per_page",15);
 
+        $is_order = "p.weigh desc,p.add_time desc";
         $wh = [];
         $wh['p.status'] = 1;
         $wh['p.stock']  = ['>',0];
         if(!empty($cate_id)){
             $wh['p.cate_id'] = $cate_id;
+            if($cate_id == 1){
+                if(Cookie::has('is_order')){
+                    $is_order = Cookie::get('is_order');
+                }else{
+                    $mtr = mt_rand(1,6);
+                    if($mtr == 1){
+                        $is_order = "p.add_time desc";
+                    }else if($mtr == 2){
+                        $is_order = "p.add_time asc";
+                    }else if($mtr == 3){
+                        $is_order = "p.sell_num desc";
+                    }else if($mtr == 4){
+                        $is_order = "p.sell_num asc";
+                    }else if($mtr == 5){
+                        $is_order = "p.title desc";
+                    }else if($mtr == 6){
+                        $is_order = "p.title asc";
+                    }                     
+                    Cookie::set('is_order',$is_order,3600);
+                }
+            }
         }
         if(!empty($title)){
             $wh['p.title'] = ['like',"%".$title."%"];
@@ -67,7 +89,7 @@ class Product extends Api
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
                     ->where($wh)
                     ->whereOr($whs)
-                    ->order("p.weigh desc,p.add_time desc")
+                    ->order($is_order)
                     ->paginate($per_page)->each(function($item){
                         if(!empty($item['images'])){                            
                             $img_arr = explode(",",$item['images']);
