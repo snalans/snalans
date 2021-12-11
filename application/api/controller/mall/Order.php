@@ -158,7 +158,11 @@ class Order extends Api
             if($info['status'] == 1){
                 $info['status_str'] = "交易完成";
             }else if($info['status'] == 2){
-                $info['status_str'] = "待发货";
+                if($info['is_virtual']==1){
+                    $info['status_str'] = "待充值";
+                }else{
+                    $info['status_str'] = "待发货";
+                }                
             }else if($info['status'] == 3){
                 $info['status_str'] = "待收货";
             }else if($info['status'] == 5){
@@ -446,17 +450,17 @@ class Order extends Api
         if($total_egg > $egg_num){
             $this->error("您的可支付蛋数量不足".$total_egg.'个！');
         }
-        if($info['is_virtual'] == 1 && empty($recharge_account)){
-            $this->error("充值账户不能为空");        
-        }
-        $wh = [];
-        $wh['id']      = $address_id;
-        $wh['user_id'] = $this->auth->id;
-        $address = Db::name("user_address")->where($wh)->find();
+
         if($info['is_virtual'] == 0){
+            $wh = [];
+            $wh['id']      = $address_id;
+            $wh['user_id'] = $this->auth->id;
+            $address = Db::name("user_address")->where($wh)->find();
             if(empty($address)){
                 $this->error("请选择配送地址");            
             }
+        }else{
+            $this->error("充值账户不能为空"); 
         }
 
         $auth = new \app\common\library\Auth();
@@ -478,14 +482,19 @@ class Order extends Api
             $data['image']              = $img_arr[0];
             $data['title']              = $info['title'];
             $data['price']              = $info['price'];
-            $data['recharge_account']   = $recharge_account;
             $data['is_virtual']         = $info['is_virtual'];
             $data['number']             = $number;
             $data['rate']               = $rate;
             $data['total_price']        = $sell_egg;
-            $data['contactor']          = $address['real_name'];
-            $data['contactor_phone']    = $address['phone'];
-            $data['address']            = $address['area']." ".$address['address'];
+
+            if($info['is_virtual'] == 0){
+                $data['contactor']          = $address['real_name'];
+                $data['contactor_phone']    = $address['phone'];
+                $data['address']            = $address['area']." ".$address['address'];
+            }else{
+                $data['recharge_account']   = $recharge_account;
+            }
+
             $data['status']             = 2;
             $data['add_time']           = time();    
             $rs = Db::name("mall_order")->insertGetId($data);
@@ -518,13 +527,18 @@ class Order extends Api
                 // \app\common\library\Hsms::send($info['user_id'], '','order');
             } else {
                 DB::rollback();
-                $this->error("购买失败");
+                $this->error("购买失败,请重新购买");
             }
         } catch (\Exception $e) {
             Db::rollback();
             $this->error($e->getMessage());
         }   
-        $this->success('购买成功，等待卖家发货');
+        if($info['is_virtual'] == 0){
+            $this->success('购买成功,等待发货');
+        }else{  
+            $this->success('申请成功,等待审核');
+        }
+        
     }
 
 
