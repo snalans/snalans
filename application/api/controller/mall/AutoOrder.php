@@ -64,6 +64,8 @@ class AutoOrder extends Api
                     }
                     $this->success("超时未付款-退款成功",$value['order_sn']);
                 }
+            }else{
+                $this->success("超时未付款-无订单");
             }
         }        
     }
@@ -105,6 +107,8 @@ class AutoOrder extends Api
                     }
                     $this->success("超时未确认收获-确认收获成功",$value['order_sn']);
                 }
+            }else{
+                $this->success("超时未签收-无订单");
             }
         }        
     }
