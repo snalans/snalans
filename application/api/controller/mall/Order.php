@@ -164,7 +164,7 @@ class Order extends Api
                 if($info['sell_user_id'] == 0){
                     $info['status_str'] = "申请中,有问题请联系客服";
                 }else{
-                    $info['status_str'] = "申请中,有问题请联系卖家";
+                    $info['status_str'] = "申请中,有问题请联系对方";
                 }
                 unset($info['sell_user_id']);
             }else if($info['status'] == 6){
