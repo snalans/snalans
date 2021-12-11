@@ -58,8 +58,8 @@ return array (
   'order_end_time' => '24',
   'valid_number' => '1',
   'invite_url' => 'http://h5.snalans.com',
-  'issue_number' => '0',
-  'send_hours' => '0',
-  'voer_hours' => '0',
-  'mall_is_open' => '0',
+  'issue_number' => '10',
+  'send_hours' => '10',
+  'voer_hours' => '10',
+  'mall_is_open' => '1',
 );

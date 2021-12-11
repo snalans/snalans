@@ -10,7 +10,7 @@ use think\Db;
  * 商城订单接口
  * @ApiWeigh   (38)
  */
-class Order extends Api
+class AutoOrder extends Api
 {
     protected $noNeedLogin = "*";
     protected $noNeedRight = '*';
@@ -72,7 +72,7 @@ class Order extends Api
      * 自动确认-超时未签收
      *
      */
-    public function autoRefund()
+    public function autoSure()
     {
         $voer_hours = Config::get("site.voer_hours");
         if($voer_hours > 0){
