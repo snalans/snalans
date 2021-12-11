@@ -306,6 +306,7 @@ function copyText(mobile) {
         },1500)
     }
 }
+
 // 添加用户到面板
 function addUser(data) {
     var add = true;
@@ -315,7 +316,7 @@ function addUser(data) {
         }
     });
     if(add){
-    var _html = '<li onclick="copyText(' + data.name + ')" class="layui-nav-item" data-id="' + data.id + '" id="f-' + data.id +
+    var _html = '<li ondblclick="copyText(' + data.name + ')" class="layui-nav-item" data-id="' + data.id + '" id="f-' + data.id +
         '" data-name="' + data.name + '" data-avatar="' + data.avatar + '" data-ip="' + data.ip + '">';
     _html += '<img src="' + data.avatar + '">';
     _html += '<span class="user-name">' + data.name + '</span>';
