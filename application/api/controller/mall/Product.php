@@ -50,6 +50,7 @@ class Product extends Api
 
         $wh = [];
         $wh['p.status'] = 1;
+        $wh['p.stock']  = ['>',0];
         if(!empty($cate_id)){
             $wh['p.cate_id'] = $cate_id;
         }
