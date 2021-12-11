@@ -81,7 +81,11 @@ class Order extends Api
                         if($item['status'] == 1){
                             $item['status_str'] = "交易完成";
                         }else if($item['status'] == 2){
-                            $item['status_str'] = "待发货";
+                            if($item['is_virtual']==1){
+                                $item['status_str'] = "待充值";
+                            }else{
+                                $item['status_str'] = "待发货";
+                            }   
                         }else if($item['status'] == 3){
                             $item['status_str'] = "待收货";
                         }else if($item['status'] == 5){
