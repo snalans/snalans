@@ -93,6 +93,8 @@ class Order extends Backend
             if ($params) {
                 $params = $this->preExcludeFields($params);
                 $result = false;
+                $log_rs = true;
+                $log_re = true;
                 Db::startTrans();
                 try {
                     //是否采用模型验证
@@ -102,12 +104,24 @@ class Order extends Backend
                         $row->validateFailException(true)->validate($validate);
                     }
                     if($row['is_virtual'] == 1){
-                        if($params['sure'] != 1){
-                            $this->error("确认失败");
+                        if($params['status'] == 1){                            
+                            $params['received_time']    = time();
+                            $params['send_time']        = time();
+                        }else if($params['status'] == 6){
+                            $total_amount = $row['total_price']+$row['rate'];
+                            $wh = [];
+                            $wh['user_id'] = $row['buy_user_id'];
+                            $wh['kind_id'] = $row['kind_id'];
+                            $before = Db::name("egg")->where($wh)->value('number');
+                            $inc_rs = Db::name("egg")->where($wh)->setInc('number',$total_amount);
+                            //写入日志
+                            $log_rs = Db::name("egg_log")->insert(['user_id'=>$row['buy_user_id'],'kind_id'=>$row['kind_id'],'type'=>1,'order_sn'=>$row['order_sn'],'number'=>$row['total_price'],'before'=>$before,'after'=>($before+$row['total_price']),'note'=>"充值申请失败返还消费",'createtime'=>time()]);
+                            if($row['rate']>0){         
+                                //手续费写入日志
+                                $log_re = Db::name("egg_log")->insert(['user_id'=>$row['buy_user_id'],'kind_id'=>$row['kind_id'],'type'=>9,'order_sn'=>$row['order_sn'],'number'=>$row['rate'],'before'=>($before+$row['total_price']),'after'=>($before+$total_amount),'note'=>"充值申请失败返还手续费",'createtime'=>time()]);
+                            }
                         }
-                        $params['status']           = 1;
-                        $params['received_time']    = time();
-                        $params['send_time']        = time();
+                        
                     }else{
                         $params['status']       = 3;
                         $params['send_time']    = time();
@@ -124,7 +138,7 @@ class Order extends Backend
                     Db::rollback();
                     $this->error($e->getMessage());
                 }
-                if ($result !== false) {
+                if ($result !== false && $log_rs && $log_re) {
                     $this->success();
                 } else {
                     $this->error(__('No rows were updated'));

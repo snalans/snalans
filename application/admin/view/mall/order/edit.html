@@ -45,7 +45,13 @@
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">确认充值:</label>
         <div class="col-xs-12 col-sm-8">
-            <input id="c-sure" data-rule="required" class="form-control" name="row[sure]" type="number" placeholder="确认充值完毕输入 1 再点击按钮" value="">
+
+            <select id="c-status" data-rule="required" class="form-control selectpicker" name="row[status]">
+                <option value="">请选择充值结果</option>
+                <option value="1">充值成功</option>
+                <option value="6">充值失败</option>
+            </select>
+
         </div>
     </div>
     {/if}
