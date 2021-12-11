@@ -104,8 +104,7 @@ class Order extends Backend
                         $row->validateFailException(true)->validate($validate);
                     }
                     if($row['is_virtual'] == 1){
-                        if($params['status'] == 1){                            
-                            $params['received_time']    = time();
+                        if($params['status'] == 1){                   
                             $params['send_time']        = time();
                         }else if($params['status'] == 6){
                             $total_amount = $row['total_price']+$row['rate'];
@@ -120,8 +119,8 @@ class Order extends Backend
                                 //手续费写入日志
                                 $log_re = Db::name("egg_log")->insert(['user_id'=>$row['buy_user_id'],'kind_id'=>$row['kind_id'],'type'=>9,'order_sn'=>$row['order_sn'],'number'=>$row['rate'],'before'=>($before+$row['total_price']),'after'=>($before+$total_amount),'note'=>"充值申请失败返还手续费",'createtime'=>time()]);
                             }
-                        }
-                        
+                        }         
+                        $params['received_time']    = time();                        
                     }else{
                         $params['status']       = 3;
                         $params['send_time']    = time();

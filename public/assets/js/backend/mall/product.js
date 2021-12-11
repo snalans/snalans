@@ -18,6 +18,14 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
             var table = $("#table");
 
+            //在普通搜索渲染后
+            table.on('post-common-search.bs.table', function (event, table) {
+                var form = $("form", table.$commonsearch);
+                $("input[name='cate_id']", form).addClass("selectpage").data("source", "mall/product_cate/index").data("primaryKey", "id").data("field", "title");
+                Form.events.cxselect(form);
+                Form.events.selectpage(form);
+            });
+
             // 初始化表格
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
@@ -48,7 +56,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                 return span.outerHTML;
                             }
                         },
-                        {field: 'cate.title', title: "分类名称", operate: 'LIKE'},
+                        {field: 'cate.title', title: "商品分类", operate: false},
+                        {field: 'cate_id', title: "商品分类", visible: false},
                         {field: 'images', title: __('Images'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.images},
                         {field: 'price', title: __('Price'), operate:false},
                         {field: 'eggkind.name', title: "蛋类型", operate: false},

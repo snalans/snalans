@@ -3,7 +3,7 @@
 return [
     'User_id'           => '卖家ID',
     'Title'             => '商品名称',
-    'Product_cate'      => '分类名称',
+    'Product_cate'      => '商品分类',
     'Images'            => '商品图片',
     'Price'             => '支付价格',
     'Stock'             => '库存',
