@@ -68,6 +68,8 @@ class Hsms
             $log_msg .= '您申请登录，验证码：'.$code.'。请不要把验证码泄漏给其他人，如非本人请勿操作。 ';
         }else if($event=='register'){                
             $log_msg .= '您申请注册会员，验证码：'.$code.'。请不要把验证码泄漏给其他人，如非本人请勿操作。 ';
+        }else if($event=='virtual'){                
+            $log_msg .= '你申请的（话费/油卡）充值审核通过，以为你自动充值';
         }else if($event=='order'){
             $log_msg .= '您的订单已发生变化，请登录查看。';
         }

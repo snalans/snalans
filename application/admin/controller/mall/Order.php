@@ -138,6 +138,10 @@ class Order extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false && $log_rs && $log_re) {
+                    if($row['is_virtual'] == 1 && $params['status'] == 1){
+                        // 通知卖家
+                        \app\common\library\Hsms::send($row['buy_user_id'], '','virtual');
+                    }
                     $this->success();
                 } else {
                     $this->error(__('No rows were updated'));
