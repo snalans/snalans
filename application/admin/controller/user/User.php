@@ -223,18 +223,50 @@ class User extends Backend
     /**
      * 修改状态
      */
-    public function change_status($ids = "")
+    public function status($ids = "")
     {
-        if ($this->request->isAjax()) {
-            $ids = $ids ? $ids : $this->request->post("ids");
-            $status = Db::name("user")->where("id",$ids)->value("status");
-            $status = $status=='hidden'?'normal':'hidden';
-            $result = Db::name("user")->where("id",$ids)->update(['status'=>$status]);
-            if($result){
-                $this->success();
+        $row = $this->model->get($ids);
+        if ($this->request->isPost()) {
+            $params = $this->request->post("row/a");
+            if ($params) {
+                $params = $this->preExcludeFields($params);
+                $result = false;
+                Db::startTrans();
+                try {           
+                    if($params['status'] == 'hidden'){
+                        $params['is_attestation'] = 3;
+                    }         
+                    //是否采用模型验证
+                    if ($this->modelValidate) {
+                        $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
+                        $row->validateFailException(true)->validate($validate);
+                    }
+                    $result = $row->allowField(true)->save($params);
+                    Db::commit();
+                } catch (ValidateException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (PDOException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (Exception $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                }
+                if ($result !== false) {
+                    if($params['status'] == 'hidden'){
+                        Db::name("user_token")->where("user_id",$ids)->delete();
+                    }
+                    $this->success();
+                } else {
+                    $this->error(__('No rows were updated'));
+                }
             }
+            $this->error(__('Parameter %s can not be empty', ''));
         }
-        $this->error();
+        $this->view->assign("row", $row);
+        return $this->view->fetch();
     }
 
 

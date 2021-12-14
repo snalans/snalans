@@ -9,6 +9,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     see_url: 'user/user/see',
                     add_url: 'user/user/add',
                     edit_url: 'user/user/edit',
+                    status_url: 'user/user/status',
                     del_url: 'user/user/del',
                     multi_url: 'user/user/multi',
                     table: 'user',
@@ -45,8 +46,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'valid_number', title: __('Valid_number')},
                         {field: 'total_valid_number', title: '团队有效值', operate: false},
                         {field: 'team_number', title: '直推人数', operate: false},
-                        {field: 'status', title: __('Status'), formatter: Table.api.formatter.status, searchList: {normal: __('Normal'), hidden: __('Hidden')}},
                         {field: 'is_attestation', title: __('是否认证'), formatter: Table.api.formatter.normal, searchList: {0: '未认证', 1: '成功',2: '等待审核',3:'失败'}},
+                        {field: 'status', title: __('Status'), formatter: Table.api.formatter.status, searchList: {normal: __('Normal'), hidden: __('Hidden')}},
+                        {field: 'note', title: '备注', operate: false},
                         {field: 'operate', title: __('Operate'), table: table,buttons: [
                             {name: 'see', text: '查看', title: '查看详情', icon: 'fa fa-list', classname: 'btn btn-xs btn-primary btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.see_url},
                             {name: 'edit', text: '修改密码', title: '修改密码', icon: 'fa fa-list', classname: 'btn btn-xs btn-primary btn-editone btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url},
@@ -62,42 +64,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                             {name: 'edit', text: '认证', title: '认证信息', icon: 'fa fa-list', classname: 'btn btn-xs btn-success btn-dialog' ,url:function(row){
                                 return 'user/attestation/index?user_id='+row.id
                             }},
-                            {
-                                name: 'ajax',
-                                text: '拉黑',
-                                title: '拉黑',
-                                classname: 'btn btn-xs btn-primary btn-stop btn-ajax',
-                                icon: 'fa fa-stop',
-                                confirm: '确认拉黑？',
-                                url: 'user/user/change_status',
-                                success: function (data, ret) {
-                                    table.bootstrapTable('refresh');
-                                    //如果需要阻止成功提示，则必须使用return false;
-                                    //return false;
-                                },
-                                hidden:function(row){
-                                    if(row.status == 'hidden'){ 
-                                        return true; 
-                                    }
-                                }
-                            },{
-                                name: 'ajax',
-                                text: '恢复',
-                                title: '恢复',
-                                classname: 'btn btn-xs btn-success btn-stop btn-ajax',
-                                icon: 'fa fa-stop',
-                                confirm: '确认恢复正常？',
-                                url: 'user/user/change_status',
-                                success: function (data, ret) {
-                                    table.bootstrapTable('refresh');
-                                    //如果需要阻止成功提示，则必须使用return false;
-                                    //return false;
-                                },
-                                hidden:function(row){
-                                    if(row.status == 'normal'){ 
-                                        return true; 
-                                    }
-                                }
+                            {name: 'status', text: '审核', title: '编辑用户状态', icon: 'fa fa-star', classname: 'btn btn-xs btn-success btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.status_url
+                                ,extend: 'data-area=\'["500px", "450px"]\''
                             }
                         ], events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
@@ -127,6 +95,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Controller.api.bindevent();
         },
         edit: function () {
+            Controller.api.bindevent();
+        },
+        status: function () {
             Controller.api.bindevent();
         },
         api: {
