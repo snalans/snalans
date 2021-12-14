@@ -48,7 +48,25 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'team_number', title: '直推人数', operate: false},
                         {field: 'is_attestation', title: __('是否认证'), formatter: Table.api.formatter.normal, searchList: {0: '未认证', 1: '成功',2: '等待审核',3:'失败'}},
                         {field: 'status', title: __('Status'), formatter: Table.api.formatter.status, searchList: {normal: __('Normal'), hidden: __('Hidden')}},
-                        {field: 'note', title: '备注', operate: false},
+                        {field: 'note', title: '备注', operate: false,
+                            cellStyle:function(value,row,index){
+                                return {
+                                    css:{
+                                        "min-width":"80px",
+                                        "white-space":"nowrap",
+                                        "text-overflow":"ellipsis",
+                                        "overflow":"hidden",
+                                        "max-width":"220px"
+                                    }
+                                }
+                            },
+                            formatter:function paramsMatter(value,row,index){
+                                var span = document.createElement("span");
+                                span.setAttribute("title",value);
+                                span.innerHTML = value;
+                                return span.outerHTML;
+                            }
+                        },
                         {field: 'operate', title: __('Operate'), table: table,buttons: [
                             {name: 'see', text: '查看', title: '查看详情', icon: 'fa fa-list', classname: 'btn btn-xs btn-primary btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.see_url},
                             {name: 'edit', text: '修改密码', title: '修改密码', icon: 'fa fa-list', classname: 'btn btn-xs btn-primary btn-editone btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url},

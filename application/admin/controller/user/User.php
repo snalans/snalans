@@ -232,16 +232,14 @@ class User extends Backend
                 $params = $this->preExcludeFields($params);
                 $result = false;
                 Db::startTrans();
-                try {           
-                    if($params['status'] == 'hidden'){
-                        $params['is_attestation'] = 3;
-                    }         
+                try {          
                     //是否采用模型验证
                     if ($this->modelValidate) {
                         $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
                         $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
                         $row->validateFailException(true)->validate($validate);
                     }
+                    $params['note'] = $this->auth->username.":".$params['note']." >> ".$row['note'];
                     $result = $row->allowField(true)->save($params);
                     Db::commit();
                 } catch (ValidateException $e) {
