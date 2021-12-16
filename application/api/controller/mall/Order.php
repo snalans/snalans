@@ -449,7 +449,9 @@ class Order extends Api
         $sell_egg = $info['price']*$number;
         $rate = 0;
         $rate_config = Db::name("egg_kind")->where("id",$info['kind_id'])->value("rate_config");
-        $rate = ceil($sell_egg/10)*$rate_config;
+        if($rate_config>0){
+            $rate = $sell_egg*$rate_config/100;
+        }   
         $total_egg = $sell_egg + $rate;
         if($total_egg > $egg_num){
             $this->error("您的可支付蛋数量不足".$total_egg.'个！');

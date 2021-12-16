@@ -364,8 +364,11 @@ class Index extends Api
             $this->error(__('Paypwd is incorrect'));
         }
 
+        $rate = 0;
         $rate_config = Db::name("egg_kind")->where("id",$kind_id)->value("rate_config");
-        $rate = ceil($number/10)*$rate_config;
+        if($rate_config>0){
+            $rate = $number*$rate_config/100;
+        }        
 
         $wh = [];
         $wh['user_id'] = $this->auth->id;
