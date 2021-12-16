@@ -58,8 +58,8 @@ class Kind extends Backend
             if ($params) {
                 $params = $this->preExcludeFields($params);
                 $result = false;
-                if($params['rate_config'] > 10 || $params['rate_config'] < 0){
-                    $this->error("手续费要在0~10之间");
+                if($params['rate_config'] > 50 || $params['rate_config'] < 0){
+                    $this->error("手续费要在0~50之间");
                 }
                 Db::startTrans();
                 try {
