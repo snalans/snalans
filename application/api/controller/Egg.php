@@ -283,11 +283,12 @@ class Egg extends Api
             $this->error("账号无效或者未认证");
         }
 
+        $amount = $price * $number;
         $rate = 0;
         if($egg_kind_info['rate_config']>0){
-            $rate = $number*$egg_kind_info['rate_config']/100;
+            $rate = $amount*$egg_kind_info['rate_config']/100;
         }   
-
+        
         //生成挂单订单
         $order_data = array();
         $order_data['order_sn'] = date("Ymdhis", time()).mt_rand(1000,9999);
@@ -301,7 +302,7 @@ class Egg extends Api
         $order_data['number'] = $number;
         // $order_data['rate'] = ceil(ceil($number/10)*$egg_kind_info['rate_config']);
         $order_data['rate'] = $rate;
-        $order_data['amount'] = $price * $number;
+        $order_data['amount'] = $amount;
         $order_data['status'] = 5;
         $order_data['createtime'] = time();
 
