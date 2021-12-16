@@ -118,7 +118,7 @@ class Index extends Api
             $wh['user_id'] = $this->auth->id;
             $wh['kind_id'] = $result['kind_id'];
             $total = Db::name("egg")->field("kind_id,number,frozen,hatchable")->where($wh)->find();
-            if(($total['kind_id'] == 1 && $total['number'] > 0) || (in_array($total['kind_id'],[2,3,4]) && $total['hatchable'] > 0)){
+            if(($total['kind_id'] == 1 && $total['number'] >= 1) || (in_array($total['kind_id'],[2,3,4]) && $total['hatchable'] >= 1)){
                 $this->hatchEgg($egg_hatch_id,$total);
             }else{
                 $this->error(__('Insufficient quantity'));
@@ -266,12 +266,12 @@ class Index extends Api
         $wh['kind_id']      = $result['kind_id'];
         $assets = Db::name("egg")->where($wh)->find();
         if($result['kind_id'] == 1){
-            $wh['number']    = ['>',0];
+            $wh['number']    = ['>=',1];
             $reduce_rs = Db::name("egg")->where($wh)->setDec('number');
             $before = $assets['number'];
             $after = $assets['number']-1;
         }else{            
-            $wh['hatchable']    = ['>',0];
+            $wh['hatchable']    = ['>=',1];
             $reduce_rs = Db::name("egg")->where($wh)->setDec('hatchable');
             $before = $assets['hatchable'];
             $after = $assets['hatchable']-1;

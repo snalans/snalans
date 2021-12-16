@@ -239,7 +239,7 @@ class User extends Backend
                         $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
                         $row->validateFailException(true)->validate($validate);
                     }
-                    $params['note'] = $this->auth->username.":".$params['note']." >> ".$row['note'];
+                    // $params['note'] = $this->auth->username.":".$params['note']." >> ".$row['note'];
                     $result = $row->allowField(true)->save($params);
                     Db::commit();
                 } catch (ValidateException $e) {
