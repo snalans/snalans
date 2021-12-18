@@ -67,17 +67,15 @@ class Dashboard extends Backend
             }
             Db::name("egg_log_all")->insertAll($datas);
         }
-        $total = Db::name("egg_log_all")->group("kind_id")->column("kind_id,sum(number)");
 
-        $megg = Db::name("egg_log")
-                    ->whereTime('createtime', 'month')
+        $megg = Db::name("egg")
                     ->group("kind_id")
                     ->column("kind_id,sum(number)");
         $this->view->assign([
-            'egg1'            => isset($megg['1'])?($megg['1']+$total['1']):0,
-            'egg2'            => isset($megg['2'])?($megg['2']+$total['2']):0,
-            'egg3'            => isset($megg['3'])?($megg['3']+$total['3']):0,
-            'egg4'            => isset($megg['4'])?($megg['4']+$total['4']):0,
+            'egg1'            => isset($megg['1'])?$megg['1']:0,
+            'egg2'            => isset($megg['2'])?$megg['2']:0,
+            'egg3'            => isset($megg['3'])?$megg['3']:0,
+            'egg4'            => isset($megg['4'])?$megg['4']:0,
             'degg1'           => isset($degg['1'])?$degg['1']:0,
             'degg2'           => isset($degg['2'])?$degg['2']:0,
             'degg3'           => isset($degg['3'])?$degg['3']:0,
