@@ -134,6 +134,12 @@ class Api
                 $this->auth->init($token);
             }
         }
+        
+        // 每天更新一次访问时间
+        if(isset($this->auth->id) && $this->auth->updatetime<strtotime(date("Y-m-d"))){
+            $user = new \app\common\model\User;
+            $user->save(['updatetime'=>time()],["id"=>$this->auth->id]);
+        }
 
         $upload = \app\common\model\Config::upload();
 

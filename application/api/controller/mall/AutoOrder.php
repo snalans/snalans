@@ -8,7 +8,7 @@ use think\Db;
 
 /**
  * 商城订单接口
- * @ApiWeigh   (38)
+ * @ApiInternal
  */
 class AutoOrder extends Api
 {
@@ -111,5 +111,23 @@ class AutoOrder extends Api
                 $this->success("超时未签收-无订单");
             }
         }        
+    }
+
+    /**
+     * 自动拉黑超过10天不玩的玩家
+     *
+     */
+    public function autoHidden()
+    {
+        $wh = [];
+        $wh['status']       = 'normal';
+        $wh['updatetime']   = ['<',time()-10*3600*24];
+        $list = Db::name("user")->field("id,mobile,note")->where($wh)->limit(200)->select();
+        if(!empty($list)){
+            foreach ($list as $key => $value) {
+                Db::name("user")->where("id",$value['id'])->update(['status'=>'hidden','note'=>"太久不玩拉黑 ".$value['note']]);
+            }
+        }
+        $this->success("自动拉黑超过10天不玩的玩家");
     }
 }
