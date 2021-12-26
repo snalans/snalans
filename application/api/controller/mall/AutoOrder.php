@@ -120,8 +120,9 @@ class AutoOrder extends Api
     public function autoHidden()
     {
         $wh = [];
-        $wh['status']       = 'normal';
-        $wh['updatetime']   = ['<',time()-10*3600*24];
+        $wh['status']         = 'normal';
+        $wh['is_attestation'] = 1;
+        $wh['updatetime']     = ['<',time()-10*3600*24];
         $list = Db::name("user")->field("id,mobile,note")->where($wh)->limit(200)->select();
         if(!empty($list)){
             foreach ($list as $key => $value) {
