@@ -120,7 +120,15 @@ class OrderList extends Api
         $data['createtime'] = date("Y-m-d H:i",$data['createtime']);
         $data['pay_list'] = "";
         if($type == 1 && $data['status'] == 0){
-            $data['pay_list'] = Db::name("egg_charge_code")->field(["user_id","add_time"],true)->where("user_id",$data['sell_user_id'])->select();
+            $pay_list = Db::name("egg_charge_code")->field(["user_id","add_time"],true)->where("user_id",$data['sell_user_id'])->select();
+            if(!empty($pay_list)){
+                foreach ($pay_list as $key => $value) {
+                    if(!empty($value['image'])){
+                        $pay_list[$key]['image'] = cdnurl($value['image'], true);
+                    }
+                }
+            }
+            $data['pay_list'] = $pay_list;
         }
         $this->success('',$data);
     }
