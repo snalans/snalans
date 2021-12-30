@@ -417,6 +417,9 @@ class Order extends Api
         $number     = $this->request->post("number/d",1);
         $paypwd     = $this->request->post('paypwd',"");
 
+        if($number <= 0){
+            $this->error("参数错误");
+        }
         //商品信息
         $wh = [];
         $wh['id']       = $id;
