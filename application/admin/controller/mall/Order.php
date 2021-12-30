@@ -252,11 +252,11 @@ class Order extends Backend
         return $this->view->fetch();
     }
 
-    
+
     /**
      * 关闭订单
      */
-    public function close($ids = null)
+    public function closed($ids = null)
     {
         $row = $this->model->get($ids);
         if (!$row) {
@@ -282,7 +282,7 @@ class Order extends Backend
                         $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
                         $row->validateFailException(true)->validate($validate);
                     }
-                    $params['status']               = 8;
+                    $params['status'] = -1;
                     $result = $row->allowField(true)->save($params);
                     Db::commit();               
                 } catch (ValidateException $e) {

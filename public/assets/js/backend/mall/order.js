@@ -63,7 +63,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'express_name', title: __('Express_name'), operate:false},
                         {field: 'express_no', title: __('Express_no'), operate:false}, 
                         {field: 'is_virtual', title: __('Is_virtual'), formatter: Table.api.formatter.normal, searchList: {1: '是',0: '否'}}, 
-                        {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {0: '待付款',1: '完成',2: '待发货 / 充值',3: '待收货',5: '申请退款',6: '确认退款',7: '申诉',-1: '取消'}},
+                        {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {0: '待付款',1: '完成',2: '待发货 / 充值',3: '待收货',5: '申请退款',6: '确认退款',7: '申诉','-1': '取消'}},
                         {field: 'send_time', title: __('Send_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'received_time', title: __('Received_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'add_time', title: __('Add_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
@@ -85,14 +85,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                     }
                                 }
                             },
-                            {name: 'close', text: '关闭', title: '关闭订单', icon: 'fa fa-close', classname: 'btn btn-xs btn-primary btn-editone btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.closed_url,
+                            {name: 'closed', text: '取消', title: '取消订单', icon: 'fa fa-close', classname: 'btn btn-xs btn-primary btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.closed_url,
                                 hidden:function(row){
                                     if(row.status==2 && row.sell_user_id==0){
                                         return false;
                                     }else{
                                         return true;
                                     }
-                                }
+                                },
+                                extend: 'data-area=\'["500px", "450px"]\''
                             },
                         ], events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
@@ -111,7 +112,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         appeal: function () {
             Controller.api.bindevent();
         },
-        close: function () {
+        closed: function () {
             Controller.api.bindevent();
         },
         api: {

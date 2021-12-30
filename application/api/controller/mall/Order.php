@@ -94,8 +94,10 @@ class Order extends Api
                             $item['status_str'] = "退款完成";
                         }else if($item['status'] == 7){
                             $item['status_str'] = "申诉中";
-                        }else{
+                        }else if($item['status'] == 0){
                             $item['status_str'] = "待付款";
+                        }else {
+                            $item['status_str'] = "取消";
                         }
                         return $item;
                     });
@@ -180,8 +182,10 @@ class Order extends Api
                 $info['status_str'] = "退款完成";
             }else if($info['status'] == 7){
                 $info['status_str'] = "申诉中,有问题请联系对方";
-            }else{
+            }else if($info['status'] == 0){
                 $info['status_str'] = "待付款";
+            }else {
+                $info['status_str'] = "取消";
             }
             $info['send_time']      = empty($info['send_time'])?"":date("Y-m-d H:i",$info['send_time']);
             $info['received_time']  = empty($info['received_time'])?"":date("Y-m-d H:i",$info['received_time']);
