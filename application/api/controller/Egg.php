@@ -237,8 +237,8 @@ class Egg extends Api
             ->field("name,rate_config")
             ->where('id',$kind_id)
             ->find();
-        if($number==0){
-            $this->error("请输入蛋数量！");
+        if($number <= 0){
+            $this->error("参数异常");
         }
 
         //挂单数量
