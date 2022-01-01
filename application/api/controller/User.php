@@ -67,6 +67,8 @@ class User extends Api
         }
         $wh = [];
         $wh['c.ancestral_id'] = $this->auth->id;
+        $wh['u.status']       = 'normal';
+        $wh['u.is_attestation'] = 1;
         $wh['c.level']        = ['<',4];
         $sum = Db::name("membership_chain")->alias("c")
                 ->join("user u","u.id=c.user_id","LEFT")
