@@ -84,7 +84,7 @@ class Log extends Api
         $list = Db::name("egg_score_log")
                 ->field("type,score,memo,FROM_UNIXTIME(createtime,'%m-%d %H:%i') as createtime")
                 ->where($wh)
-                ->order("createtime","desc")
+                ->order("id","desc")
                 ->paginate($per_page);
         $this->success('',$list);
     }
