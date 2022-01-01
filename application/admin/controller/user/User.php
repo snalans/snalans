@@ -56,6 +56,7 @@ class User extends Backend
                 $wh = [];
                 $wh['c.ancestral_id']   = $v->id;
                 $wh['c.level']          = ['<',4];
+                $wh['u.status']         = 'normal';
                 $wh['u.is_attestation'] = 1;
                 $sum = Db::name("membership_chain")->alias("c")
                         ->join("user u","u.id=c.user_id","LEFT")
