@@ -195,17 +195,20 @@ class User extends Api
         $mobile = $this->request->post('mobile');
         $username = $mobile;
         $password = $this->request->post('password');
-        $invite_code = $this->request->post('invite_code');
+        $invite_code = $this->request->post('invite_code',"");
         $email = $this->request->post('email');
         $code = $this->request->post('code');
         if (!$username || !$password) {
             $this->error(__('Invalid parameters'));
         }
+        if(empty($invite_code)){
+            $this->error(__('Invalid invitation code, please check'));
+        }
         $wh = [];
         $wh['status']           = 'normal';
         $wh['serial_number']    = $invite_code;
         $result = Db::name("user")->where($wh)->find();
-        if(empty($result) || empty($invite_code)){
+        if(empty($result)){
             $this->error(__('Invalid invitation code, please check'));
         }
         if ($email && !Validate::is($email, "email")) {
@@ -245,23 +248,22 @@ class User extends Api
      *
      * @ApiMethod (POST)
      * @param string $avatar   头像地址
-     * @param string $username 用户名
      * @param string $nickname 昵称
      */
     public function profile()
     {
         $user = $this->auth->getUser();
-        $username = $this->request->post('username');
         $nickname = $this->request->post('nickname');
-        $bio      = $this->request->post('bio');
         $avatar   = $this->request->post('avatar', '', 'trim,strip_tags,htmlspecialchars');
-        if ($username) {
-            $exists = \app\common\model\User::where('username', $username)->where('id', '<>', $this->auth->id)->find();
-            if ($exists) {
-                $this->error(__('Username already exists'));
-            }
-            $user->username = $username;
-        }
+        // $username = $this->request->post('username');
+        // $bio      = $this->request->post('bio');
+        // if ($username) {
+        //     $exists = \app\common\model\User::where('username', $username)->where('id', '<>', $this->auth->id)->find();
+        //     if ($exists) {
+        //         $this->error(__('Username already exists'));
+        //     }
+        //     $user->username = $username;
+        // }
         if ($nickname) {
             $exists = \app\common\model\User::where('nickname', $nickname)->where('id', '<>', $this->auth->id)->find();
             if ($exists) {
@@ -270,8 +272,12 @@ class User extends Api
             $user->nickname = $nickname;
         }
         $user->avatar = $avatar;
-        $user->save();
-        $this->success();
+        $rs = $user->save();
+        if($rs){
+            $this->success("修改成功");
+        }else{
+            $this->error("修改失败");
+        }
     }
 
     /**

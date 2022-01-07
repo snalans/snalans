@@ -41,4 +41,5 @@ return [
     'Id_card is incorrect'                  => '身份证不正确',
     'Reset payment password successful'     => '重置支付密码成功',
     'Captcha'                               => '验证码',
+    'Nickname already exists'               => '昵称已经存在',
 ];
