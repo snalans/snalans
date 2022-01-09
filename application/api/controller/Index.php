@@ -26,6 +26,8 @@ class Index extends Api
      * @ApiReturnParams   (name="adroid", type="string", description="安卓下载地址")
      * @ApiReturnParams   (name="ios", type="string", description="苹果下载地址")
      * @ApiReturnParams   (name="app_version", type="string", description="app版本号")
+     * @ApiReturnParams   (name="apk_version", type="string", description="apk包版本号")
+     * @ApiReturnParams   (name="upgrade", type="string", description="是否强制升级 0=否 1=是")
      */
     public function init()
     {
@@ -38,6 +40,9 @@ class Index extends Api
         $data['ios']            = Config::get("site.ios_url");
         $data['is_agreement']   = Config::get("site.is_agreement");
         $data['app_version']    = Config::get("site.app_version");
+        $data['app_version']    = Config::get("site.app_version");
+        $data['apk_version']    = Config::get("site.apk_version");
+        $data['upgrade']        = Config::get("site.upgrade");
         $this->success('', $data);
     }
 

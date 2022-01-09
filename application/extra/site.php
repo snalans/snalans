@@ -27,6 +27,7 @@ return array (
     'dictionary' => 'Dictionary',
     'egg' => 'Egg',
     'mall' => 'Mall',
+    'app' => 'APP',
     'user' => 'User',
     'example' => 'Example',
   ),
@@ -62,4 +63,6 @@ return array (
   'send_hours' => '10',
   'voer_hours' => '10',
   'mall_is_open' => '1',
+  'upgrade' => '0',
+  'apk_version' => '100',
 );
