@@ -2,6 +2,7 @@
 namespace app\api\controller\farm;
 
 use app\common\controller\Api;
+use think\Validate;
 use think\Config;
 use think\Log;
 use think\Db;
@@ -330,7 +331,7 @@ class Index extends Api
      * 转账
      *
      * @ApiMethod (POST)
-     * @ApiParams   (name="serial_number", type="string", description="会员编号")
+     * @ApiParams   (name="serial_number", type="string", description="会员编号或者手机号")
      * @ApiParams   (name="kind_id", type="string", description="蛋分类id")
      * @ApiParams   (name="number", type="string", description="数量")
      * @ApiParams   (name="paypwd", type="string", description="支付密码")
@@ -346,9 +347,12 @@ class Index extends Api
         if(!in_array($kind_id,[1,2,3,4]) || $number<=0){
             $this->error("参数错误");
         }
-
         $wh = [];
-        $wh['serial_number']    = $serial_number;
+        if (Validate::regex($serial_number, "^1\d{10}$")) {
+            $wh['mobile']           = $serial_number;
+        }else{
+            $wh['serial_number']    = $serial_number;
+        }
         $wh['status']           = 'normal';
         $wh['is_attestation']   = 1;
         $user_id = Db::name("user")->where($wh)->value("id");
@@ -366,9 +370,10 @@ class Index extends Api
 
         $rate = 0;
         $rate_config = Db::name("egg_kind")->where("id",$kind_id)->value("rate_config");
-        if($rate_config>0){
-            $rate = $number*$rate_config/100;
-        }        
+        // if($rate_config>0){
+        //     $rate = $number*$rate_config/100;
+        // }        
+        $rate = ceil($number/10)*$rate_config;
 
         $wh = [];
         $wh['user_id'] = $this->auth->id;

@@ -282,10 +282,11 @@ class Egg extends Api
             $this->error("账号无效或者未认证");
         }
 
-        $rate = 0;
-        if($egg_kind_info['rate_config']>0){
-            $rate = $number*$egg_kind_info['rate_config']/100;
-        }   
+        // $rate = 0;
+        // if($egg_kind_info['rate_config']>0){
+        //     $rate = $number*$egg_kind_info['rate_config']/100;
+        // }   
+        $rate = ceil($number/10)*$egg_kind_info['rate_config'];
 
         //生成挂单订单
         $order_data = array();
