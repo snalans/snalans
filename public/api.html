@@ -5000,6 +5000,16 @@
                                                                 <td>string</td>
                                                                 <td>app版本号</td>
                                                             </tr>
+                                                                                                                        <tr>
+                                                                <td>apk_version</td>
+                                                                <td>string</td>
+                                                                <td>apk包版本号</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>upgrade</td>
+                                                                <td>string</td>
+                                                                <td>是否强制升级 0=否 1=是</td>
+                                                            </tr>
                                                                                                                     </tbody>
                                                     </table>
                                                                                                     </div>
@@ -7969,12 +7979,6 @@
                                                         <td>头像地址</td>
                                                     </tr>
                                                                                                         <tr>
-                                                        <td>username</td>
-                                                        <td>string</td>
-                                                        <td>是</td>
-                                                        <td>用户名</td>
-                                                    </tr>
-                                                                                                        <tr>
                                                         <td>nickname</td>
                                                         <td>string</td>
                                                         <td>是</td>
@@ -8005,10 +8009,6 @@
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="avatar">avatar</label>
                                                             <input type="string" class="form-control input-sm" id="avatar" required placeholder="头像地址" name="avatar">
-                                                        </div>
-                                                                                                                <div class="form-group">
-                                                            <label class="control-label" for="username">username</label>
-                                                            <input type="string" class="form-control input-sm" id="username" required placeholder="用户名" name="username">
                                                         </div>
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="nickname">nickname</label>
@@ -8649,6 +8649,11 @@
                                                                 <td>直推有效人数</td>
                                                             </tr>
                                                                                                                         <tr>
+                                                                <td>p_mobile</td>
+                                                                <td>int</td>
+                                                                <td>邀请人手机号</td>
+                                                            </tr>
+                                                                                                                        <tr>
                                                                 <td>avatar</td>
                                                                 <td>string</td>
                                                                 <td>用户头像</td>
@@ -8664,9 +8669,24 @@
                                                                 <td>有效值</td>
                                                             </tr>
                                                                                                                         <tr>
+                                                                <td>mobile</td>
+                                                                <td>string</td>
+                                                                <td>手机号</td>
+                                                            </tr>
+                                                                                                                        <tr>
                                                                 <td>title</td>
                                                                 <td>string</td>
                                                                 <td>等级名称</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>status</td>
+                                                                <td>string</td>
+                                                                <td>状态</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>createtime</td>
+                                                                <td>string</td>
+                                                                <td>注册时间</td>
                                                             </tr>
                                                                                                                         <tr>
                                                                 <td>is_attestation</td>
@@ -12014,7 +12034,7 @@
 
                 </div>
                 <div class="col-md-6" align="right">
-                    Generated on 2021-12-11 12:10:35 <a href="./" target="_blank">农场</a>
+                    Generated on 2022-01-12 16:51:20 <a href="./" target="_blank">农场</a>
                 </div>
             </div>
 
