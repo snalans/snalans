@@ -49,10 +49,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                             return '';
                         }},
                         {field: 'note', title: __('Note'), operate: false},
-                        {field: 'sale_time', title: '出售时间', operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
-                        {field: 'pay_time', title: __('Pay_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
-                        {field: 'over_time', title: "确认收款时间", operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
-                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
+                        {field: 'sale_time', title: '出售时间', operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime,sortable:true},
+                        {field: 'pay_time', title: __('Pay_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime,sortable:true},
+                        {field: 'over_time', title: "确认收款时间", operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime,sortable:true},
+                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime,sortable:true},
                         {field: 'operate', title: __('Operate'), table: table,buttons: [
                             {name: 'pay', text: '去支付', title: '上传支付凭证', icon: 'fa fa-star', classname: 'btn btn-xs btn-success btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.pay_url
                                 ,visible:function(row){

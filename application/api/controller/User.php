@@ -493,11 +493,15 @@ class User extends Api
      * @ApiReturnParams   (name="team_valid", type="int", description="团队有效人数")
      * @ApiReturnParams   (name="p_total", type="int", description="直推总人数")
      * @ApiReturnParams   (name="p_valid", type="int", description="直推有效人数")
+     * @ApiReturnParams   (name="p_mobile", type="int", description="邀请人手机号")
      * 
      * @ApiReturnParams   (name="avatar", type="string", description="用户头像")
      * @ApiReturnParams   (name="serial_number", type="string", description="用户编号")
      * @ApiReturnParams   (name="valid_number", type="string", description="有效值")
+     * @ApiReturnParams   (name="mobile", type="string", description="手机号")
      * @ApiReturnParams   (name="title", type="string", description="等级名称")
+     * @ApiReturnParams   (name="status", type="string", description="状态")
+     * @ApiReturnParams   (name="createtime", type="string", description="注册时间")
      * @ApiReturnParams   (name="is_attestation", type="string", description="是否认证 0=否 1=是 2=待审核 3=失败")
      * @ApiReturnParams   (name="team_number", type="int", description="下级-直推人数")
      */
@@ -508,7 +512,7 @@ class User extends Api
         $wh = [];
         $wh['u.pid']            = $this->auth->id;
         $list = Db::name("user")->alias("u")
-                ->field("u.id,u.avatar,u.nickname,u.serial_number,l.title,u.valid_number,u.is_attestation,u.createtime")
+                ->field("u.id,u.avatar,u.nickname,u.serial_number,l.title,u.valid_number,u.is_attestation,u.mobile,u.status,u.createtime")
                 ->join("user_level_config l","l.level=u.level","LEFT")
                 ->where($wh)
                 ->order("u.createtime desc")
@@ -518,6 +522,7 @@ class User extends Api
                     if($item['is_attestation'] != 1){
                         $item['title'] = "普通会员";
                     }
+                    $item['status'] = $item['status']=='normal'?"正常":"锁定";
                     $item['createtime'] = date("Y-m-d",$item['createtime']);
                     unset($item['id']);
                     unset($item['nickname']);
@@ -528,6 +533,7 @@ class User extends Api
 
         $wh = [];
         $wh['pid']              = $this->auth->id;
+        $wh['status']           = 'normal';
         $wh['is_attestation']   = 1;
         $list['p_valid'] = Db::name("user")->where($wh)->count(); 
         $list['p_total'] = $list['total'];
@@ -535,14 +541,20 @@ class User extends Api
         $wh = [];
         $wh['mc.ancestral_id'] = $this->auth->id;
         $wh['mc.level']        = ['<=',3];
-        $info = Db::name("membership_chain")->alias("mc")
-                        ->field("sum(if(u.is_attestation=1,1,0)) as valid,count(mc.id) as total")
-                        ->join("user u","u.id=mc.user_id","LEFT")
-                        ->where($wh)
-                        ->find();
-        $list['team_total'] = empty($info['total'])?0:$info['total'];
-        $list['team_valid'] = empty($info['valid'])?0:$info['valid'];
-     
+        $list['team_total'] = Db::name("membership_chain")->alias("mc")
+                                ->join("user u","u.id=mc.user_id","LEFT")
+                                ->where($wh)
+                                ->count();
+
+        $wh['status']           = 'normal';
+        $list['team_valid'] = Db::name("membership_chain")->alias("mc")
+                                ->join("user u","u.id=mc.user_id","LEFT")
+                                ->where($wh)
+                                ->count();
+        $list['p_mobile'] = '';
+        if($this->auth->pid>0){
+            $list['p_mobile'] = Db::name("user")->where("id",$this->auth->pid)->value("mobile");
+        }        
         $this->success('',$list);
     }
 
