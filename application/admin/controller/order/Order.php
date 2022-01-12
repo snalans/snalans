@@ -97,11 +97,11 @@ class Order extends Backend
                     }
                     $number = 0;
                     if($params['status'] == 1){
-                        $note = "申诉通过";
+                        $note = "申诉不通过";
                         $number = $row['number'];
                         $user_id = $row['buy_user_id'];
                     }else if($params['status'] == 6){
-                        $note = " 申诉不通过. ";
+                        $note = "申诉通过";
                         $number = $row['number'] + $row['rate'];
                         $user_id = $row['sell_user_id'];
                     }else{

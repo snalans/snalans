@@ -55,6 +55,12 @@
         </div>
     </div>
     <div class="form-group">
+        <label for="c-updatetime" class="control-label col-xs-12 col-sm-3">最近活动时间:</label>
+        <div class="col-xs-12 col-sm-4">
+            <span class="form-control">{:date("Y-m-d H:i",$row.updatetime)}</span>
+        </div>
+    </div>
+    <div class="form-group">
         <label for="c-prevtime" class="control-label col-xs-12 col-sm-3">{:__('Prevtime')}:</label>
         <div class="col-xs-12 col-sm-4">
             <span class="form-control">{:date("Y-m-d H:i",$row.prevtime)}</span>
