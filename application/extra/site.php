@@ -48,7 +48,6 @@ return array (
   'rate_config' => '10',
   'android_url' => 'https://egg.snalans.com/download/farm.apk',
   'ios_url' => 'https://egg.snalans.com/ios',
-  'app_version' => '1.0.0',
   'valid_time' => '1',
   'confirm_time' => '1',
   'fee_rate' => '70',
@@ -64,5 +63,7 @@ return array (
   'voer_hours' => '10',
   'mall_is_open' => '1',
   'upgrade' => '0',
+  'app_version' => '1.0.0',
   'apk_version' => '100',
+  'black_days' => '13',
 );

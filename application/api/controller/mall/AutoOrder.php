@@ -119,11 +119,13 @@ class AutoOrder extends Api
      */
     public function autoHidden()
     {
+        $black_days = Config::get("site.black_days");
+        $days = $black_days??15;
         $wh = [];
         $wh['id']             = ['>',240];
         $wh['status']         = 'normal';
         $wh['is_attestation'] = 1;
-        $wh['updatetime']     = ['<',time()-3600*24*15];
+        $wh['updatetime']     = ['<',time()-3600*24*$days];
         $list = Db::name("user")->field("id,mobile,note")->where($wh)->limit(200)->select();
         if(!empty($list)){
             foreach ($list as $key => $value) {
