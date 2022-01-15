@@ -2,6 +2,7 @@
 namespace app\api\controller\farm;
 
 use app\common\controller\Api;
+use think\config;
 use think\Db;
 
 /**
@@ -33,6 +34,7 @@ class OrderList extends Api
      * @ApiReturnParams   (name="price", type="integer", description="单价")
      * @ApiReturnParams   (name="number", type="integer", description="数量")
      * @ApiReturnParams   (name="amount", type="integer", description="总价")
+     * @ApiReturnParams   (name="is_cancel", type="integer", description="是否可以取消 0=否 1=是")
      * @ApiReturnParams   (name="status", type="integer", description="状态 0=待付款 1=完成 2=待确认 3=申诉 4=无效（撤单） 5=挂单  6退款")
      * @ApiReturnParams   (name="refund_status", type="int", description="退款类型：1=超时未打款退款  0=申诉退款")
      * @ApiReturnParams   (name="createtime", type="integer", description="创建时间")
@@ -58,6 +60,17 @@ class OrderList extends Api
                 ->where($wh)
                 ->order("createtime","desc")
                 ->paginate($per_page)->each(function($item,$index){
+                    if($item['status']==5){
+                        //时间过期
+                        $valid_time = 0;
+                        $valid_time = Config::get('site.valid_time') * 60 * 60;
+                        $end_time = $valid_time + $item['createtime'];
+                        if($end_time>time()){
+                            $item['is_cancel'] = 0;
+                        }else{
+                            $item['is_cancel'] = 1;
+                        }
+                    }
                     $item['createtime'] = date("Y-m-d H:i",$item['createtime']);
                     return $item;
                 });

@@ -6211,7 +6211,7 @@
                                                         <td>serial_number</td>
                                                         <td>string</td>
                                                         <td>是</td>
-                                                        <td>会员编号</td>
+                                                        <td>会员编号或者手机号</td>
                                                     </tr>
                                                                                                         <tr>
                                                         <td>kind_id</td>
@@ -6255,7 +6255,7 @@
                                                     <form enctype="application/x-www-form-urlencoded" role="form" action="/api/farm.index/giveEgg" method="POST" name="form17" id="form17">
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="serial_number">serial_number</label>
-                                                            <input type="string" class="form-control input-sm" id="serial_number" required placeholder="会员编号" name="serial_number">
+                                                            <input type="string" class="form-control input-sm" id="serial_number" required placeholder="会员编号或者手机号" name="serial_number">
                                                         </div>
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="kind_id">kind_id</label>
@@ -6486,6 +6486,11 @@
                                                                 <td>amount</td>
                                                                 <td>integer</td>
                                                                 <td>总价</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>is_cancel</td>
+                                                                <td>integer</td>
+                                                                <td>是否可以取消 0=否 1=是</td>
                                                             </tr>
                                                                                                                         <tr>
                                                                 <td>status</td>
@@ -12034,7 +12039,7 @@
 
                 </div>
                 <div class="col-md-6" align="right">
-                    Generated on 2022-01-12 16:51:20 <a href="./" target="_blank">农场</a>
+                    Generated on 2022-01-15 19:19:32 <a href="./" target="_blank">农场</a>
                 </div>
             </div>
 
