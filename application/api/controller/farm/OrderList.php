@@ -60,14 +60,13 @@ class OrderList extends Api
                 ->where($wh)
                 ->order("createtime","desc")
                 ->paginate($per_page)->each(function($item,$index){
+                    $item['is_cancel'] = 0;
                     if($item['status']==5){
                         //时间过期
                         $valid_time = 0;
                         $valid_time = Config::get('site.valid_time') * 60 * 60;
                         $end_time = $valid_time + $item['createtime'];
-                        if($end_time>time()){
-                            $item['is_cancel'] = 0;
-                        }else{
+                        if($end_time < time()){
                             $item['is_cancel'] = 1;
                         }
                     }
