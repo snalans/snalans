@@ -91,7 +91,7 @@ class EggHatch extends Backend
             $rs = Db::name("egg_hatch")->where("id",$ids)->update($data);
 
             if ($rs !== false) {
-                $this->success("窝清空成功".$rs);
+                $this->success("窝清空成功");
             }
         }
         $this->error("操作失败".$rs);
