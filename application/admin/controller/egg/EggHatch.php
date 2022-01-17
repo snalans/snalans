@@ -77,10 +77,10 @@ class EggHatch extends Backend
     /**
      * 还原鸡窝
      */
-    public function reduction()
+    public function reduction($ids = '')
     {        
-        if ($this->request->isPost()) {
-            $id = $this->request->post("ids",0);
+        if ($this->request->isPost()) 
+        {
             $data = [];
             $data['hatch_num']  = 0;
             $data['shape']      = 5;
@@ -88,10 +88,10 @@ class EggHatch extends Backend
             $data['status']     = 1;
             $data['is_give']    = 0;
             $data['uptime']     = time();
-            $rs = Db::name("egg_hatch")->where("id",$id)->fetchSql(true)->update($data);
+            $rs = Db::name("egg_hatch")->where("id",$ids)->update($data);
 
-            if ($rs) {
-                $this->success("清空成功".$rs);
+            if ($rs !== false) {
+                $this->success("窝清空成功".$rs);
             }
         }
         $this->error("操作失败".$rs);
