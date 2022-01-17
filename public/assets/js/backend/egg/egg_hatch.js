@@ -38,7 +38,27 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'is_reap', title: __('Is_reap'), operate:false, formatter: Table.api.formatter.normal, searchList: {0: '无', 1: '可收获', 2: '可收获'}},
                         {field: 'position', title: __('Position'), operate:false},
                         {field: 'uptime', title: __('Uptime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
-                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
+                        {field: 'createtime', title: __('Createtime'), table: table,buttons: [
+                            {
+                                name: 'ajax',
+                                text: '清空',
+                                title: "删除窝里面的蛋或鸡",
+                                classname: 'btn btn-xs btn-success btn-magic btn-ajax',
+                                icon: 'fa fa-magic',
+                                url: 'egg/egg_hatch/reduction',
+                                confirm: '确认发送',
+                                success: function (data, ret) {
+                                    Layer.alert(ret.msg);
+                                    //如果需要阻止成功提示，则必须使用return false;
+                                    return false;
+                                },
+                                error: function (data, ret) {
+                                    console.log(data, ret);
+                                    Layer.alert(ret.msg);
+                                    return false;
+                                }
+                            }
+                        ], operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                     ]
                 ]
             });

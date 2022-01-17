@@ -73,4 +73,27 @@ class EggHatch extends Backend
         return $this->view->fetch();
     }
 
+    /**
+     * 还原鸡窝
+     */
+    public function reduction()
+    {        
+        if ($this->request->isPost()) {
+            $id = $this->request->post("id");
+            $data = [];
+            $data['hatch_num']  = 0;
+            $data['shape']      = 5;
+            $data['is_reap']    = 0;
+            $data['status']     = 1;
+            $data['is_give']    = 0;
+            $data['uptime']     = time();
+            $rs = Db::name("egg_hatch")->where("id",$id)->update($data);
+
+            if ($rs !== false) {
+                $this->success("清空成功");
+            }
+        }
+        $this->error("操作失败");
+    }
+
 }
