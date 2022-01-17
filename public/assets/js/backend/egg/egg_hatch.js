@@ -51,7 +51,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                 success: function (data, ret) {
                                     Layer.alert(ret.msg);
                                     //如果需要阻止成功提示，则必须使用return false;
-                                    return false;
+                                    // return false;
                                 },
                                 error: function (data, ret) {
                                     console.log(data, ret);

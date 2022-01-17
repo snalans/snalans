@@ -88,13 +88,13 @@ class EggHatch extends Backend
             $data['status']     = 1;
             $data['is_give']    = 0;
             $data['uptime']     = time();
-            $rs = Db::name("egg_hatch")->where("id",$id)->update($data);
+            $rs = Db::name("egg_hatch")->where("id",$id)->fetchSql(true)->update($data);
 
-            if ($rs !== false) {
-                $this->success("清空成功");
+            if ($rs) {
+                $this->success("清空成功".$rs);
             }
         }
-        $this->error("操作失败");
+        $this->error("操作失败".$rs);
     }
 
 }
