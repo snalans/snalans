@@ -3,6 +3,7 @@
 namespace app\admin\controller\egg;
 
 use app\common\controller\Backend;
+use think\Db;
 
 /**
  * 蛋孵化列管理
