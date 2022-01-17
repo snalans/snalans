@@ -47,7 +47,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                 classname: 'btn btn-xs btn-success btn-magic btn-ajax',
                                 icon: 'fa fa-magic',
                                 url: 'egg/egg_hatch/reduction',
-                                confirm: '确认发送',
+                                confirm: '确认清空蛋窝?',
                                 success: function (data, ret) {
                                     Layer.alert(ret.msg);
                                     //如果需要阻止成功提示，则必须使用return false;
@@ -59,8 +59,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                     return false;
                                 }
                             }
-                        ], events: Table.api.events.operate, formatter: Table.api.formatter.operate}
-                    
+                        ], events: Table.api.events.operate, formatter: Table.api.formatter.operate}                    
                     ]
                 ]
             });

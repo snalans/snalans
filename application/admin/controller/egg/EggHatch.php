@@ -79,7 +79,7 @@ class EggHatch extends Backend
     public function reduction()
     {        
         if ($this->request->isPost()) {
-            $id = $this->request->post("id");
+            $id = $this->request->post("ids",0);
             $data = [];
             $data['hatch_num']  = 0;
             $data['shape']      = 5;
