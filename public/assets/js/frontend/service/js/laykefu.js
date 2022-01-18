@@ -358,8 +358,6 @@ function addUser(data) {
 
     }
 
-    getChatLog(data.id, 1);
-
     checkUser();
     }
 
