@@ -290,6 +290,7 @@ function changeUserTab(obj) {
 
 // 显示用户到面板
 function showUser(data) {
+    console.log(data)
     data.forEach(function(item){
         addUser(item)
     })
