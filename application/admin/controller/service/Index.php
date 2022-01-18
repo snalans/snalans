@@ -44,8 +44,6 @@ class Index extends Backend
         $data['avatar']         = $result['avatar'] ? cdnurl($result['avatar'], true) : letter_avatar($result['nickname']);
         $data['group']          = 1;
         // $data['socket_server']  = '34.150.29.116:8282';
-        print_r($_SERVER);
-        exit;
         if(isset($_SERVER['OS'])){
             $data['socket_server'] = '127.0.0.1:8282';
         }else {
