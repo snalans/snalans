@@ -358,9 +358,6 @@ function addUser(data) {
         $("#f-ip").val(ip);
 
     }
-
-    getChatLog(data.id, 1);
-
     checkUser();
     }
 
