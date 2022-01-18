@@ -27,7 +27,7 @@ socket.onopen = function (res) {
 // 监听消息
 socket.onmessage = function (res) {
     var data = eval("(" + res.data + ")");
-    console.log(res)
+    console.log(data)
     switch (data['message_type']) {
         // 服务端ping客户端
         case 'ping':
@@ -317,48 +317,48 @@ function addUser(data) {
         }
     });
     if(add){
-    var _html = '<li ondblclick="copyText(' + data.name + ')" class="layui-nav-item" data-id="' + data.id + '" id="f-' + data.id +
-        '" data-name="' + data.name + '" data-avatar="' + data.avatar + '" data-ip="' + data.ip + '">';
-    _html += '<img src="' + data.avatar + '">';
-    _html += '<span class="user-name">' + data.name + '</span>';
-    _html += '<span class="layui-badge" style="margin-left:5px">0</span>';
-    _html += '<i class="layui-icon close" style="display:none">ဇ</i>';
-    _html += '</li>';
+        var _html = '<li ondblclick="copyText(' + data.name + ')" class="layui-nav-item" data-id="' + data.id + '" id="f-' + data.id +
+            '" data-name="' + data.name + '" data-avatar="' + data.avatar + '" data-ip="' + data.ip + '">';
+        _html += '<img src="' + data.avatar + '">';
+        _html += '<span class="user-name">' + data.name + '</span>';
+        _html += '<span class="layui-badge" style="margin-left:5px">0</span>';
+        _html += '<i class="layui-icon close" style="display:none">ဇ</i>';
+        _html += '</li>';
 
-    // 添加左侧列表
-    $("#user_list").append(_html);
+        // 添加左侧列表
+        $("#user_list").append(_html);
 
-    // 如果没有选中人，选中第一个
-    var hasActive = 0;
-    $("#user_list li").each(function(){
-        if($(this).hasClass('active')){
-            hasActive = 1;
+        // 如果没有选中人，选中第一个
+        var hasActive = 0;
+        $("#user_list li").each(function(){
+            if($(this).hasClass('active')){
+                hasActive = 1;
+            }
+        });
+
+        var _html2 = '';
+        _html2 += '<ul id="u-' + data.id + '">';
+        _html2 += '</ul>';
+        // 添加主聊天面板
+        $('.chat-box').append(_html2);
+
+        if(0 == hasActive){
+            $("#user_list").find('li').eq(0).addClass('active').find('span:eq(1)').removeClass('layui-badge').text('');
+            $("#u-" + data.id).show();
+
+            var id = $(".layui-unselect").find('li').eq(0).data('id');
+            var name = $(".layui-unselect").find('li').eq(0).data('name');
+            var ip = $(".layui-unselect").find('li').eq(0).data('ip');
+            var avatar = $(".layui-unselect").find('li').eq(0).data('avatar');
+
+            // 设置当前会话用户
+            $("#active-user").attr('data-id', id).attr('data-name', name).attr('data-avatar', avatar).attr('data-ip', ip);
+
+            $("#f-user").val(name);
+            $("#f-ip").val(ip);
+
         }
-    });
-
-    var _html2 = '';
-    _html2 += '<ul id="u-' + data.id + '">';
-    _html2 += '</ul>';
-    // 添加主聊天面板
-    $('.chat-box').append(_html2);
-
-    if(0 == hasActive){
-        $("#user_list").find('li').eq(0).addClass('active').find('span:eq(1)').removeClass('layui-badge').text('');
-        $("#u-" + data.id).show();
-
-        var id = $(".layui-unselect").find('li').eq(0).data('id');
-        var name = $(".layui-unselect").find('li').eq(0).data('name');
-        var ip = $(".layui-unselect").find('li').eq(0).data('ip');
-        var avatar = $(".layui-unselect").find('li').eq(0).data('avatar');
-
-        // 设置当前会话用户
-        $("#active-user").attr('data-id', id).attr('data-name', name).attr('data-avatar', avatar).attr('data-ip', ip);
-
-        $("#f-user").val(name);
-        $("#f-ip").val(ip);
-
-    }
-    checkUser();
+        checkUser();
     }
 
 }
