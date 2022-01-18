@@ -290,7 +290,6 @@ function changeUserTab(obj) {
 
 // 显示用户到面板
 function showUser(data) {
-    console.log(data)
     data.forEach(function(item){
         addUser(item)
     })
@@ -414,6 +413,7 @@ function sendWord(obj) {
 
 // 获取聊天记录
 function getChatLog(uid, page, flag) {
+    console.log('{"type":"chatRecord","to_id":"'+ uid +'","page":"'+ page +'"}')
     socket.send('{"type":"chatRecord","to_id":"'+ uid +'","page":"'+ page +'"}');
 }
 
