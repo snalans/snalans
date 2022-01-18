@@ -27,7 +27,7 @@ socket.onopen = function (res) {
 // 监听消息
 socket.onmessage = function (res) {
     var data = eval("(" + res.data + ")");
-    console.log(data)
+    console.log(res)
     switch (data['message_type']) {
         // 服务端ping客户端
         case 'ping':
@@ -447,7 +447,6 @@ function showChatLog(res)
         _html += '</div><div class="laykefu-chat-text">' + replaceContent(v.content) + '</div>';
         _html += '</li>';
     }
-
     setTimeout(function () {
         // 滚动条自动定位到最底端
         if(res.page <= 1){
