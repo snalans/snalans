@@ -27,6 +27,7 @@ socket.onopen = function (res) {
 // 监听消息
 socket.onmessage = function (res) {
     var data = eval("(" + res.data + ")");
+    console.log(data)
     switch (data['message_type']) {
         // 服务端ping客户端
         case 'ping':
@@ -358,6 +359,8 @@ function addUser(data) {
 
     }
 
+    getChatLog(data.id, 1);
+
     checkUser();
     }
 
@@ -424,12 +427,11 @@ function showChatLog(res)
             + '" onclick="getMore(this)"><cite>更多记录</cite></a></div>';
     }
 
-    var len = res.data.length,show_id=$(".show-chat-detail").attr("id");
+    var len = res.data.length,show_id=res.to_id;
 
     for(var i = 0; i < len; i++)
     {
         var v = res.data[len - i - 1];
-        // show_id = v.from_id;
         if ('mine' == v.type) {
             _html += '<li class="laykefu-chat-mine">';
         } else {
@@ -445,13 +447,14 @@ function showChatLog(res)
         _html += '</div><div class="laykefu-chat-text">' + replaceContent(v.content) + '</div>';
         _html += '</li>';
     }
+
     setTimeout(function () {
         // 滚动条自动定位到最底端
         if(res.page <= 1){
-            $(show_id).html(_html);
+            $("#u-" + show_id).html(_html);
             wordBottom();
         }else{
-            $(show_id).prepend(_html);
+            $("#u-" + show_id).prepend(_html);
         }
         showBigPic();
     }, 200);        
