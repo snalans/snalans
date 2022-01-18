@@ -391,8 +391,6 @@ function checkUser() {
         $("#f-user").val(name);
         $("#f-ip").val(ip);
 
-        getChatLog(uid, 1);
-
         wordBottom();
     });
 }
