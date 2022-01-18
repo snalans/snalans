@@ -80,10 +80,11 @@ class UserLevelConfig extends Model
                             $wh = [];
                             $wh['user_id'] =  $user_id;
                             $wh['kind_id'] = $v['kind_id'];
+                            $before = Db::name("egg")->where($wh)->value('hatchable');
                             $add_rs = Db::name("egg")->where($wh)->inc('hatchable',$v['number'])->inc('frozen',$v['number'])->update();;
 
                             //蛋日志
-                            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$v['kind_id'],10,1,$v['number'],"农场主等级升级到".$level."级赠送");
+                            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$v['kind_id'],10,1,$v['number'],$before,($before+$v['number']),"农场主等级升级到".$level."级赠送");
                         }
                     }
 
