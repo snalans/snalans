@@ -494,6 +494,7 @@ class User extends Api
      * @ApiReturnParams   (name="p_total", type="int", description="直推总人数")
      * @ApiReturnParams   (name="p_valid", type="int", description="直推有效人数")
      * @ApiReturnParams   (name="p_mobile", type="int", description="邀请人手机号")
+     * @ApiReturnParams   (name="p_serial_number", type="int", description="邀请人会员编号")
      * 
      * @ApiReturnParams   (name="avatar", type="string", description="用户头像")
      * @ApiReturnParams   (name="serial_number", type="string", description="用户编号")
@@ -551,9 +552,9 @@ class User extends Api
                                 ->join("user u","u.id=mc.user_id","LEFT")
                                 ->where($wh)
                                 ->count();
-        $list['p_mobile'] = '';
+        $list['p_serial_number'] = '';
         if($this->auth->pid>0){
-            $list['p_mobile'] = Db::name("user")->where("id",$this->auth->pid)->value("mobile");
+            $list['p_serial_number'] = Db::name("user")->where("id",$this->auth->pid)->value("serial_number");
         }        
         $this->success('',$list);
     }
