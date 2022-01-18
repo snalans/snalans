@@ -390,12 +390,7 @@ function checkUser() {
         // 右侧展示详情
         $("#f-user").val(name);
         $("#f-ip").val(ip);
-        var htm = $('u-' + uid).html();
-        console.log(typeof(htm))
-        if(htm == null || html == ''){
-            getChatLog(uid, 1);
-        }
-        
+        getChatLog(uid, 1);
         wordBottom();
     });
 }
