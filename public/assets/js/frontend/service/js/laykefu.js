@@ -26,6 +26,7 @@ socket.onopen = function (res) {
 
 // 监听消息
 socket.onmessage = function (res) {
+    console.log(res)
     var data = eval("(" + res.data + ")");
     switch (data['message_type']) {
         // 服务端ping客户端
@@ -413,7 +414,6 @@ function sendWord(obj) {
 
 // 获取聊天记录
 function getChatLog(uid, page, flag) {
-    console.log('{"type":"chatRecord","to_id":"'+ uid +'","page":"'+ page +'"}')
     socket.send('{"type":"chatRecord","to_id":"'+ uid +'","page":"'+ page +'"}');
 }
 
