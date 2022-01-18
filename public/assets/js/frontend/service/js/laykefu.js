@@ -358,7 +358,6 @@ function addUser(data) {
             $("#f-ip").val(ip);
 
         }
-        getChatLog(data.id, 1);
         checkUser();
     }
 
@@ -391,6 +390,8 @@ function checkUser() {
         // 右侧展示详情
         $("#f-user").val(name);
         $("#f-ip").val(ip);
+
+        getChatLog(uid, 1);
         wordBottom();
     });
 }
