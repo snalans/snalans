@@ -4,6 +4,7 @@ return [
     'Name'          => '蛋名称',
     'Valid_number'  => '对应增加的有效值',
     'Image'         => '蛋图片',
+    'Egg_image'      => '窝里蛋图片',
     'Ch_image'      => '小鸡图片',
     'Bg_image'      => '背景图片',
     'Point'         => '兑换积分',

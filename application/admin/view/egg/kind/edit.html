@@ -21,6 +21,20 @@
         </div>
     </div>
     <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Egg_image')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                <input id="c-egg_image" class="form-control" size="50" name="row[egg_image]" type="text" value="{$row.egg_image|htmlentities}">
+                <div class="input-group-addon no-border no-padding">
+                    <span><button type="button" id="faupload-egg_image" class="btn btn-danger faupload" data-input-id="c-egg_image" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="false" data-preview-id="p-egg_image"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
+                    <span><button type="button" id="fachoose-egg_image" class="btn btn-primary fachoose" data-input-id="c-egg_image" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> {:__('Choose')}</button></span>
+                </div>
+                <span class="msg-box n-right" for="c-egg_image"></span>
+            </div>
+            <ul class="row list-inline faupload-preview" id="p-egg_image"></ul>
+        </div>
+    </div>
+    <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Ch_image')}:</label>
         <div class="col-xs-12 col-sm-8">
             <div class="input-group">

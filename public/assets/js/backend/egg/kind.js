@@ -29,6 +29,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'id', title: __('Id'), operate:false},
                         {field: 'name', title: __('Name'), operate: 'LIKE'},
                         {field: 'image', title: __('Image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
+                        {field: 'egg_image', title: __('Egg_image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'ch_image', title: __('Ch_image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'bg_image', title: __('Bg_image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'valid_number', title: __('Valid_number'), operate: false},
