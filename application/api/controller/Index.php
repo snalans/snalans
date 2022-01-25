@@ -160,10 +160,8 @@ class Index extends Api
             $this->error(__('Parameter error'));
         }
 
-        if(in_array($kind_id,[2,3])){
-            if(!preg_match("/^[0-9]*$/",$number)){                
-                $this->error("兑换数量要为正整数");
-            }
+        if(!preg_match("/^[0-9]*$/",$number)){                
+            $this->error("兑换数量要为正整数");
         }
 
         $wh = [];

@@ -32,6 +32,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
                         {field: 'origin_user_id', title: __('Origin_user_id')},
                         {field: 'number', title: __('Number'), operate:false},
+                        {field: 'before', title: __('Before'), operate:false},
+                        {field: 'after', title: __('After'), operate:false},
+                        {field: 'note', title: __('Note'), operate:false},
                         {field: 'add_time', title: __('Add_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                     ]
                 ]

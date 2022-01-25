@@ -44,7 +44,7 @@ class User extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $list = $this->model
-                ->with(['group','puser','levels'])
+                ->with(['group','puser','levels','attestation'])
                 ->where($where)
                 ->order($sort, $order)
                 ->paginate($limit);
@@ -53,6 +53,7 @@ class User extends Backend
                 $v->hidden(['password', 'salt']);
                 $v->getRelation('puser')->visible(['mobile']);
                 $v->getRelation('levels')->visible(['title']);
+                $v->getRelation('attestation')->visible(['name']);
                 $wh = [];
                 $wh['c.ancestral_id']   = $v->id;
                 $wh['c.level']          = ['<',4];
@@ -318,6 +319,82 @@ class User extends Backend
             $this->error(__('Parameter %s can not be empty', ''));
         }
         $row['level_str'] = $row['is_attestation']==1?"农民":"普通用户";
+        $this->view->assign("row", $row);
+        return $this->view->fetch();
+    }
+
+
+    /**
+     * 编辑信息
+     */
+    public function info($ids = null)
+    {
+        $row = $this->model->get($ids);
+        if (!$row) {
+            $this->error(__('No Results were found'));
+        }
+        $adminIds = $this->getDataLimitAdminIds();
+        if (is_array($adminIds)) {
+            if (!in_array($row[$this->dataLimitField], $adminIds)) {
+                $this->error(__('You have no permission'));
+            }
+        }
+        if ($this->request->isPost()) {
+            $params = $this->request->post("row/a");
+            if ($params) {
+                $params = $this->preExcludeFields($params);
+                if(!is_numeric($params['change_number']) || $params['change_number']==0){
+                    $this->error('不能为0的数值');
+                }
+                $new_number = $row['valid_number']+$params['change_number'];
+                
+                if($new_number < 0){                    
+                    $this->error('变动数量超出已有的数量');
+                }
+                $params['valid_number'] = $new_number;
+
+                $result = false;
+                Db::startTrans();
+                try {
+                    //是否采用模型验证
+                    if ($this->modelValidate) {
+                        $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
+                        $row->validateFailException(true)->validate($validate);
+                    }
+              
+                    $note = "管理员：".$this->auth->username." ".$params['note'];
+                    $log = Db::name("egg_valid_number_log")->insert([
+                        'user_id'=>$row['id'],
+                        'type'=>3,
+                        'number'=>$params['change_number'],
+                        'before'=>$row['valid_number'],
+                        'after'=>$new_number,
+                        'note'=>$note,
+                        'add_time'=>time(),
+                    ]);
+                    $result = $row->allowField(true)->save($params);
+
+                    if ($result !== false && $log) {
+                        Db::commit();
+                        $this->success();
+                    } else {
+                        Db::rollback();
+                        $this->error(__('No rows were updated'));
+                    }
+                } catch (ValidateException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (PDOException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (Exception $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                }
+            }
+            $this->error(__('Parameter %s can not be empty', ''));
+        }
         $this->view->assign("row", $row);
         return $this->view->fetch();
     }

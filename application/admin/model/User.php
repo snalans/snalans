@@ -122,4 +122,8 @@ class User extends Model
         return $this->belongsTo('app\admin\model\level\UserLevelConfig', 'level', 'level', [], 'LEFT')->setEagerlyType(0);
     }
 
+    public function attestation()
+    {
+        return $this->belongsTo('app\admin\model\user\Attestation', 'id', 'user_id', [], 'LEFT')->setEagerlyType(0);
+    }
 }

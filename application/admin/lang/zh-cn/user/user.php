@@ -31,7 +31,7 @@ return [
     'Status'         => '状态',
     'Hidden'         => '拉黑',
     'Leave password blank if dont want to change' => '不修改密码请留空',
-    'Valid_number'   => '有效值',
+    'Valid_number'   => '个人有效值',
     'Serial_number'  => '编号或邀请码',
     'Pid'            => '上级用户ID',
     'User.mobile'    => '上级手机号',

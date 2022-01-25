@@ -42,8 +42,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'serial_number', title: __('Serial_number'), operate: 'LIKE'},
                         {field: 'puser.mobile', title: __('User.mobile'), operate: 'LIKE'},
                         {field: 'level', title: __('Level'), visible:false},
+                        {field: 'attestation.name', title: __('姓名'), operate: 'LIKE', visible:false},
                         {field: 'levels.title', title: __('Level'), operate:false},
-                        {field: 'valid_number', title: __('Valid_number')},
+                        {field: 'valid_number', title: __('Valid_number'),width:'100', operate:false,sortable:true},
                         {field: 'total_valid_number', title: '团队有效值', operate: false},
                         {field: 'team_number', title: '直推人数', operate: false},
                         {field: 'is_attestation', title: __('是否认证'), formatter: Table.api.formatter.normal, searchList: {0: '未认证', 1: '成功',2: '等待审核',3:'失败'}},
@@ -55,6 +56,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                             {name: 'edit', text: '修改密码', title: '修改密码', icon: 'fa fa-list', classname: 'btn btn-xs btn-primary btn-editone btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url},
                             {name: 'assets', text: '资产', title: '蛋资产', icon: 'fa fa-list', classname: 'btn btn-xs btn-primary btn-dialog' ,url:function(row){
                                 return 'egg/egg/index?user.mobile='+row.mobile
+                            }},
+                            {name: 'info', text: '有效值', title: '变动用户有效值', classname: 'btn btn-xs btn-info btn-dialog' ,url:function(row){
+                                return 'user/user/info?ids='+row.id
                             }},
                             {name: 'charge', text: '收款信息', title: '收款信息', icon: 'fa fa-bank', classname: 'btn btn-xs btn-info btn-dialog' ,url:function(row){
                                 return 'user/charge_code/index?user_id='+row.id
@@ -87,6 +91,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Controller.api.bindevent();
         },
         add: function () {
+            Controller.api.bindevent();
+        },
+        info: function () {
             Controller.api.bindevent();
         },
         charge: function () {
