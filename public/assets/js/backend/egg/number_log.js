@@ -31,6 +31,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'user.serial_number', title: __('User.serial_number'), operate: 'LIKE'},
                         {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
                         {field: 'origin_user_id', title: __('Origin_user_id')},
+                        {field: 'type', title: __('Type'), formatter: Table.api.formatter.status, searchList: {1: '孵化', 2: '购买蛋', 3: '管理员'}},
                         {field: 'number', title: __('Number'), operate:false},
                         {field: 'before', title: __('Before'), operate:false},
                         {field: 'after', title: __('After'), operate:false},
