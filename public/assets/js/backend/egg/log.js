@@ -44,7 +44,23 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'type', title: __('Type'), formatter: Table.api.formatter.normal, searchList: {0: '农场', 1: '订单', 2: '互转', 3: '合成', 4: '管理员操作', 5: '积分兑换', 9: '手续费',10:'农场主等级升级'}},
                         {field: 'order_sn', title: __('Order_sn'), operate: 'LIKE'},
                         {field: 'before', title: '变动前', operate: false},
-                        {field: 'number', title: __('Number'), operate: false},
+                        {field: 'number', title: __('Number'), operate: false,
+                            cellStyle:function(value,row,index){
+                                let h_css = {}
+                                if(parseInt(row.number)>=0){
+                                    h_css = {css:{"color":"#0592f0"}};        
+                                }else{
+                                    h_css = {css:{"color":"#ec7f7f"}};
+                                }  
+                                return h_css;
+                            },
+                            formatter:function paramsMatter(value,row,index){
+                                var span = document.createElement("span");
+                                span.setAttribute("title",value);
+                                span.innerHTML = value;
+                                return span.outerHTML;
+                            }
+                        },
                         {field: 'after', title: '变动后', operate: false},
                         {field: 'note', title: __('Note'), operate: false},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
