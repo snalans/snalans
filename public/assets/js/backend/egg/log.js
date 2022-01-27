@@ -2,6 +2,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
     var Controller = {
         index: function () {
+            $(".btn-add").data("area",["800px","400px"]);
             // 初始化表格参数配置
             Table.api.init({
                 extend: {
@@ -47,6 +48,16 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'after', title: '变动后', operate: false},
                         {field: 'note', title: __('Note'), operate: false},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
+                        {field: 'operate', title: __('Operate'), table: table,buttons: [
+                            {name: 'edit', text: '修改', title: '添加交易手续费', icon: 'fa fa-pencil', classname: 'btn btn-xs btn-success btn-editone btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url,
+                                visible:function(row){
+                                    if(row.type == 9 && row.user_id == 0){
+                                        return true; 
+                                    }
+                                },
+                                extend: 'data-area=\'["800px", "400px"]\''
+                            },                            
+                        ], events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
             });

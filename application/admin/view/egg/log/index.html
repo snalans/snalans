@@ -16,9 +16,10 @@
                             </span>
                         </a>
                         
+                        <a href="javascript:;" class="btn btn-success btn-add {:$auth->check('egg/nest_kind/add')?'':'hide'}" title="添加交易手续费" ><i class="fa fa-plus"></i> {:__('Add')}</a>
                     </div>
                     <table id="table" class="table table-striped table-bordered table-hover table-nowrap"
-                           data-operate-edit="" 
+                           data-operate-edit="{:$auth->check('egg/log/edit')}" 
                            data-operate-del="" 
                            width="100%">
                     </table>
