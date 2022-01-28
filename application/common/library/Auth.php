@@ -20,7 +20,7 @@ class Auth
     protected $_user = null;
     protected $_token = '';
     //Token默认有效时长
-    protected $keeptime = 2592000;
+    protected $keeptime = 86400;
     protected $requestUri = '';
     protected $rules = [];
     //默认配置
