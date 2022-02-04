@@ -556,7 +556,8 @@ class User extends Api
                                 ->where($wh)
                                 ->count();
 
-        $wh['status']           = 'normal';
+        $wh['u.status']           = 'normal';
+        $wh['u.is_attestation']   = 1;
         $list['team_valid'] = Db::name("membership_chain")->alias("mc")
                                 ->join("user u","u.id=mc.user_id","LEFT")
                                 ->where($wh)
