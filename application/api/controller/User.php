@@ -117,6 +117,15 @@ class User extends Api
         $password = $this->request->post('password');
         $captcha  = $this->request->post('captcha');
 
+        // $start_time = strtotime("2022-1-30 01:00:00");
+        // $end_time = strtotime("2022-2-04 12:00:00");
+
+        // if(time() >= $start_time && time() < $end_time){
+        //     if(!in_array($account,['17095989213','15060060723','18059119783','15705917729'])){
+        //         $this->error("系统维护中");
+        //     }            
+        // }
+
         if (!$account || !$password) {
             $this->error(__('Invalid parameters'));
         }

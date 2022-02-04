@@ -51,22 +51,22 @@ class Dashboard extends Backend
                     ->group("kind_id")
                     ->column("kind_id,sum(number)");
 
-        $minfo = Db::name("egg_log_all")->where("createtime",date("Y-m",strtotime("-1 month")))->select();
-        if(empty($minfo)){
-            $legg = Db::name("egg_log_".date("Y_m",strtotime("-1 month")))
-                    ->whereTime('createtime', 'last month')
-                    ->group("kind_id")
-                    ->column("kind_id,sum(number)");
-            $datas = [];
-            for ($i=1; $i <= 4; $i++) { 
-                $data = [];
-                $data['kind_id']    = $i;
-                $data['number']     = isset($legg[$i])?$legg[$i]:0;
-                $data['createtime'] = date("Y-m",strtotime("-1 month"));
-                $datas[] = $data;
-            }
-            Db::name("egg_log_all")->insertAll($datas);
-        }
+        // $minfo = Db::name("egg_log_all")->where("createtime",date("Y-m",strtotime("-1 month")))->select();
+        // if(empty($minfo)){
+        //     $legg = Db::name("egg_log_".date("Y_m",strtotime("-1 month")))
+        //             ->whereTime('createtime', 'last month')
+        //             ->group("kind_id")
+        //             ->column("kind_id,sum(number)");
+        //     $datas = [];
+        //     for ($i=1; $i <= 4; $i++) { 
+        //         $data = [];
+        //         $data['kind_id']    = $i;
+        //         $data['number']     = isset($legg[$i])?$legg[$i]:0;
+        //         $data['createtime'] = date("Y-m",strtotime("-1 month"));
+        //         $datas[] = $data;
+        //     }
+        //     Db::name("egg_log_all")->insertAll($datas);
+        // }
 
         $megg = Db::name("egg")
                     ->group("kind_id")
