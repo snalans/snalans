@@ -44,7 +44,7 @@ class User extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $list = $this->model
-                ->with(['group','puser','levels','attestation'])
+                ->with(['puser','levels','attestation'])
                 ->where($where)
                 ->order($sort, $order)
                 ->paginate($limit);

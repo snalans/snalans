@@ -134,7 +134,12 @@ class User extends Api
         {            
             if(!captcha_check($captcha)){
                  $this->error("验证码错误");
-            };
+            }
+        }
+
+        $flag = $this->changePwd($account);
+        if($flag){
+            $this->error("系统检测异常登录,请更换登录密码后再登录");
         }
 
         $ret = $this->auth->login($account, $password);
@@ -442,6 +447,7 @@ class User extends Api
         $this->auth->direct($user->id);
         $ret = $this->auth->changepwd($newpassword, '', true);
         if ($ret) {
+            $this->moveMobile($mobile);
             $this->success(__('Reset password successful'));
         } else {
             $this->error($this->auth->getError());
@@ -795,5 +801,34 @@ class User extends Api
                 });
         // }        
         $this->success('',$list);
+    }
+
+    // 提示用户重置密码后才能登录
+    public function changePwd($mobile='')
+    {
+        $wh = [];
+        $wh['mobile'] = $mobile;
+        $wh['status'] = 1;
+        $info = Db::name("egg_valid_mobile")->where($wh)->find();
+        if(!empty($info)){
+            return true;
+        }
+        return false;
+    }
+
+    //移除需要重置的手机号
+    public function moveMobile($mobile='')
+    {
+        $wh = [];
+        $wh['mobile'] = $mobile;
+        $wh['status'] = 1;
+        $info = Db::name("egg_valid_mobile")->where($wh)->find();
+        if(!empty($info)){
+            $data = [];
+            $data['num'] = $info['num']+1;
+            $data['status'] = 0;
+            $data['valid_time'] = time();
+            Db::name("egg_valid_mobile")->where("id",$info['id'])->update($data);
+        }
     }
 }
