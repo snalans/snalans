@@ -139,7 +139,7 @@ class User extends Api
 
         $flag = $this->changePwd($account);
         if($flag){
-            $this->error("系统检测异常登录,请更换登录密码后再登录");
+            $this->error("您的账号登录异常请修改密码重新登陆");
         }
 
         $ret = $this->auth->login($account, $password);
