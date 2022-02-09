@@ -93,7 +93,7 @@ class Product extends Api
                     ->paginate($per_page)->each(function($item){
                         if(!empty($item['images'])){                            
                             $img_arr = explode(",",$item['images']);
-                            $item['image'] = cdnurl($img_arr[0], true);
+                            $item['image'] = cdnurl($img_arr[0], false);
                             unset($item['images']);
                         }
                         if(empty($item['serial_number'])){
