@@ -76,6 +76,8 @@ class ValidMobile extends Backend
                     //     $this->model->validateFailException(true)->validate($validate);
                     // }
                     // $result = $this->model->allowField(true)->save($params);
+                    $ids = Db::name("user")->where('mobile','in',$arr)->column("id");
+                    Db::name("user_token")->where("user_id",'in',$ids)->delete();
                     Db::commit();
                 } catch (ValidateException $e) {
                     Db::rollback();
@@ -98,5 +100,57 @@ class ValidMobile extends Backend
         return $this->view->fetch();
     }
 
+
+    /**
+     * 批量更新
+     */
+    public function multi($ids = "")
+    {
+        if (!$this->request->isPost()) {
+            $this->error(__("Invalid parameters"));
+        }
+        $ids = $ids ? $ids : $this->request->post("ids");
+        if ($ids) {
+            if ($this->request->has('params')) {
+                parse_str($this->request->post("params"), $values);
+                $values = $this->auth->isSuperAdmin() ? $values : array_intersect_key($values, array_flip(is_array($this->multiFields) ? $this->multiFields : explode(',', $this->multiFields)));
+                if ($values) {
+                    $adminIds = $this->getDataLimitAdminIds();
+                    if (is_array($adminIds)) {
+                        $this->model->where($this->dataLimitField, 'in', $adminIds);
+                    }
+                    $count = 0;
+                    Db::startTrans();
+                    try {
+                        $list = $this->model->where($this->model->getPk(), 'in', $ids)->select();
+                        foreach ($list as $index => $item) {
+                            if($values['status'] == 1){
+                                $user_id = Db::name("user")->where('mobile',$item->mobile)->value("id");
+                                if(!empty($user_id)){
+                                    Db::name("user_token")->where("user_id",$user_id)->delete();
+                                }
+                            }
+                            $count += $item->allowField(true)->isUpdate(true)->save($values);
+                        }
+                        Db::commit();
+                    } catch (PDOException $e) {
+                        Db::rollback();
+                        $this->error($e->getMessage());
+                    } catch (Exception $e) {
+                        Db::rollback();
+                        $this->error($e->getMessage());
+                    }
+                    if ($count) {
+                        $this->success();
+                    } else {
+                        $this->error(__('No rows were updated'));
+                    }
+                } else {
+                    $this->error(__('You have no permission'));
+                }
+            }
+        }
+        $this->error(__('Parameter %s can not be empty', 'ids'));
+    }
 
 }
