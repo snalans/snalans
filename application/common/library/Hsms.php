@@ -59,7 +59,7 @@ class Hsms
         $time = time();
         $ip = request()->ip();
         $sms = \app\common\model\Sms::create(['event' => $event, 'mobile' => $mobile, 'code' => $code, 'ip' => $ip, 'createtime' => $time]);
-        $log_msg = '【我的农场】';
+        $log_msg = '【阿尼农场】';
         if($event=='resetpwd'){
             $log_msg .= '您申请重置登录密码，验证码：'.$code.'。请不要把验证码泄漏给其他人，如非本人请勿操作。 ';
         }else if($event=='resetpay'){                
