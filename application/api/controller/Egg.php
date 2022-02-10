@@ -779,7 +779,7 @@ class Egg extends Api
                         DB::rollback();
                         $this->error("确认订单失败");
                     } else {
-                        \app\common\library\Hsms::send($v['buy_mobile'], '','order');
+                        // \app\common\library\Hsms::send($v['buy_mobile'], '','order');
                         DB::commit();
                         continue;
                     }
