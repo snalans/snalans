@@ -140,7 +140,8 @@ class Order extends Backend
                 if ($result !== false && $log_rs && $log_re) {
                     if($row['is_virtual'] == 1 && $params['status'] == 1){
                         // 通知卖家
-                        \app\common\library\Hsms::send($row['buy_user_id'], '','virtual');
+                        $mobile = Db::name("user")->where("id",$row['buy_user_id'])->value("mobile");
+                        \app\common\library\Hsms::send($mobile, '','virtual');
                     }
                     $this->success();
                 } else {
