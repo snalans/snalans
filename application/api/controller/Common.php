@@ -10,6 +10,8 @@ use app\common\model\Version;
 use fast\Random;
 use think\Config;
 use think\Hook;
+use BackblazeB2\Client;
+use BackblazeB2\Bucket;
 
 /**
  * 公共接口
@@ -113,18 +115,32 @@ class Common extends Api
                 }
                 $this->success();
             }
-        } else {
+        } else {            
+            $options = ['auth_timeout_seconds' => 3600*12];
+            $client = new Client('dff9b3f25737', '0047ba6686abbdddedad160502c5a22399de4ef07e', $options);
+
             $attachment = null;
             //默认普通上传文件
             $file = $this->request->file('file');
             try {
-                $upload = new Upload($file);
-                $attachment = $upload->upload();
+                // $upload = new Upload($file);
+                // $attachment = $upload->upload();
+                // $fileInfo = $file->getInfo();
+                $fileInfo['name'] = '141386482110045991432649.jpg';
+                $arr_name = explode(".",$fileInfo['name']);
+                $filename = "/".date("Ymd")."/".md5(current($arr_name)).".".end($arr_name);
+                $attachment = $client->upload([
+                    'BucketName' => 'fram-EGGsovVLOop',
+                    'FileName' => $filename,
+                    'Body' => "C:\Users\huangbin\Pictures\Camera Roll/141386482110045991432649.jpg",
+                ]);                
+                // print_r($attachment);
+                $attachment->url = $filename;
+                print_r($attachment);
             } catch (UploadException $e) {
                 $this->error($e->getMessage());
             }
-
-            $this->success(__('Uploaded successful'), ['url' => $attachment->url, 'fullurl' => cdnurl($attachment->url, true)]);
+            $this->success(__('Uploaded successful'), ['url' => cdnurl($attachment->url, 'https://oss.eggloop.co'), 'fullurl' => cdnurl($attachment->url, 'https://oss.eggloop.co')]);
         }
 
     }

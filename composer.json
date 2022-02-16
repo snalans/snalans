@@ -30,7 +30,8 @@
         "ext-curl": "*",
         "ext-pdo": "*",
         "ext-bcmath": "*",
-        "txthinking/mailer": "^2.0"
+        "txthinking/mailer": "^2.0",
+        "gliterd/backblaze-b2": "^1.5"
     },
     "config": {
         "preferred-install": "dist"
