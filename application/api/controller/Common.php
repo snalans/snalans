@@ -115,9 +115,9 @@ class Common extends Api
                 }
                 $this->success();
             }
-        } else {            
-            $options = ['auth_timeout_seconds' => 3600*12];
-            $client = new Client('dff9b3f25737', '0047ba6686abbdddedad160502c5a22399de4ef07e', $options);
+        } else {       
+            $config = Config::get('upload');
+            $client = new Client($config['accountId'],$config['applicationKey']);
 
             $attachment = null;
             //默认普通上传文件
@@ -125,22 +125,19 @@ class Common extends Api
             try {
                 // $upload = new Upload($file);
                 // $attachment = $upload->upload();
-                // $fileInfo = $file->getInfo();
-                $fileInfo['name'] = '141386482110045991432649.jpg';
+                $fileInfo = $file->getInfo();
                 $arr_name = explode(".",$fileInfo['name']);
-                $filename = "/".date("Ymd")."/".md5(current($arr_name)).".".end($arr_name);
+                $filename = "/".date("Ymd")."/".md5(current($arr_name).time()).".".end($arr_name);
                 $attachment = $client->upload([
                     'BucketName' => 'fram-EGGsovVLOop',
                     'FileName' => $filename,
-                    'Body' => "C:\Users\huangbin\Pictures\Camera Roll/141386482110045991432649.jpg",
+                    'Body' => fopen($fileInfo['tmp_name'], 'r'),
                 ]);                
-                // print_r($attachment);
                 $attachment->url = $filename;
-                print_r($attachment);
             } catch (UploadException $e) {
                 $this->error($e->getMessage());
             }
-            $this->success(__('Uploaded successful'), ['url' => cdnurl($attachment->url, 'https://oss.eggloop.co'), 'fullurl' => cdnurl($attachment->url, 'https://oss.eggloop.co')]);
+            $this->success(__('Uploaded successful'), ['url' => cdnurl($attachment->url, 'https://oss.eggloop.co'), 'fullurl' => cdnurl($attachment->url, false)]);
         }
 
     }
