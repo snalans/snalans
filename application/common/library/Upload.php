@@ -9,6 +9,8 @@ use FilesystemIterator;
 use think\Config;
 use think\File;
 use think\Hook;
+use BackblazeB2\Client;
+use BackblazeB2\Bucket;
 
 /**
  * 文件上传类
@@ -332,7 +334,7 @@ class Upload
         $destDir = ROOT_PATH . 'public' . str_replace('/', DS, $uploadDir);
 
         $sha1 = $this->file->hash();
-
+        $b2_filename = '';
         //如果是合并文件
         if ($this->merging) {
             if (!$this->file->check()) {
@@ -349,11 +351,22 @@ class Upload
             $file = new File($destFile);
             $file->setSaveName($fileName)->setUploadInfo($info);
         } else {
-            $file = $this->file->move($destDir, $fileName);
-            if (!$file) {
-                // 上传失败获取错误信息
-                throw new UploadException($this->file->getError());
-            }
+            // $file = $this->file->move($destDir, $fileName);
+            // if (!$file) {
+            //     // 上传失败获取错误信息
+            //     throw new UploadException($this->file->getError());
+            // }
+            $config = Config::get('upload');
+            $client = new Client($config['accountId'],$config['applicationKey']);
+       
+            $arr_name = explode(".",$this->fileInfo['name']);
+            $b2_filename = "/".date("Ymd")."/".md5(current($arr_name).time()).".".end($arr_name);
+            $file = $client->upload([
+                'BucketName' => $config['BucketName'],
+                'FileName' => $b2_filename,
+                'Body' => fopen($this->fileInfo['tmp_name'], 'r'),
+            ]); 
+            $b2_filename = cdnurl($b2_filename, "https://oss.eggloop.co");
         }
         $this->file = $file;
         $category = request()->post('category');
@@ -370,7 +383,7 @@ class Upload
             'imagetype'   => $this->fileInfo['suffix'],
             'imageframes' => 0,
             'mimetype'    => $this->fileInfo['type'],
-            'url'         => $uploadDir . $file->getSaveName(),
+            'url'         => empty($b2_filename)?$uploadDir . $file->getSaveName():$b2_filename,
             'uploadtime'  => time(),
             'storage'     => 'local',
             'sha1'        => $sha1,

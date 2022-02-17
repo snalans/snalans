@@ -10,8 +10,6 @@ use app\common\model\Version;
 use fast\Random;
 use think\Config;
 use think\Hook;
-use BackblazeB2\Client;
-use BackblazeB2\Bucket;
 
 /**
  * 公共接口
@@ -116,28 +114,17 @@ class Common extends Api
                 $this->success();
             }
         } else {       
-            $config = Config::get('upload');
-            $client = new Client($config['accountId'],$config['applicationKey']);
 
             $attachment = null;
             //默认普通上传文件
             $file = $this->request->file('file');
             try {
-                // $upload = new Upload($file);
-                // $attachment = $upload->upload();
-                $fileInfo = $file->getInfo();
-                $arr_name = explode(".",$fileInfo['name']);
-                $filename = "/".date("Ymd")."/".md5(current($arr_name).time()).".".end($arr_name);
-                $attachment = $client->upload([
-                    'BucketName' => 'fram-EGGsovVLOop',
-                    'FileName' => $filename,
-                    'Body' => fopen($fileInfo['tmp_name'], 'r'),
-                ]);                
-                $attachment->url = $filename;
+                $upload = new Upload($file);
+                $attachment = $upload->upload();
             } catch (UploadException $e) {
                 $this->error($e->getMessage());
             }
-            $this->success(__('Uploaded successful'), ['url' => cdnurl($attachment->url, 'https://oss.eggloop.co'), 'fullurl' => cdnurl($attachment->url, false)]);
+            $this->success(__('Uploaded successful'), ['url' => $attachment->url, 'fullurl' => cdnurl($attachment->url, true)]);
         }
 
     }

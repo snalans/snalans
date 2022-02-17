@@ -37,6 +37,7 @@ return [
     /*
      * B2
      */
+    'BucketName' => 'fram-EGGsovVLOop',
     'accountId' => 'dff9b3f25737',
     'applicationKey' => '004f53ac14e21b25c7afd7a722f18983c661637773',
 ];
