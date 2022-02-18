@@ -232,14 +232,26 @@ class Egg extends Api
         if($kind_id<=0 || $kind_id>3){
             $this->error("请选择有效的蛋种类！");
         }
+        if($kind_id == 1){            
+            if($number <= 0 || $number > 500){
+                $this->error("数量要在1~500之间");
+            }
+        }
+        if($kind_id == 2){            
+            if($number <= 0 || $number > 200){
+                $this->error("数量要在1~200之间");
+            }
+        }
+        if($kind_id == 3){            
+            if($number <= 0 || $number > 60){
+                $this->error("数量要在1~60之间");
+            }
+        }
 
         $egg_kind_info = Db::name("egg_kind")
             ->field("name,rate_config")
             ->where('id',$kind_id)
             ->find();
-        if($number <= 0 || $number > 500){
-            $this->error("数量要在1~500之间");
-        }
 
         //挂单数量
         $where = array(
