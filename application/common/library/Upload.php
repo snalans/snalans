@@ -351,22 +351,25 @@ class Upload
             $file = new File($destFile);
             $file->setSaveName($fileName)->setUploadInfo($info);
         } else {
-            // $file = $this->file->move($destDir, $fileName);
-            // if (!$file) {
-            //     // 上传失败获取错误信息
-            //     throw new UploadException($this->file->getError());
-            // }
             $config = Config::get('upload');
-            $client = new Client($config['accountId'],$config['applicationKey']);
-       
-            $arr_name = explode(".",$this->fileInfo['name']);
-            $b2_filename = "/".date("Ymd")."/".md5(current($arr_name).time()).".".end($arr_name);
-            $file = $client->upload([
-                'BucketName' => $config['BucketName'],
-                'FileName' => $b2_filename,
-                'Body' => fopen($this->fileInfo['tmp_name'], 'r'),
-            ]); 
-            $b2_filename = cdnurl($b2_filename, "https://oss.eggloop.co");
+            if(isset($config['BucketName']))
+            {
+                $client = new Client($config['accountId'],$config['applicationKey']);           
+                $arr_name = explode(".",$this->fileInfo['name']);
+                $b2_filename = "/".date("Ymd")."/".md5(current($arr_name).time()).".".end($arr_name);
+                $file = $client->upload([
+                    'BucketName' => $config['BucketName'],
+                    'FileName' => $b2_filename,
+                    'Body' => fopen($this->fileInfo['tmp_name'], 'r'),
+                ]); 
+                $b2_filename = cdnurl($b2_filename, $config['HostName']);
+            }else{
+                $file = $this->file->move($destDir, $fileName);
+                if (!$file) {
+                    // 上传失败获取错误信息
+                    throw new UploadException($this->file->getError());
+                }                
+            }
         }
         $this->file = $file;
         $category = request()->post('category');
