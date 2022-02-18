@@ -69,6 +69,30 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                     }
                                 },
                                 extend: 'data-area=\'["500px", "450px"]\''
+                            },
+                            {
+                                name: 'ajax',
+                                text: '撤单',
+                                title: "取消订单",
+                                classname: 'btn btn-xs btn-danger btn-magic btn-ajax',
+                                icon: 'fa fa-magic',
+                                visible:function(row){
+                                    if(row.status == 5){ 
+                                        return true; 
+                                    }
+                                },
+                                url: 'order/order/cancel',
+                                confirm: '确认取消订单?',
+                                success: function (data, ret) {
+                                    Layer.alert(ret.msg);
+                                    //如果需要阻止成功提示，则必须使用return false;
+                                    table.bootstrapTable('refresh');
+                                    return false;
+                                },
+                                error: function (data, ret) {
+                                    Layer.alert(ret.msg);
+                                    return false;
+                                }
                             }
                         ], events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
@@ -90,6 +114,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Controller.api.bindevent();
         },
         edit: function () {
+            Controller.api.bindevent();
+        },
+        cancel: function () {
             Controller.api.bindevent();
         },
         api: {

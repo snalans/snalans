@@ -228,4 +228,24 @@ class Order extends Backend
         $this->view->assign("row", $row);
         return $this->view->fetch();
     }
+
+
+    /**
+     * 撤单
+     */
+    public function cancel($ids = '')
+    {        
+        if ($this->request->isPost()) 
+        {
+            $wh = [];
+            $wh['id']         = $ids;
+            $wh['status']     = 5;
+            $rs = Db::name("egg_order")->where($wh)->update(['status'=>4]);
+
+            if ($rs !== false) {
+                $this->success("撤单成功");
+            }
+        }
+        $this->error("撤单失败");
+    }
 }
