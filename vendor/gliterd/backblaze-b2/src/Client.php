@@ -8,6 +8,7 @@ use BackblazeB2\Exceptions\ValidationException;
 use BackblazeB2\Http\Client as HttpClient;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
+use think\Cache;
 
 class Client
 {
@@ -179,11 +180,15 @@ class Client
         }
 
         // Retrieve the URL that we should be uploading to.
-
-        $response = $this->sendAuthorizedRequest('POST', 'b2_get_upload_url', [
-            'bucketId' => $options['BucketId'],
-        ]);
-
+        $authorized = Cache::get('authorized','');
+        if(empty($authorized)){
+            $response = $this->sendAuthorizedRequest('POST', 'b2_get_upload_url', [
+                'bucketId' => $options['BucketId'],
+            ]);
+            Cache::set('authorized',json_encode($response),3600*24-300);
+        }else{
+            $response = json_decode($authorized,true);
+        }
         $uploadEndpoint = $response['uploadUrl'];
         $uploadAuthToken = $response['authorizationToken'];
 
