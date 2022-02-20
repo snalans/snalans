@@ -358,6 +358,7 @@ class Upload
                 $arr_name = explode(".",$this->fileInfo['name']);
                 $b2_filename = "/".date("Ymd")."/".md5(current($arr_name).time()).".".end($arr_name);
                 $file = $client->upload([
+                    'BucketName' => $config['BucketName'],
                     'BucketId' => $config['BucketId'],
                     'FileName' => $b2_filename,
                     'Body' => fopen($this->fileInfo['tmp_name'], 'r'),

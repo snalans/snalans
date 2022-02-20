@@ -180,15 +180,11 @@ class Client
         }
 
         // Retrieve the URL that we should be uploading to.
-        $authorized = Cache::get('authorized','');
-        if(empty($authorized)){
-            $response = $this->sendAuthorizedRequest('POST', 'b2_get_upload_url', [
-                'bucketId' => $options['BucketId'],
-            ]);
-            Cache::set('authorized',json_encode($response),3600*24-300);
-        }else{
-            $response = json_decode($authorized,true);
-        }
+
+        $response = $this->sendAuthorizedRequest('POST', 'b2_get_upload_url', [
+            'bucketId' => $options['BucketId'],
+        ]);
+
         $uploadEndpoint = $response['uploadUrl'];
         $uploadAuthToken = $response['authorizationToken'];
 
@@ -539,10 +535,15 @@ class Client
             return;
         }
 
-        $response = $this->client->guzzleRequest('GET', self::B2_API_BASE_URL.self::B2_API_V1.'/b2_authorize_account', [
-            'auth' => [$this->accountId, $this->applicationKey],
-        ]);
-
+        $b2_authorize_account = Cache::get('b2_authorize_account','');
+        if(empty($b2_authorize_account)){
+            $response = $this->client->guzzleRequest('GET', self::B2_API_BASE_URL.self::B2_API_V1.'/b2_authorize_account', [
+                'auth' => [$this->accountId, $this->applicationKey],
+            ]);
+            Cache::set('b2_authorize_account',json_encode($response),3600*24-300);
+        }else{
+            $response = json_decode($b2_authorize_account,true);
+        }
         $this->authToken = $response['authorizationToken'];
         $this->apiUrl = $response['apiUrl'].self::B2_API_V1;
         $this->downloadUrl = $response['downloadUrl'];
