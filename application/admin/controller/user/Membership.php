@@ -55,6 +55,7 @@ class Membership extends Backend
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $wh = [];
             $wh['u.status'] = 'normal';
+            $wh['u.level'] = ['>=',3];
             $wh['u.is_attestation'] = 1;
             $list = Db::name("membership_chain")->alias("mc")
                     ->field("fu.id,fu.serial_number,fu.mobile,fu.valid_number,fu.status,fu.is_attestation,mc.ancestral_id,SUM(IF(u.`status`='normal' && u.is_attestation=1,u.valid_number,0)) as total")
