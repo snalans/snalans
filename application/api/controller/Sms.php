@@ -36,7 +36,10 @@ class Sms extends Api
         if ($last && time() - $last['createtime'] < 60 && $event != 'order') {
             $this->error(__('发送频繁'));
         }
-        $ipSendTotal = \app\common\model\Sms::where(['ip' => $this->request->ip()])->whereTime('createtime', '-1 hours')->count();
+        $wh = [];
+        $wh['event'] = $event;
+        $wh['mobile'] = $mobile;
+        $ipSendTotal = \app\common\model\Sms::where($wh)->whereTime('createtime', '-1 day')->count();
         if ($ipSendTotal >= 5) {
             $this->error(__('发送频繁'));
         }
