@@ -540,7 +540,7 @@ class Client
             $response = $this->client->guzzleRequest('GET', self::B2_API_BASE_URL.self::B2_API_V1.'/b2_authorize_account', [
                 'auth' => [$this->accountId, $this->applicationKey],
             ]);
-            Cache::set('b2_authorize_account',json_encode($response),3600*24-300);
+            Cache::set('b2_authorize_account',json_encode($response),$this->authTimeoutSeconds);
         }else{
             $response = json_decode($b2_authorize_account,true);
         }
