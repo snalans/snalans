@@ -11,6 +11,7 @@ use think\File;
 use think\Hook;
 use BackblazeB2\Client;
 use BackblazeB2\Bucket;
+use think\Cache;
 
 /**
  * 文件上传类
@@ -354,6 +355,7 @@ class Upload
             $config = Config::get('upload');
             if(isset($config['BucketId']))
             {
+                $this->getBackblazeb2();
                 $client = new Client($config['accountId'],$config['applicationKey']);           
                 $arr_name = explode(".",$this->fileInfo['name']);
                 $b2_filename = "/".date("Ymd")."/".md5(current($arr_name).time()).".".end($arr_name);
@@ -409,5 +411,33 @@ class Upload
     public function getError()
     {
         return $this->error;
+    }
+
+    /*
+     * 获取authorizationToken
+     */ 
+    public function getBackblazeb2()
+    {
+        $b2_authorize_account = Cache::get('b2_authorize_account','');
+        if(empty($b2_authorize_account)){
+            $config = Config::get('upload');
+            $application_key_id = $config['accountId']; // Obtained from your B2 account page
+            $application_key = $config['applicationKey']; // Obtained from your B2 account page
+            $credentials = base64_encode($application_key_id . ":" . $application_key);
+            $url = "https://api.backblazeb2.com/b2api/v2/b2_authorize_account";
+
+            $session = curl_init($url);
+            // Add headers
+            $headers = array();
+            $headers[] = "Accept: application/json";
+            $headers[] = "Authorization: Basic " . $credentials;
+            curl_setopt($session, CURLOPT_HTTPHEADER, $headers);  // Add headers
+
+            curl_setopt($session, CURLOPT_HTTPGET, true);  // HTTP GET
+            curl_setopt($session, CURLOPT_RETURNTRANSFER, true); // Receive server response
+            $server_output = curl_exec($session);
+            curl_close ($session);
+            Cache::set('b2_authorize_account',$server_output,60*60*22);
+        }
     }
 }

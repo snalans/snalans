@@ -41,5 +41,5 @@ return [
     'BucketName'     => 'fram-EGGsovVLOop',
     'BucketId'       => '3d5fef290be30f3275f70317',
     'accountId'      => 'dff9b3f25737',
-    'applicationKey' => '004f53ac14e21b25c7afd7a722f18983c661637773',
+    'applicationKey' => '004db0df7f19ad41e1f4e996b6d3cca82eda5eb34c',
 ];
