@@ -68,7 +68,12 @@ class UserLevelConfig extends Model
                     ->where(['id'=>$user_id])
                     ->data(array('level'=>$level))
                     ->update();
-                if($re==true){
+                $wh = [];
+                $wh['user_id']  =  $user_id;
+                $wh['type']     =  10;
+                $wh['note']     = "农场主等级升级到".$level."级赠送";
+                $info = Db::name("egg_log")->where($wh)->find();
+                if($re==true && empty($info)){
                     //赠送蛋
                     $egg_give = Db::name("egg_give")
                         ->field('*')
