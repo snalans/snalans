@@ -122,7 +122,7 @@ class AutoOrder extends Api
         $black_days = Config::get("site.black_days");
         $days = $black_days??15;
         $wh = [];
-        $wh['id']             = ['>',240];
+        $wh['id']             = ['>',308];
         $wh['status']         = 'normal';
         $wh['is_attestation'] = 1;
         $wh['updatetime']     = ['<',time()-3600*24*$days];
