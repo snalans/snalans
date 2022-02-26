@@ -723,6 +723,10 @@ class User extends Api
             $this->error("参数有误");
         }
 
+        if(in_array($type,[1,2]) && empty($image)){
+            $this->error("收款二维码不能为空");
+        }
+
         $real_name = Db::name("egg_attestation")->where("user_id",$this->auth->id)->value("name");
         if($real_name != $name){
             $this->error("跟实名的名字不一样");
