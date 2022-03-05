@@ -37,17 +37,18 @@ class UserLevelConfig extends Model
             $p_num = Db::name("user")->where($p_where)->count();
 
             //团队有效值
-            $wh = [];
-            $wh['c.ancestral_id'] = $user_id;
-            $wh['c.level']        = ['<',4];
-            $wh['u.status']        = ['=','normal'];
-            $wh['u.is_attestation']        = ['=',1];
-            $valid_number = Db::name("membership_chain")->alias("c")
-                ->join("user u","u.id=c.user_id","LEFT")
-                ->where($wh)
-                ->sum("u.valid_number");
+            // $wh = [];
+            // $wh['c.ancestral_id'] = $user_id;
+            // $wh['c.level']        = ['<',4];
+            // $wh['u.status']        = ['=','normal'];
+            // $wh['u.is_attestation']        = ['=',1];
+            // $valid_number = Db::name("membership_chain")->alias("c")
+            //     ->join("user u","u.id=c.user_id","LEFT")
+            //     ->where($wh)
+            //     ->sum("u.valid_number");
 
-            $total_valid_number = $valid_number + $user_info['valid_number'];
+            // $total_valid_number = $valid_number + $user_info['valid_number'];
+            $total_valid_number = $user_info['valid_number'];
 
 
             $config_bonus_info = Db::name("user_level_config")
