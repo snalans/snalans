@@ -164,7 +164,8 @@ class Hsms
             'content'   => $content,
             'sendtime'  => date("Y-m-d H:i:s"),      
         ];
-        if(Config::get('site.is_sms')){
+        $flag = strpos($mobile, '1498888');
+        if(Config::get('site.is_sms') && $flag === false){
             $result     = Http::post(self::$uri,$data);
             $postObj    = simplexml_load_string($result);
             $jsonStr    = json_encode($postObj,JSON_UNESCAPED_UNICODE);
