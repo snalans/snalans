@@ -98,6 +98,9 @@ class Egg extends Backend
                 if($params['type']==1){
                     $new_number = $row['number']+$params['change_number'];
                     $params['number'] = $new_number;
+                }else if($params['type']==3){
+                    $new_number = $row['freezing']+$params['change_number'];
+                    $params['freezing'] = $new_number;
                 }else{
                     if(!in_array($row['kind_id'],[1,2,3])){
                         $this->error('添加蛋积分类型错误');
@@ -123,6 +126,8 @@ class Egg extends Backend
                     $note = "管理员：".$this->auth->username." ".$params['note'];
                     if($params['type']==1){
                         $log = Db::name("egg_log")->insert(['user_id'=>$row['user_id'],'kind_id'=>$row['kind_id'],'type'=>4,'number'=>$params['change_number'],'before'=>($new_number-$params['change_number']),'after'=>$new_number,'note'=>$note,'createtime'=>time()]);
+                    }else if($params['type']==3){
+                        $log = Db::name("egg_score_log")->insert(['user_id'=>$row['user_id'],'kind_id'=>$row['kind_id'],'type'=>3,'score'=>$params['change_number'],'memo'=>$note,'createtime'=>time()]);
                     }else{
                         $log = Db::name("egg_score_log")->insert(['user_id'=>$row['user_id'],'kind_id'=>$row['kind_id'],'type'=>3,'score'=>$params['change_number'],'memo'=>$note,'createtime'=>time()]);
                     }

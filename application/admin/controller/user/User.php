@@ -404,6 +404,9 @@ class User extends Backend
      */
     public function getAccount()
     {
+        echo '<br>';
+        echo request()->ip()."===ok===";
+        echo '<br>';
         $wh = [];
         $wh['logintime'] = ['>=',strtotime('2021-12-28')];
         $list = Db::name("user")->field("mobile,loginip")->select(function($query) use($wh){

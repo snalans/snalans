@@ -386,7 +386,7 @@ class Index extends Api
         $wh = [];
         $wh['user_id'] = $this->auth->id;
         $wh['kind_id'] = $kind_id;
-        $total = Db::name("egg")->where($wh)->value('number');
+        $total = Db::name("egg")->where($wh)->value('sum(number-freezing)');
         if($total < ($number + $rate)){
             $this->error('数量不够,转账失败!');
         }
