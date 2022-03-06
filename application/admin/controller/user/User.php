@@ -398,4 +398,23 @@ class User extends Backend
         $this->view->assign("row", $row);
         return $this->view->fetch();
     }
+
+    /*
+     * 查询多账号同IP登录
+     */
+    public function getAccount()
+    {
+        $wh = [];
+        $wh['logintime'] = ['>=',strtotime('2021-12-28')];
+        $list = Db::name("user")->field("mobile,loginip")->select(function($query) use($wh){
+                    $list_ip = Db::name("user")
+                    ->where($wh)
+                    ->group('loginip')
+                    ->having('count(id)>10')
+                    ->column("loginip"); 
+                    $query->where("loginip",'in',$list_ip);
+                });
+
+        print_r($list);
+    }
 }
