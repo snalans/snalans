@@ -454,13 +454,16 @@ class Egg extends Api
         DB::startTrans();
         try{
             //更新订单
-            $data =array();
+            $data = [];
             $data['sell_user_id'] = $user_id;
             $data['sell_serial_umber'] = $user_info['serial_number'];
             $data['sell_mobile'] = $user_info['mobile'];
             $data['status'] = 0;
             $data['sale_time'] = time();
-            $re = Db::name("egg_order")->where('order_sn',$order_sn)->data($data)->update();
+            $wh = [];
+            $wh['order_sn'] = $order_sn;
+            $wh['status'] = 5;
+            $re = Db::name("egg_order")->where($wh)->data($data)->update();
 
             //扣除蛋
             $egg_where = array(
@@ -476,13 +479,13 @@ class Egg extends Api
             //蛋手续费
             $log_fee_add = \app\admin\model\egg\Log::saveLog($user_id,$order['kind_id'],9,$order['order_sn'],'-'.$order['rate'],($egg_num-$order['number']),($egg_num-$total_egg),"农贸市场交易手续费");
 
-            if ($re == false || $add_rs == false ||  $log_add == false || $log_fee_add == false ) {
-                DB::rollback();
-                $this->error("出售失败");
-            } else {
+            if ($re && $add_rs && $log_add && $log_fee_add) {
                 //通知买家
                 \app\common\library\Hsms::send($order['buy_mobile'], '','order');
                 DB::commit();
+            } else {
+                DB::rollback();
+                $this->error("出售失败");
             }
         }//end try
         catch(\Exception $e)

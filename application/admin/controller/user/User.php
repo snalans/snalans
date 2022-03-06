@@ -6,6 +6,8 @@ use app\common\controller\Backend;
 use app\common\library\Auth;
 use fast\Random;
 use think\Validate;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use think\Db;
 
 /**
@@ -404,20 +406,65 @@ class User extends Backend
      */
     public function getAccount()
     {
-        echo '<br>';
-        echo request()->ip()."===ok===";
-        echo '<br>';
+        set_time_limit(0);
+        $date = input("date",date("Y-m-d"));
+        $num = input("num",10);
         $wh = [];
-        $wh['logintime'] = ['>=',strtotime('2021-12-28')];
-        $list = Db::name("user")->field("mobile,loginip")->select(function($query) use($wh){
+        $wh['logintime'] = ['>=',strtotime($date)];
+        $list = Db::name("user")->field("mobile,loginip")->order("loginip","ASC")
+                ->select(function($query) use($wh,$num){
                     $list_ip = Db::name("user")
                     ->where($wh)
                     ->group('loginip')
-                    ->having('count(id)>10')
+                    ->having("count(id)>$num")
                     ->column("loginip"); 
                     $query->where("loginip",'in',$list_ip);
                 });
 
-        print_r($list);
+        $cols_arr = [
+            "A"     => '手机号',
+            "B"     => '登录IP',   
+        ];
+        $newExcel = new Spreadsheet();  //创建一个新的excel文档
+        $objSheet = $newExcel->getActiveSheet();  //获取当前操作sheet的对象        
+        $objSheet->setTitle('同IP登录数据表');  //设置当前sheet的标题
+        //设置第一栏的标题
+        foreach ($cols_arr as $key => $value) 
+        {
+            //设置宽度为true,不然太窄了
+            $newExcel->getActiveSheet()->getColumnDimension($key)->setWidth(15);
+            $objSheet->setCellValue($key.'1', $value);
+        }
+
+        if(!empty($list))
+        {          
+            $num=1;
+            foreach ($list as $k => $val) 
+            {         
+                $num++;
+                $objSheet->setCellValue("A".$num, $val['mobile']);
+                $objSheet->setCellValue("B".$num, $val['loginip']);
+            }
+        }else{
+            $objSheet->setCellValue("A2", "数据为空");
+        }
+
+        /*--------------下面是设置其他信息------------------*/
+        ob_end_clean();
+        $excel_type = 'Xlsx';
+        if($excel_type == "Xls"){            
+            header('Content-Type: application/vnd.ms-excel');
+            header("Content-Disposition: attachment;filename=". date('Y-m-d') .".xlsx");
+            header('Cache-Control: max-age=0');
+            $objWriter = IOFactory::createWriter($newExcel, 'Xls');
+        }else{            
+            header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            header("Content-Disposition: inline;filename=". date('Y-m-d') .".xlsx");
+            header('Cache-Control: max-age=0');
+            $objWriter = IOFactory::createWriter($newExcel, 'Xlsx');
+        }
+        $objWriter->save('php://output');
+        exit();
+
     }
 }

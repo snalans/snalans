@@ -81,6 +81,27 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 $(".btn-editone").data("area",["400px","400px"]);
             })
 
+            var str = '<div><p>选择导出的选项</p> '
+                str += '<label>开始日期：</label><input id="date" name="date" type="input" placeholder="如:2022-01-01 默认当天"/><br>'
+                str += '<label>大于数量：</label><input id="number" name="number" type="number" value="10" /></div>';
+            $(".btn-imports").on("click",function(){
+                layer.confirm(str, {
+                    title: '导出同IP登录',
+                    btn: ['导出数据'],
+                    yes: function (index, layero) {
+                        var url = Fast.api.fixurl("user/user/getAccount");
+                        var date = layero.find("input[name='date']").val(),number = layero.find("input[name='number']").val();
+                        url += '?number='+number;
+                        if(date != ''){
+                            url += '&date='+date;
+                        }
+                        // 当前页面数据
+                        Layer.close(index);
+                        top.location.href = url
+                    }
+                })
+            })
+
             // 为表格绑定事件
             Table.api.bindevent(table);
         },
