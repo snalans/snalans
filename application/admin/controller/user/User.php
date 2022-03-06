@@ -404,7 +404,7 @@ class User extends Backend
     /*
      * 查询多账号同IP登录
      */
-    public function getAccount()
+    public function get_account()
     {
         set_time_limit(0);
         $date = input("date",date("Y-m-d"));

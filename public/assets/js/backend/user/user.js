@@ -89,7 +89,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     title: '导出同IP登录',
                     btn: ['导出数据'],
                     yes: function (index, layero) {
-                        var url = Fast.api.fixurl("user/user/getAccount");
+                        var url = Fast.api.fixurl("user/user/get_account");
                         var date = layero.find("input[name='date']").val(),number = layero.find("input[name='number']").val();
                         url += '?number='+number;
                         if(date != ''){
