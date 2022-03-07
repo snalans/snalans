@@ -722,7 +722,7 @@ class User extends Api
         if (empty($account) || !in_array($type,[1,2,3,4])) {
             $this->error("参数有误");
         }
-
+        
         if(in_array($type,[1,2]) && empty($image)){
             $this->error("收款二维码不能为空");
         }
