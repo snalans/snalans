@@ -267,10 +267,13 @@ class Index extends Api
         $wh['kind_id']      = $result['kind_id'];
         $assets = Db::name("egg")->where($wh)->find();
         if($result['kind_id'] == 1){
-            $wh['number']    = ['>=',1];
-            $reduce_rs = Db::name("egg")->where($wh)->setDec('number');
             $before = $assets['number'];
             $after = $assets['number']-1;
+            if($after < $assets['freezing']){
+                $this->error('可孵化的蛋不够');
+            }
+            $wh['number']    = ['>=',1];
+            $reduce_rs = Db::name("egg")->where($wh)->setDec('number');
         }else{            
             $wh['hatchable']    = ['>=',1];
             $reduce_rs = Db::name("egg")->where($wh)->setDec('hatchable');
