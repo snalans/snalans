@@ -74,7 +74,7 @@ class User extends Api
                 ->join("user u","u.id=c.user_id","LEFT")
                 ->where($wh)
                 ->sum("u.valid_number");
-        $result['total_valid_number'] = $result['valid_number'] + $sum;
+        $result['total_valid_number'] = $sum;
         $result['is_paypwd'] = empty($result['paypwd'])?0:1;
         unset($result['paypwd']);
 
