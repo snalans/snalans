@@ -65,7 +65,7 @@ class User extends Backend
                         ->join("user u","u.id=c.user_id","LEFT")
                         ->where($wh)
                         ->sum("u.valid_number");
-                $v->total_valid_number = $sum + $v->valid_number;
+                $v->total_valid_number = $sum;
                 $wh = [];
                 $wh['pid']              = $v->id;
                 $v->team_number = Db::name("user")->where($wh)->count();
