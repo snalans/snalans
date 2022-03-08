@@ -37,6 +37,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {0: '孵化中', 1: '空闲'}},
                         {field: 'is_reap', title: __('Is_reap'), operate:false, formatter: Table.api.formatter.normal, searchList: {0: '无', 1: '可收获', 2: '可收获'}},
                         {field: 'position', title: __('Position'), operate:false},
+                        {field: 'is_give', title: __('是否赠送'), formatter: Table.api.formatter.normal, searchList: {0: '否', 1: '是'}},
                         {field: 'uptime', title: __('Uptime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'operate', title: __('Operate'), table: table,buttons: [
