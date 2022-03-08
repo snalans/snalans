@@ -450,7 +450,7 @@ class Order extends Api
         $egg_where = [];
         $egg_where['user_id'] = $this->auth->id;
         $egg_where['kind_id'] = $info['kind_id'];
-        $egg_num = Db::name("egg")->where($egg_where)->value('number');
+        $egg_num = Db::name("egg")->where($egg_where)->value('sum(number-freezing)');
 
         //蛋数量判断
         $sell_egg = $info['price']*$number;

@@ -44,7 +44,7 @@ class Synthesis extends Api
         $config = Db::name("egg_synthesis_config")->where("kind_id",$kind_id)->select();     
         $egg_list = Db::name("egg")
                     ->where("user_id",$this->auth->id)
-                    ->column("number","kind_id");    
+                    ->column("sum(number-freezing) as number","kind_id");    
 
         $flag = true;
         foreach ($config as $key => $value) {
