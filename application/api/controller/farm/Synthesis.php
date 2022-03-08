@@ -109,6 +109,7 @@ class Synthesis extends Api
             $wh['user_id']   = $pid;
             $wh['kind_id']   = $kind_id;
             $wh['status']    = 0;
+            $wh['is_give']    = 0;
             $result = Db::name("egg_hatch")->field("id,position")->where($wh)->find();
             if(!empty($result)){                
                 foreach ($config as $key => $value) {
