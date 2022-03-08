@@ -423,7 +423,7 @@ class Egg extends Api
         //蛋数量不够
         $total_egg = $order['number'] + $order['rate'];
         if($total_egg>$egg_num){
-            $this->error("您的蛋数量不足".$total_egg.'个！');
+            $this->error("您的可交易蛋资产不足".$total_egg.'个！');
         }
 
         $u_where = [];
