@@ -21,6 +21,7 @@ class UserLevelConfig extends Model
             //团队数量
             $team_where = [];
             $team_where['c.ancestral_id'] = $user_id;
+            $team_where['c.level']        = ['<',4];
             $team_where['u.status']        = ['=','normal'];
             $team_where['u.is_attestation']        = ['=',1];
             $team_num = Db::name("membership_chain")->alias("c")
