@@ -411,19 +411,24 @@ class User extends Backend
         $num = input("num",10);
         $wh = [];
         $wh['logintime'] = ['>=',strtotime($date)];
-        $list = Db::name("user")->field("mobile,loginip")->order("loginip","ASC")
+        $list = Db::name("user")->alias("u")
+                ->field("u.mobile,u.loginip,u.logintime,uu.mobile as p_mobile")
+                ->join("user uu","uu.id=u.pid")
+                ->order("loginip","ASC")
                 ->select(function($query) use($wh,$num){
                     $list_ip = Db::name("user")
                     ->where($wh)
                     ->group('loginip')
                     ->having("count(id)>$num")
                     ->column("loginip"); 
-                    $query->where("loginip",'in',$list_ip);
+                    $query->where("u.loginip",'in',$list_ip);
                 });
 
         $cols_arr = [
             "A"     => '手机号',
             "B"     => '登录IP',   
+            "C"     => '登录时间',  
+            "C"     => '上级手机号',  
         ];
         $newExcel = new Spreadsheet();  //创建一个新的excel文档
         $objSheet = $newExcel->getActiveSheet();  //获取当前操作sheet的对象        
@@ -444,6 +449,8 @@ class User extends Backend
                 $num++;
                 $objSheet->setCellValue("A".$num, $val['mobile']);
                 $objSheet->setCellValue("B".$num, $val['loginip']);
+                $objSheet->setCellValue("C".$num, date("Y-m-d H:i:s",$val['logintime']));
+                $objSheet->setCellValue("D".$num, $val['p_mobile']);
             }
         }else{
             $objSheet->setCellValue("A2", "数据为空");
