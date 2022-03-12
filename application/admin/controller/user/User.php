@@ -428,7 +428,7 @@ class User extends Backend
             "A"     => '手机号',
             "B"     => '登录IP',   
             "C"     => '登录时间',  
-            "C"     => '上级手机号',  
+            "D"     => '上级手机号',  
         ];
         $newExcel = new Spreadsheet();  //创建一个新的excel文档
         $objSheet = $newExcel->getActiveSheet();  //获取当前操作sheet的对象        
@@ -437,7 +437,7 @@ class User extends Backend
         foreach ($cols_arr as $key => $value) 
         {
             //设置宽度为true,不然太窄了
-            $newExcel->getActiveSheet()->getColumnDimension($key)->setWidth(15);
+            $newExcel->getActiveSheet()->getColumnDimension($key)->setWidth(20);
             $objSheet->setCellValue($key.'1', $value);
         }
 
