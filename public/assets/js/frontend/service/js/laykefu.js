@@ -362,7 +362,9 @@ function addUser(data) {
 }
 // 强制退出
 function signOut(uid) {
-    socket.send('{"type":"signOut","to_id":"'+ uid +'"}');
+    if(confirm("将其禁言？")){        
+        socket.send('{"type":"signOut","to_id":"'+ uid +'"}');
+    }
 }
 // 操作新连接用户的 dom操作
 function checkUser() {
