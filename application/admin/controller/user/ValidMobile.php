@@ -52,19 +52,23 @@ class ValidMobile extends Backend
                 }
                 $arr = explode("\n",$params['mobile']);
                 $arr = array_filter(array_map('trim', $arr));
-                $arr = array_unique($arr);
+                $array_in = array_unique($arr);
                 $wh = [];
                 $wh['mobile'] = ['in',$arr];
                 $list = Db::name("egg_valid_mobile")->where($wh)->value("group_concat(mobile)");
+                $array_is = [];
                 if(!empty($list)){
-                    $this->error("不允许重复添加手机号:".$list);
+                    $array_is = explode(",",$list);
+                    Db::name("egg_valid_mobile")->where("mobile",'in',$array_is)->inc("num")->update(['status'=>1]);
+                    // $this->error("不允许重复添加手机号:".$list);
                 }
                 $result = false;
                 Db::startTrans();
                 try {
+                    $array_in = array_diff($array_in, $array_is);
                     $data = [];
-                    if(!empty($arr)){
-                        foreach ($arr as $key => $value) {
+                    if(!empty($array_in)){
+                        foreach ($array_in as $key => $value) {
                             $data[]['mobile'] = trim($value);
                         }
                     }
