@@ -27,7 +27,6 @@ socket.onopen = function (res) {
 // 监听消息
 socket.onmessage = function (res) {
     var data = eval("(" + res.data + ")");
-    console.log(data)
     switch (data['message_type']) {
         // 服务端ping客户端
         case 'ping':
@@ -148,7 +147,7 @@ layui.use(['upload', 'layer'], function () {
         elem: '#image' // 绑定元素
         , accept: 'images'
         , exts: 'jpg|jpeg|png|gif'
-        , url: '/ZKlSOvVLkh.php/ajax/upload' // 上传接口
+        , url: '/EGGsovVLOop.php/ajax/upload' // 上传接口
         , done: function (res) {
 
             sendMessage('img[' + res.data.fullurl + ']');
@@ -163,7 +162,7 @@ layui.use(['upload', 'layer'], function () {
         elem: '#file' // 绑定元素
         , accept: 'file'
         , exts: 'zip|rar'
-        , url: '/ZKlSOvVLkh.php/ajax/upload' // 上传接口
+        , url: '/EGGsovVLOop.php/ajax/upload' // 上传接口
         , done: function (res) {
             sendMessage('file(' + res.data.src + ')[' + res.msg + ']');
         }
@@ -307,7 +306,6 @@ function copyText(mobile) {
         },1500)
     }
 }
-
 // 添加用户到面板
 function addUser(data) {
     var add = true;
@@ -322,12 +320,12 @@ function addUser(data) {
         _html += '<img src="' + data.avatar + '">';
         _html += '<span class="user-name">' + data.name + '</span>';
         _html += '<span class="layui-badge" style="margin-left:5px">0</span>';
-        _html += '<i class="layui-icon close" style="display:none">ဇ</i>';
+        _html += '<i class="layui-icon close" style="padding-left: 25px;" onclick="signOut(' + data.id + ')">ဇ</i>';
         _html += '</li>';
-
+    
         // 添加左侧列表
         $("#user_list").append(_html);
-
+    
         // 如果没有选中人，选中第一个
         var hasActive = 0;
         $("#user_list li").each(function(){
@@ -335,25 +333,25 @@ function addUser(data) {
                 hasActive = 1;
             }
         });
-
+    
         var _html2 = '';
         _html2 += '<ul id="u-' + data.id + '">';
         _html2 += '</ul>';
         // 添加主聊天面板
         $('.chat-box').append(_html2);
-
+    
         if(0 == hasActive){
             $("#user_list").find('li').eq(0).addClass('active').find('span:eq(1)').removeClass('layui-badge').text('');
             $("#u-" + data.id).show();
-
+    
             var id = $(".layui-unselect").find('li').eq(0).data('id');
             var name = $(".layui-unselect").find('li').eq(0).data('name');
             var ip = $(".layui-unselect").find('li').eq(0).data('ip');
             var avatar = $(".layui-unselect").find('li').eq(0).data('avatar');
-
+    
             // 设置当前会话用户
             $("#active-user").attr('data-id', id).attr('data-name', name).attr('data-avatar', avatar).attr('data-ip', ip);
-
+    
             $("#f-user").val(name);
             $("#f-ip").val(ip);
             getChatLog(data.id, 1);
@@ -361,6 +359,10 @@ function addUser(data) {
         checkUser();
     }
 
+}
+// 强制退出
+function signOut(uid) {
+    socket.send('{"type":"signOut","to_id":"'+ uid +'"}');
 }
 // 操作新连接用户的 dom操作
 function checkUser() {
@@ -390,7 +392,9 @@ function checkUser() {
         // 右侧展示详情
         $("#f-user").val(name);
         $("#f-ip").val(ip);
+
         getChatLog(uid, 1);
+
         wordBottom();
     });
 }
