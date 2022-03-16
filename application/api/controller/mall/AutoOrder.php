@@ -17,6 +17,7 @@ class AutoOrder extends Api
 {
     protected $noNeedLogin = "*";
     protected $noNeedRight = '*';
+    private $limit = 10;
 
     public function _initialize()
     {
@@ -137,29 +138,43 @@ class AutoOrder extends Api
         }
         $this->success("自动拉黑玩家");
     }
+
+   /*
+    * 图片上传云统一入口
+    */ 
+   public function cloudImage()
+   {
+        echo '<pre>';
+        $getB2 = new \app\common\library\Upload();
+        $getB2->getBackblazeb2();
+        $config = Config::get('upload');
+        $client = new Client($config['accountId'],$config['applicationKey']);
+
+        $this->imgAttestation($config,$client);
+        $this->imgCharge($config,$client);
+        $this->orderCharge($config,$client);
+   }
     
     /*
      * 认证图片上传
      */ 
-    public function imgAttestation()
+    private function imgAttestation($config=[],$client,$domain="eggloop.co")
     {        
-        exit;
-        $getB2 = new \app\common\library\Upload();
-        $getB2->getBackblazeb2();
-
-        $config = Config::get('upload');
-        $client = new Client($config['accountId'],$config['applicationKey']);
-        $domain = "eggloop.co";
-
-        $attestation_id = Cache::get('attestation_id',500000);
         $wh = [];
-        $wh['id'] = ['>',$attestation_id];
-        $wh['front_img'] = ['like',"%www.$domain%"];
-        $list = Db::name("egg_attestation")->where($wh)->order("id","asc")->limit(14)->select();
-        
-        // echo '<pre>';
-        // print_r($list);        
-        // exit;
+        $wh['u.id'] = ['>',5000];
+        $wh['u.is_attestation'] = 1;
+        $wh['u.logintime'] = ['>=',strtotime("-5 day")];
+        $wh['at.front_img'] = ['like',"%www.$domain%"];
+        $list = Db::name("egg_attestation")->alias("at")
+                    ->field("at.id,at.user_id,at.front_img,at.reverse_img,at.hand_img")
+                    ->join("user u","u.id=at.user_id")
+                    ->where($wh)
+                    ->order("at.id","asc")
+                    ->limit($this->limit)
+                    ->select();
+
+        print_r($list);        
+        return true;
         if(!empty($list))
         {            
             $num = 0;
@@ -186,7 +201,7 @@ class AutoOrder extends Api
                         $str = "'"."/uploads".$front_img."'";
                         Db::query("UPDATE fa_attachment SET url = REPLACE(url, '/uploads', 'https://oss.eggloop.co') WHERE url IN ($str)");
                         unlink($path_front);
-                        echo $value['id']."=>front_img \n";
+                        echo $value['id']." #user_id: ".$value['user_id']." =>front_img \n";
                     }
                 }
 
@@ -210,7 +225,7 @@ class AutoOrder extends Api
                         $str = "'"."/uploads".$reverse_img."'";
                         Db::query("UPDATE fa_attachment SET url = REPLACE(url, '/uploads', 'https://oss.eggloop.co') WHERE url IN ($str)");
                         unlink($path_reverse);
-                        echo  $value['id']."=>reverse_img \n";
+                        echo $value['id']." #user_id: ".$value['user_id']." =>reverse_img \n";
                     }
                 }
 
@@ -234,10 +249,9 @@ class AutoOrder extends Api
                         $str = "'"."/uploads".$hand_img."'";
                         Db::query("UPDATE fa_attachment SET url = REPLACE(url, '/uploads', 'https://oss.eggloop.co') WHERE url IN ($str)");
                         unlink($path_hand);
-                        echo $value['id']."=>hand_img \n";
+                        echo $value['id']." #user_id: ".$value['user_id']." =>hand_img \n";
                     }
                 }
-                Cache::set('attestation_id',$value['id'],60*60);
             }
             echo  date("Y-m-d H:i:s")."结束 \n";
         }
@@ -247,29 +261,21 @@ class AutoOrder extends Api
     /*
      * 收款图片上传
      */ 
-    public function imgCharge()
+    private function imgCharge($config=[],$client,$domain="eggloop.co")
     {        
-        $getB2 = new \app\common\library\Upload();
-        $getB2->getBackblazeb2();
-        $config = Config::get('upload');
-        $client = new Client($config['accountId'],$config['applicationKey']);
-        $domain = "eggloop.co";
-
-        $code_id = Cache::get('code_id',500000);
         $wh = [];
-        $wh['id'] = ['<',$code_id];
+        $wh['add_time'] = ['>=',strtotime("-5 day")];
         $wh['image'] = ['like',"%www.$domain%"];
         $list = Db::name("egg_charge_code")->field("id,user_id,image")
                         ->where($wh)
-                        ->order("id","desc")
-                        ->limit(35)
+                        ->order("id","asc")
+                        ->limit($this->limit)
                         ->select();
-        // echo '<pre>';
-        // print_r($list);        
-        // exit;
+
+        print_r($list);             
+        return true;
         if(!empty($list))
         {            
-            $num = 0;
             echo date("Y-m-d H:i:s")."开始 \n";
             foreach ($list as $key => $value) 
             {
@@ -284,8 +290,7 @@ class AutoOrder extends Api
                         'Body' => fopen($path_front, 'r'),
                     ]); 
                     $json = json_encode($file1);
-                    $front = json_decode($json,1);    
-    
+                    $front = json_decode($json,1); 
                     if(!empty($front['id'])){
                         $data = [];
                         $data["image"] = str_replace("www.$domain/uploads","oss.eggloop.co",$value['image']);
@@ -294,42 +299,33 @@ class AutoOrder extends Api
                         $str = "'"."/uploads".$front_img."'";
                         Db::query("UPDATE fa_attachment SET url = REPLACE(url, '/uploads', 'https://oss.eggloop.co') WHERE url IN ($str)");
                         unlink($path_front);
-                        echo $value['id']." # user_id : ".$value['user_id']."\n";
+                        echo $value['id']." # user_id: ".$value['user_id']."\n";
                     }
                 }
-                Cache::set('code_id',$value['id'],60*60);
             }
             echo  date("Y-m-d H:i:s")."结束 \n";
         }
     }
-
+    
+    
     /*
      * 蛋订单图片上传
      */ 
-    public function orderCharge()
+    private function orderCharge($config=[],$client,$domain="eggloop.co")
     {        
-        $getB2 = new \app\common\library\Upload();
-        $getB2->getBackblazeb2();
-        $config = Config::get('upload');
-        $client = new Client($config['accountId'],$config['applicationKey']);
-        $domain = "eggloop.co";
-
-        $order_id = Cache::get('order_id',500000);
         $wh = [];
-        $wh['id'] = ['<',$order_id];
         $wh['status'] = 1;
-        $wh['image'] = ['like',"%www.$domain%"];
+        $wh['pay_time'] = ['>=',strtotime("-5 day")];
+        $wh['pay_img'] = ['like',"%www.$domain%"];
         $list = Db::name("egg_order")->field("id,order_sn,attestation_image,pay_img")
                         ->where($wh)
-                        ->order("id","desc")
-                        ->limit(1)
+                        ->order("id","asc")
+                        ->limit($this->limit)
                         ->select();
-        // echo '<pre>';
-        // print_r($list);        
-        // exit;
+        print_r($list);          
+        return true;
         if(!empty($list))
         {            
-            $num = 0;
             echo date("Y-m-d H:i:s")."开始 \n";
             foreach ($list as $key => $value) 
             {
@@ -353,10 +349,9 @@ class AutoOrder extends Api
                         $str = "'"."/uploads".$attestation_image."'";
                         Db::query("UPDATE fa_attachment SET url = REPLACE(url, '/uploads', 'https://oss.eggloop.co') WHERE url IN ($str)");
                         unlink($path_attestation);
-                        echo $value['id']." # order_sn : ".$value['order_sn']."\n";
+                        echo $value['id']." 1# order_sn : ".$value['order_sn']."\n";
                     }
                 }
-
 
                 $pay_img = str_replace("https://www.$domain/uploads","",$value['pay_img']);
                 $path_pay = str_replace("https://www.".$domain,"/www/wwwroot/$domain/public",$value['pay_img']);
@@ -378,10 +373,9 @@ class AutoOrder extends Api
                         $str = "'"."/uploads".$pay_img."'";
                         Db::query("UPDATE fa_attachment SET url = REPLACE(url, '/uploads', 'https://oss.eggloop.co') WHERE url IN ($str)");
                         unlink($path_pay);
-                        echo $value['id']." # order_sn : ".$value['order_sn']."\n";
+                        echo $value['id']." 2# order_sn : ".$value['order_sn']."\n";
                     }
                 }
-                Cache::set('order_id',$value['id'],60*60);
             }
             echo  date("Y-m-d H:i:s")."结束 \n";
         }
