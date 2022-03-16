@@ -650,6 +650,7 @@ class User extends Api
         $params['front_img']    = $front_img;
         $params['reverse_img']  = $reverse_img;
         $params['hand_img']     = $hand_img;
+        $params['add_time']     = time();
         $result = Db::name("egg_attestation")->where("user_id",$this->auth->id)->find();
         if(empty($result)){
             $params['user_id']    = $this->auth->id;
