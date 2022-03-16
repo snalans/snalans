@@ -143,7 +143,7 @@ class AutoOrder extends Api
      */ 
     public function imgAttestation()
     {        
-        // exit;
+        exit;
         $getB2 = new \app\common\library\Upload();
         $getB2->getBackblazeb2();
 
@@ -257,14 +257,13 @@ class AutoOrder extends Api
 
         $code_id = Cache::get('code_id',500000);
         $wh = [];
-        $wh['id'] = ['>',$code_id];
+        $wh['id'] = ['<',$code_id];
         $wh['image'] = ['like',"%www.$domain%"];
-        $list = Db::name("egg_charge_code")->field("id,image")
+        $list = Db::name("egg_charge_code")->field("id,user_id,image")
                         ->where($wh)
                         ->order("id","desc")
-                        ->limit(5)
+                        ->limit(35)
                         ->select();
-        
         // echo '<pre>';
         // print_r($list);        
         // exit;
@@ -295,10 +294,94 @@ class AutoOrder extends Api
                         $str = "'"."/uploads".$front_img."'";
                         Db::query("UPDATE fa_attachment SET url = REPLACE(url, '/uploads', 'https://oss.eggloop.co') WHERE url IN ($str)");
                         unlink($path_front);
-                        echo $value['id']."\n";
+                        echo $value['id']." # user_id : ".$value['user_id']."\n";
                     }
                 }
                 Cache::set('code_id',$value['id'],60*60);
+            }
+            echo  date("Y-m-d H:i:s")."结束 \n";
+        }
+    }
+
+    /*
+     * 蛋订单图片上传
+     */ 
+    public function orderCharge()
+    {        
+        $getB2 = new \app\common\library\Upload();
+        $getB2->getBackblazeb2();
+        $config = Config::get('upload');
+        $client = new Client($config['accountId'],$config['applicationKey']);
+        $domain = "eggloop.co";
+
+        $order_id = Cache::get('order_id',500000);
+        $wh = [];
+        $wh['id'] = ['<',$order_id];
+        $wh['status'] = 1;
+        $wh['image'] = ['like',"%www.$domain%"];
+        $list = Db::name("egg_order")->field("id,order_sn,attestation_image,pay_img")
+                        ->where($wh)
+                        ->order("id","desc")
+                        ->limit(1)
+                        ->select();
+        // echo '<pre>';
+        // print_r($list);        
+        // exit;
+        if(!empty($list))
+        {            
+            $num = 0;
+            echo date("Y-m-d H:i:s")."开始 \n";
+            foreach ($list as $key => $value) 
+            {
+                $attestation_image = str_replace("https://www.$domain/uploads","",$value['attestation_image']);
+                $path_attestation = str_replace("https://www.".$domain,"/www/wwwroot/$domain/public",$value['attestation_image']);
+                if(file_exists($path_attestation))
+                {
+                    $file1 = $client->upload([
+                        'BucketName' => $config['BucketName'],
+                        'BucketId' => $config['BucketId'],
+                        'FileName' => $attestation_image,
+                        'Body' => fopen($path_attestation, 'r'),
+                    ]); 
+                    $json = json_encode($file1);
+                    $front = json_decode($json,1);    
+                    if(!empty($front['id'])){
+                        $data = [];
+                        $data["attestation_image"] = str_replace("www.$domain/uploads","oss.eggloop.co",$value['attestation_image']);
+                        Db::name("egg_order")->where("id",$value['id'])->update($data);
+                        
+                        $str = "'"."/uploads".$attestation_image."'";
+                        Db::query("UPDATE fa_attachment SET url = REPLACE(url, '/uploads', 'https://oss.eggloop.co') WHERE url IN ($str)");
+                        unlink($path_attestation);
+                        echo $value['id']." # order_sn : ".$value['order_sn']."\n";
+                    }
+                }
+
+
+                $pay_img = str_replace("https://www.$domain/uploads","",$value['pay_img']);
+                $path_pay = str_replace("https://www.".$domain,"/www/wwwroot/$domain/public",$value['pay_img']);
+                if(file_exists($path_pay))
+                {
+                    $file2 = $client->upload([
+                        'BucketName' => $config['BucketName'],
+                        'BucketId' => $config['BucketId'],
+                        'FileName' => $pay_img,
+                        'Body' => fopen($path_pay, 'r'),
+                    ]); 
+                    $json = json_encode($file2);
+                    $pay = json_decode($json,1);    
+                    if(!empty($pay['id'])){
+                        $data = [];
+                        $data["pay_img"] = str_replace("www.$domain/uploads","oss.eggloop.co",$value['pay_img']);
+                        Db::name("egg_order")->where("id",$value['id'])->update($data);
+                        
+                        $str = "'"."/uploads".$pay_img."'";
+                        Db::query("UPDATE fa_attachment SET url = REPLACE(url, '/uploads', 'https://oss.eggloop.co') WHERE url IN ($str)");
+                        unlink($path_pay);
+                        echo $value['id']." # order_sn : ".$value['order_sn']."\n";
+                    }
+                }
+                Cache::set('order_id',$value['id'],60*60);
             }
             echo  date("Y-m-d H:i:s")."结束 \n";
         }
