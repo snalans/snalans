@@ -61,6 +61,7 @@ class UserLevelConfig extends Model
             if($p_num<$config_bonus_info['number'] || $team_num<$config_bonus_info['team_number'] || $total_valid_number<$config_bonus_info['valid_number']){
                 if($user_info['level'] > 0){
                     Db::name("user")->where(['id'=>$user_id])->data(['level'=>0])->update();
+                    \app\admin\model\egg\Log::saveLog($user_id,0,11,"",0,0,0,"农场主等级从".$user_info['level']."降为 0");
                 }
                 return true;
             }
@@ -69,6 +70,7 @@ class UserLevelConfig extends Model
             $level = $this->vip($user_id,$user_info['level'],$p_num,$team_num,$total_valid_number);
             if($level < $user_info['level']){
                 Db::name("user")->where(['id'=>$user_id])->data(['level'=>$level])->update();
+                \app\admin\model\egg\Log::saveLog($user_id,0,11,"",0,0,0,"农场主等级从".$user_info['level']."降为 $level");
             }else if($level!=$user_info['level'] && ($level > $user_info['level'])){
                 $re = Db::name("user")
                     ->where(['id'=>$user_id])
