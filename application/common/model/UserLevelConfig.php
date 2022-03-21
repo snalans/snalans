@@ -58,7 +58,6 @@ class UserLevelConfig extends Model
             if(empty($config_bonus_info)){
                 return true;
             }
-
             if($p_num<$config_bonus_info['number'] || $team_num<$config_bonus_info['team_number'] || $total_valid_number<$config_bonus_info['valid_number']){
                 if($user_info['level'] > 0){
                     Db::name("user")->where(['id'=>$user_id])->data(['level'=>0])->update();
@@ -158,7 +157,7 @@ class UserLevelConfig extends Model
      */
     public function vip($user_id,$level,$p_num = 0,$team_num = 0,$valid_number){
         $where = [];
-        $where['level'] = ['>',$level];
+        $where['level'] = ['>=',0];
         $config_bonus = Db::name("user_level_config")
             ->where($where)
             ->order('level desc')
