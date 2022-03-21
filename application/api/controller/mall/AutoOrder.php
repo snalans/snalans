@@ -145,8 +145,8 @@ class AutoOrder extends Api
    public function cloudImage()
    {
         echo '<pre>';
-        $getB2 = new \app\common\library\Upload();
-        $getB2->getBackblazeb2();
+        // $getB2 = new \app\common\library\Upload();
+        // $getB2->getBackblazeb2();
         $config = Config::get('upload');
         $client = new Client($config['accountId'],$config['applicationKey']);
 
@@ -161,14 +161,14 @@ class AutoOrder extends Api
     private function imgAttestation($config=[],$client,$domain="eggloop.co")
     {        
         $wh = [];
-        $wh['u.id'] = ['>',5000];
         $wh['u.is_attestation'] = 1;
-        $wh['u.logintime'] = ['>=',strtotime("-5 day")];
+        $wh['at.add_time'] = ['>=',strtotime("-5 day")];
         $wh['at.front_img'] = ['like',"%www.$domain%"];
         $list = Db::name("egg_attestation")->alias("at")
                     ->field("at.id,at.user_id,at.front_img,at.reverse_img,at.hand_img")
                     ->join("user u","u.id=at.user_id")
                     ->where($wh)
+                    ->where('at.add_time','<=',strtotime("-2 day"));
                     ->order("at.id","asc")
                     ->limit($this->limit)
                     ->select();
@@ -301,6 +301,13 @@ class AutoOrder extends Api
                         unlink($path_front);
                         echo $value['id']." # user_id: ".$value['user_id']."\n";
                     }
+                }else{
+                    $data = [];
+                    $data["image"] = str_replace("www.$domain/uploads","oss.eggloop.co",$value['image']);
+                    Db::name("egg_charge_code")->where("id",$value['id'])->update($data);
+                    $str = "'"."/uploads".$front_img."'";
+                    Db::query("UPDATE fa_attachment SET url = REPLACE(url, '/uploads', 'https://oss.eggloop.co') WHERE url IN ($str)");
+                    echo $value['id']." #N user_id: ".$value['user_id']."\n";
                 }
             }
             echo  date("Y-m-d H:i:s")."结束 \n";

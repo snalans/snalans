@@ -60,12 +60,17 @@ class UserLevelConfig extends Model
             }
 
             if($p_num<$config_bonus_info['number'] || $team_num<$config_bonus_info['team_number'] || $total_valid_number<$config_bonus_info['valid_number']){
+                if($user_info['level'] > 0){
+                    Db::name("user")->where(['id'=>$user_id])->data(['level'=>0])->update();
+                }
                 return true;
             }
 
             //农场主等级
             $level = $this->vip($user_id,$user_info['level'],$p_num,$team_num,$total_valid_number);
-            if($level!=$user_info['level'] && ($level > $user_info['level'])){
+            if($level < $user_info['level']){
+                Db::name("user")->where(['id'=>$user_id])->data(['level'=>$level])->update();
+            }else if($level!=$user_info['level'] && ($level > $user_info['level'])){
                 $re = Db::name("user")
                     ->where(['id'=>$user_id])
                     ->data(array('level'=>$level))

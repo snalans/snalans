@@ -63,6 +63,7 @@ class Index extends Api
                     ->join("egg_nest_kind en","en.id=eh.nest_kind_id","LEFT")
                     ->field("eh.id,en.name,eh.kind_id,eh.status,eh.hatch_num,eh.position,eh.shape,eh.is_reap,eh.uptime")
                     ->where("eh.user_id",$this->auth->id)
+                    ->where("eh.is_close",0)
                     ->order("en.kind_id","ASC")
                     ->order("eh.position","ASC")
                     ->select();
@@ -385,7 +386,7 @@ class Index extends Api
         // if($rate_config>0){
         //     $rate = $number*$rate_config/100;
         // }        
-        $rate = ceil($number/10)*$rate_config;
+        $rate = ceil($number/5)*$rate_config;
 
         $wh = [];
         $wh['user_id'] = $this->auth->id;
