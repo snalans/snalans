@@ -18,7 +18,7 @@ class EggHatch extends Backend
      * @var \app\admin\model\egg\EggHatch
      */
     protected $model = null;
-    protected $noNeedRight = '*';
+    protected $multiFields = 'is_close';
 
     public function _initialize()
     {
