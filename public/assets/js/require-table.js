@@ -500,6 +500,39 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                         }
                     );
                 });
+                // 点击按钮调用旋转方法：
+                $(document).on("click", "#xuanzhuan", function(e) {
+                    num = (num+90)%360;
+                    //旋转之后背景色设置为黑色，不然在旋转长方形图片时会留下白色空白
+                    $(".layui-layer.layui-layer-page.layui-layer-photos").css('background','black');
+                    $("#layui-layer-photos").css('transform','rotate('+num+'deg)');
+                });
+                // 通过鼠标滚轮实现图片放大缩小：
+                $(document).on("mousewheel DOMMouseScroll", ".layui-layer-phimg", function (e) {
+                    var delta = (e.originalEvent.wheelDelta && (e.originalEvent.wheelDelta > 0 ? 1 : -1)) || // chrome & ie
+                        (e.originalEvent.detail && (e.originalEvent.detail > 0 ? -1 : 1)); // firefox
+                    var imagep = $(".layui-layer-phimg").parent().parent();
+                    var image = $(".layui-layer-phimg").parent();
+                    var h = image.height();
+                    var w = image.width();
+                    if (delta > 0) {
+                        if (h < (window.innerHeight)) {
+                            h = h * 1.05;
+                            w = w * 1.05;
+                        }
+                    } else if (delta < 0) {
+                        if (h > 100) {
+                            h = h * 0.95;
+                            w = w * 0.95;
+                        }
+                    }
+                    imagep.css("top", (window.innerHeight - h) / 2);
+                    imagep.css("left", (window.innerWidth - w) / 2);
+                    image.height(h);
+                    image.width(w);
+                    imagep.height(h);
+                    imagep.width(w);
+                });
 
                 //修复dropdown定位溢出的情况
                 if (options.fixDropdownPosition) {
@@ -622,6 +655,12 @@ define(['jquery', 'bootstrap', 'moment', 'moment/locale/zh-cn', 'bootstrap-table
                                 "data": data
                             },
                             anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+                            ,tab:function () {
+                                num=0;
+                                $("#layui-layer-photos").parent().append('<div style="position:relative;width:100%;text-align:center;cursor:pointer;">\n' +
+                                    '\t\t<button id="xuanzhuan" class="btn btn-info">旋转\t</button>\n' +
+                                    '\t</div>');
+                            }
                         });
                     },
                 }
