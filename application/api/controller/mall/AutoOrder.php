@@ -132,8 +132,20 @@ class AutoOrder extends Api
         $wh['updatetime']     = ['<',time()-3600*24*$days];
         $list = Db::name("user")->field("id,mobile,note")->where($wh)->limit(200)->select();
         if(!empty($list)){
+            $userLevelConfig = new \app\common\model\UserLevelConfig();
             foreach ($list as $key => $value) {
-                Db::name("user")->where("id",$value['id'])->update(['status'=>'hidden','note'=>"太久不玩拉黑 ".$value['note']]);
+                $rs = Db::name("user")->where("id",$value['id'])->update(['status'=>'hidden','note'=>"太久不玩拉黑 ".$value['note']]);
+                if($rs){                    
+                    $wh = [];
+                    $wh['user_id'] = $value['id'];
+                    $wh['level']   = ['<=',3];
+                    $plist = Db::name("membership_chain")->where($wh)->order("level","ASC")->select();
+                    if(!empty($plist)){
+                        foreach ($plist as $key => $value) {                         
+                            $userLevelConfig->update_vip($value['ancestral_id']);
+                        }
+                    }
+                }
             }
         }
         $this->success("自动拉黑玩家");
