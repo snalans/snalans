@@ -259,6 +259,16 @@ class User extends Backend
                 if ($result !== false) {
                     if($params['status'] == 'hidden'){
                         Db::name("user_token")->where("user_id",$ids)->delete();
+                        $userLevelConfig = new \app\common\model\UserLevelConfig();
+                        $wh = [];
+                        $wh['user_id'] = $ids;
+                        $wh['level']   = ['<=',3];
+                        $plist = Db::name("membership_chain")->where($wh)->order("level","ASC")->select();
+                        if(!empty($plist)){
+                            foreach ($plist as $key => $value) {                         
+                                $userLevelConfig->update_vip($value['ancestral_id']);
+                            }
+                        }
                     }
                     $this->success();
                 } else {
