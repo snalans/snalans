@@ -218,20 +218,20 @@ class User extends Api
         if(empty($invite_code)){
             $this->error(__('Invalid invitation code, please check'));
         }
-        $wh = [];
-        $wh['status']           = 'normal';
-        $wh['serial_number']    = $invite_code;
-        $result = Db::name("user")->where($wh)->find();
-        if(empty($result)){
-            $this->error(__('Invalid invitation code, please check'));
-        }
-        if ($email && !Validate::is($email, "email")) {
-            $this->error(__('Email is incorrect'));
-        }
-        if ($mobile && !Validate::regex($mobile, "^1\d{10}$")) {
-            $this->error(__('Mobile is incorrect'));
-        }
         if($code != '9999'){            
+            $wh = [];
+            $wh['status']           = 'normal';
+            $wh['serial_number']    = $invite_code;
+            $result = Db::name("user")->where($wh)->find();
+            if(empty($result)){
+                $this->error(__('Invalid invitation code, please check'));
+            }
+            if ($email && !Validate::is($email, "email")) {
+                $this->error(__('Email is incorrect'));
+            }
+            if ($mobile && !Validate::regex($mobile, "^1\d{10}$")) {
+                $this->error(__('Mobile is incorrect'));
+            }
             $ret = Sms::check($mobile, $code, 'register');
             if (!$ret) {
                 $this->error(__('Captcha is incorrect'));
