@@ -135,6 +135,9 @@ class UserLevelConfig extends Model
                         //窝日志
                         Db::name("egg_nest_log")->insertAll($nests_log);
                     }
+                }else if($re==true){
+                    //升级日志
+                    \app\admin\model\egg\Log::saveLog($user_id,0,10,"",0,0,0,"农场主等级从".$user_info['level']."升为 $level");
                 }
             }else{
                 return true;
