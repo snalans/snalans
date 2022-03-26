@@ -297,8 +297,12 @@ class Egg extends Api
         // $rate = 0;
         // if($egg_kind_info['rate_config']>0){
         //     $rate = $number*$egg_kind_info['rate_config']/100;
-        // }   
-        $rate = ceil($number/5)*$egg_kind_info['rate_config'];
+        // }           
+        if($kind_id == 3){
+            $rate = ceil($number/5)*$egg_kind_info['rate_config'];
+        }else{
+            $rate = ceil($number/10)*$egg_kind_info['rate_config'];
+        }        
 
         //生成挂单订单
         $order_data = array();

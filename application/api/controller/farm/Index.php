@@ -386,7 +386,11 @@ class Index extends Api
         // if($rate_config>0){
         //     $rate = $number*$rate_config/100;
         // }        
-        $rate = ceil($number/5)*$rate_config;
+        if($kind_id == 3){
+            $rate = ceil($number/5)*$rate_config;
+        }else{
+            $rate = ceil($number/10)*$rate_config;
+        }        
 
         $wh = [];
         $wh['user_id'] = $this->auth->id;
