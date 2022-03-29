@@ -411,6 +411,22 @@ class User extends Backend
         return $this->view->fetch();
     }
 
+    /**
+     * 清退所有用户
+     */
+    public function all_sign_out()
+    {
+        if (!$this->request->isAjax()) {
+            $this->error(__("Invalid parameters"));
+        }
+        $rs = Db::name("user_token")->where("user_id",">",1)->delete();
+        if($rs){
+            $this->success("清退成功");
+        }else{
+            $this->error("清退失败");
+        }
+    }
+
     /*
      * 查询多账号同IP登录
      */

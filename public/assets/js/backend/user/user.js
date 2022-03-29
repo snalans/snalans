@@ -102,6 +102,24 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 })
             })
 
+            $(".btn-clear").on("click",function(){
+                layer.confirm('确认清退所有用户?', {icon: 3, title:'提示'}, function(index){
+                    Fast.api.ajax({
+                       url:'user/user/all_sign_out'
+                    }, function(data, ret){
+                       //成功的回调
+                       layer.msg(ret.msg);
+                       return false;
+                    }, function(data, ret){
+                       //失败的回调
+                       layer.msg(ret.msg);
+                       return false;
+                    });
+                  
+                    layer.close(index);
+                });
+            })
+
             // 为表格绑定事件
             Table.api.bindevent(table);
         },
