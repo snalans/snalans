@@ -240,6 +240,7 @@ class User extends Api
         $ret = $this->auth->register($username, $password, $email, $mobile, ['invite_code'=>$invite_code]);
         if ($ret) {
             $data = ['userinfo' => $this->auth->getUserinfo()];
+            unset($data['userinfo']['token']);
             $this->success(__('Sign up successful'), $data);
         } else {
             $this->error($this->auth->getError());
