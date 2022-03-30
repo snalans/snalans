@@ -11,6 +11,6 @@ return [
     'Price'         => '回收价格',
     'Unit'          => '价格单位',
     'Stock'         => '库存数量',
-    'Rate_config'   => '手续费(每5个扣N个)',
+    'Rate_config'   => '手续费(每10个扣N个)',
     'Per_reward'    => '喂养奖励百分比(%)',
 ];
