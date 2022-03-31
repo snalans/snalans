@@ -113,6 +113,8 @@ class Index extends Api
         if(empty($result)){
             $this->error(__('The nest does not exist, please try again'));
         }
+        $userLevelConfig = new \app\common\model\UserLevelConfig();
+        $userLevelConfig->update_vip($this->auth->id);
 
         // 执行加蛋孵化
         if($result['status']==1){
@@ -128,8 +130,6 @@ class Index extends Api
         }else{
             $this->checkCycle($result);
         }
-        $userLevelConfig = new \app\common\model\UserLevelConfig();
-        $userLevelConfig->update_vip($this->auth->id);
     }
 
     /**
