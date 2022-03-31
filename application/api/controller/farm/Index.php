@@ -128,6 +128,8 @@ class Index extends Api
         }else{
             $this->checkCycle($result);
         }
+        $userLevelConfig = new \app\common\model\UserLevelConfig();
+        $userLevelConfig->update_vip($this->auth->id);
     }
 
     /**
