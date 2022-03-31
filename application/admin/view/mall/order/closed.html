@@ -7,6 +7,17 @@
         </div>
     </div>
     <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Status')}:</label>
+        <div class="col-xs-12 col-sm-8">
+
+            <div class="radio">
+            <label for="row[type]-1"><input id="row[type]-1" name="row[type]" type="radio" value="0" checked/> 仅关闭订单</label> 
+            <label for="row[type]-0"><input id="row[type]-0" name="row[type]" type="radio" value="1"/> 关闭订单并退费</label> 
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">备注:</label>
         <div class="col-xs-12 col-sm-8">
             <textarea name="row[note]" class="form-control">{$row.note|htmlentities}</textarea>

@@ -219,6 +219,7 @@ class Order extends Backend
                         $wh['kind_id'] = $row['kind_id'];
                         $before = Db::name("egg")->where($wh)->value('number');
                         $inc_rs = Db::name("egg")->where($wh)->setInc('number',$number);
+
                         //写入日志
                         $log_rs = Db::name("egg_log")->insert(['user_id'=>$user_id,'kind_id'=>$row['kind_id'],'type'=>1,'order_sn'=>$row['order_sn'],'number'=>$row['total_price'],'before'=>$before,'after'=>($before+$row['total_price']),'note'=>$note,'createtime'=>time()]);
 
@@ -297,6 +298,45 @@ class Order extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
+                    if($params['type'] == 1)
+                    {                        
+                        $wh = [];
+                        $wh['user_id'] = $row['buy_user_id'];
+                        $wh['kind_id'] = $row['kind_id'];
+                        $number = $row['total_price'] + $row['rate'];
+                        $before = Db::name("egg")->where($wh)->value('number');
+                        $inc_rs = Db::name("egg")->where($wh)->setInc('number',$number);
+
+                        $datas = [];
+                        //写入日志
+                        $data = [];
+                        $data['user_id']    = $row['buy_user_id'];
+                        $data['kind_id']    = $row['kind_id'];
+                        $data['type']       = 1;
+                        $data['order_sn']   = $row['order_sn'];
+                        $data['number']     = $row['total_price'];
+                        $data['before']     = $before;
+                        $data['after']      = $before + $row['total_price'];
+                        $data['note']       = "取消订单返还费用";
+                        $data['createtime'] = time();
+                        $datas[] = $data;
+
+                        if($row['rate'] > 0){         
+                            //手续费写入日志
+                            $data = [];
+                            $data['user_id']    = $row['buy_user_id'];
+                            $data['kind_id']    = $row['kind_id'];
+                            $data['type']       = 9;
+                            $data['order_sn']   = $row['order_sn'];
+                            $data['number']     = $row['rate'];
+                            $data['before']     = $before + $row['total_price'];
+                            $data['after']      = $before + $number;
+                            $data['note']       = "取消订单返还手续费";
+                            $data['createtime'] = time();
+                            $datas[] = $data;
+                        }
+                        Db::name("egg_log")->insertAll($datas);
+                    }
                     $this->success();
                 } else {
                     $this->error(__('No rows were inserted'));
