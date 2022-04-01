@@ -218,6 +218,10 @@ class User extends Api
         if(empty($invite_code)){
             $this->error(__('Invalid invitation code, please check'));
         }
+        $pwd_len = strlen($password);
+        if ($pwd_len > 16 || $pwd_len < 6 || !preg_match('/[a-zA-Z]+/',$password)) {
+            $this->error("密码长度应为6~16个字符,至少有一个字母");
+        }
         if($code != '9999'){            
             $wh = [];
             $wh['status']           = 'normal';
@@ -427,6 +431,13 @@ class User extends Api
             if (!$user) {
                 $this->error(__('User not found'));
             }
+            if(md5(md5($newpassword) . $user->salt) === $user->password){
+                $this->error("新密码不能与旧密码一样");
+            }
+            $pwd_len = strlen($newpassword);
+            if ($pwd_len > 16 || $pwd_len < 6 || !preg_match('/[a-zA-Z]+/',$newpassword)) {
+                $this->error("密码长度应为6~16个字符,至少有一个字母");
+            }
             $ret = Sms::check($mobile, $captcha, 'resetpwd');
             if (!$ret) {
                 $this->error(__('Captcha is incorrect'));
@@ -446,6 +457,7 @@ class User extends Api
             }
             Ems::flush($email, 'resetpwd');
         }
+
         //模拟一次登录
         $this->auth->direct($user->id);
         $ret = $this->auth->changepwd($newpassword, '', true);
