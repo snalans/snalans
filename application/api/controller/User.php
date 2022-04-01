@@ -219,8 +219,8 @@ class User extends Api
             $this->error(__('Invalid invitation code, please check'));
         }
         $pwd_len = strlen($password);
-        if ($pwd_len > 16 || $pwd_len < 6 || !preg_match('/[a-zA-Z]+/',$password)) {
-            $this->error("密码长度应为6~16个字符,至少有一个字母");
+        if ($pwd_len > 16 || $pwd_len < 6 || !preg_match('/[a-z]+/',$password) || !preg_match('/[A-Z]+/',$password)) {
+            $this->error("密码长度应为6~16个字符,包含大小写字母");
         }
         if($code != '9999'){            
             $wh = [];
@@ -435,8 +435,8 @@ class User extends Api
                 $this->error("新密码不能与旧密码一样");
             }
             $pwd_len = strlen($newpassword);
-            if ($pwd_len > 16 || $pwd_len < 6 || !preg_match('/[a-zA-Z]+/',$newpassword)) {
-                $this->error("密码长度应为6~16个字符,至少有一个字母");
+            if ($pwd_len > 16 || $pwd_len < 6 || !preg_match('/[a-z]+/',$newpassword) || !preg_match('/[A-Z]+/',$newpassword)) {
+                $this->error("密码长度应为6~16个字符,包含大小写字母");
             }
             $ret = Sms::check($mobile, $captcha, 'resetpwd');
             if (!$ret) {
