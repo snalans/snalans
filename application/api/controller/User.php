@@ -136,6 +136,14 @@ class User extends Api
                  $this->error("验证码错误");
             }
         }
+        $ip = request()->ip();
+        $wh = [];
+        $wh['loginip'] = $ip;
+        $wh['logintime'] = ['>=',strtotime(date("Y-m-d"))];
+        $num = Db::name("user")->where($wh)->count();
+        if($num > 1){
+            $this->error("登录异常,请稍后重试 $num");
+        }
 
         $flag = $this->changePwd($account);
         if($flag){

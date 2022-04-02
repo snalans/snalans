@@ -25,6 +25,9 @@ class Sms extends Api
      */
     public function send()
     {
+        if($this->request->isGet()){
+            return '';
+        }
         $mobile = $this->request->post("mobile");
         $event = $this->request->post("event");
         $event = $event ? $event : 'register';
