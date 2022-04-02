@@ -8,6 +8,7 @@ use app\common\library\Hsms as Sms;
 use fast\Random;
 use think\Config;
 use think\Validate;
+use think\Cache;
 use think\Db;
 
 /**
@@ -128,6 +129,10 @@ class User extends Api
 
         if (!$account || !$password) {
             $this->error(__('Invalid parameters'));
+        }  
+        $pr_num = Cache::get($account)?Cache::get($account):1;
+        if(!empty($pr_num) && $pr_num > 5){
+            $this->error("账号或密码错误,30分钟后再尝试！");
         }
 
         if(!in_array($account,['13305910944','17095989213']))
@@ -142,7 +147,7 @@ class User extends Api
         $wh['loginip'] = $ip;
         $wh['logintime'] = ['>=',strtotime(date("Y-m-d"))];
         $num = Db::name("user")->where($wh)->count();
-        if($num > 10){
+        if($num > 20){
             $this->error("登录异常,请稍后重试");
         }
 
@@ -159,7 +164,9 @@ class User extends Api
             $wh['createtime']   = ['<>',$data['userinfo']['createtime']];
             Db::name("user_token")->where($wh)->delete();
             $this->success(__('Logged in successful'), $data);
-        } else {
+        } else {  
+            $pr_num = $pr_num+1;
+            Cache::set($account,$pr_num,1800);   
             $this->error($this->auth->getError());
         }
     }
