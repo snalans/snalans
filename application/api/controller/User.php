@@ -9,6 +9,7 @@ use fast\Random;
 use think\Config;
 use think\Validate;
 use think\Cache;
+use think\Log;
 use think\Db;
 
 /**
@@ -132,6 +133,7 @@ class User extends Api
         }  
         $pr_num = Cache::get($account)?Cache::get($account):1;
         if(!empty($pr_num) && $pr_num > 5){
+            Log::write($account." >> pwd错误次数：".$pr_num,'sms');
             $this->error("账号或密码错误,30分钟后再尝试！");
         }
 
