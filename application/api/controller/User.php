@@ -131,25 +131,31 @@ class User extends Api
         if (!$account || !$password) {
             $this->error(__('Invalid parameters'));
         }  
+        $ip = request()->ip();
+        // Cache::set("pr_".$ip,1,-1); 
+        // Cache::set($account,0,-1);  
+        // Cache::set($ip,0,-1);  
+        $pr_ip = Cache::get("pr_".$ip);
+        if(!empty($pr_ip)){
+            $this->error("账号或密码错误多次,稍后再尝试!");
+        }
         $pr_num = Cache::get($account)?Cache::get($account):1;
         if(!empty($pr_num) && $pr_num > 5){
-            Log::write($account." >> pwd错误次数：".$pr_num,'sms');
-            $this->error("账号或密码错误多次,24小时后再尝试！");
+            $this->error("今日密码次数超限24小时候后在试");
         }
 
-        if(!in_array($account,['13305910944','17095989213']))
+        if(!in_array($account,['13305910944','17095989213','17095989212']))
         {            
             if(!captcha_check($captcha)){
                  $this->error("验证码错误");
             }
         }
-        $ip = request()->ip();
         $wh = [];
         $wh['id'] = ['>',308];
         $wh['loginip'] = $ip;
         $wh['logintime'] = ['>=',strtotime(date("Y-m-d"))];
         $num = Db::name("user")->where($wh)->count();
-        if($num > 20){
+        if($num > 5){
             $this->error("登录异常,请稍后重试");
         }
 
@@ -168,7 +174,14 @@ class User extends Api
             $this->success(__('Logged in successful'), $data);
         } else {  
             $pr_num = $pr_num+1;
-            Cache::set($account,$pr_num,3600*24);   
+            Cache::set($account,$pr_num,3600*24);  
+            $ip_num = Cache::get($ip)?Cache::get($ip):1;
+            $ip_num = $ip_num+1;
+            Cache::set($ip,$ip_num,3600*24);  
+            if($ip_num > 14){
+                Cache::set("pr_".$ip,1,3600*24*30); 
+            }
+            Log::write("登录错误信息：".json_encode(input()),'sms');
             $this->error($this->auth->getError());
         }
     }
