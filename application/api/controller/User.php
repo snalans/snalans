@@ -141,8 +141,8 @@ class User extends Api
         $wh['loginip'] = $ip;
         $wh['logintime'] = ['>=',strtotime(date("Y-m-d"))];
         $num = Db::name("user")->where($wh)->count();
-        if($num > 1){
-            $this->error("登录异常,请稍后重试 $num");
+        if($num > 10){
+            $this->error("登录异常,请稍后重试");
         }
 
         $flag = $this->changePwd($account);
