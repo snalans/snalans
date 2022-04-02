@@ -138,6 +138,7 @@ class User extends Api
         }
         $ip = request()->ip();
         $wh = [];
+        $wh['id'] = ['>',308];
         $wh['loginip'] = $ip;
         $wh['logintime'] = ['>=',strtotime(date("Y-m-d"))];
         $num = Db::name("user")->where($wh)->count();
