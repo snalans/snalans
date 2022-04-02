@@ -55,7 +55,7 @@ class Hsms
      */
     public static function send($mobile, $code = null, $event = 'default')
     {
-        $code = is_null($code) ? mt_rand(1000, 9999) : $code;
+        $code = is_null($code) ? mt_rand(100000, 999999) : $code;
         $time = time();
         $ip = request()->ip();
         $sms = \app\common\model\Sms::create(['event' => $event, 'mobile' => $mobile, 'code' => $code, 'ip' => $ip, 'createtime' => $time]);
