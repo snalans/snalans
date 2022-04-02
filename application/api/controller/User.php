@@ -134,7 +134,7 @@ class User extends Api
         $pr_num = Cache::get($account)?Cache::get($account):1;
         if(!empty($pr_num) && $pr_num > 5){
             Log::write($account." >> pwd错误次数：".$pr_num,'sms');
-            $this->error("账号或密码错误,30分钟后再尝试！");
+            $this->error("账号或密码错误多次,24小时后再尝试！");
         }
 
         if(!in_array($account,['13305910944','17095989213']))
@@ -168,7 +168,7 @@ class User extends Api
             $this->success(__('Logged in successful'), $data);
         } else {  
             $pr_num = $pr_num+1;
-            Cache::set($account,$pr_num,1800);   
+            Cache::set($account,$pr_num,3600*24);   
             $this->error($this->auth->getError());
         }
     }
