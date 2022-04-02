@@ -623,6 +623,9 @@ class User extends Api
      */
     public function getAttestationInfo()
     {
+        if($this->auth->is_attestation == 1){
+            $this->success("认证成功");
+        }
         $result = Db::name("egg_attestation")->alias("ea")
                     ->field("ea.name,ea.id_card,ea.front_img,ea.reverse_img,ea.hand_img,ea.hands_img,u.is_attestation")
                     ->join("user u","u.id=ea.user_id","LEFT")
