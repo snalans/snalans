@@ -56,15 +56,12 @@ class Log extends Backend
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
 
             $list = $this->model
-                    ->with(['user','eggkind'])
+                    ->field("log.*,user.serial_number as `user.serial_number`,user.username as `user.username`,user.mobile as `user.mobile`")
+                    ->join("user user","user.id=log.user_id","LEFT")
                     ->where($where)
                     ->order($sort, $order)
                     ->paginate($limit);
-            foreach ($list as $row) {
-                
-                $row->getRelation('user')->visible(['serial_number','username','mobile']);
-    			$row->getRelation('eggkind')->visible(['name']);
-            }    
+
             $filter = json_decode($this->request->get('filter'),true);
             $op = json_decode($this->request->get('op'),true);
             if(isset($filter['type'])){
@@ -74,7 +71,7 @@ class Log extends Backend
             $this->request->get(['filter'=>json_encode($filter)]);
             $this->request->get(['filter'=>json_encode($op)]);
             $info = $this->model
-                    ->with(['user','eggkind'])
+                    ->with(['user'])
                     ->where($where)  
                     ->where("type",9)
                     ->group("kind_id")

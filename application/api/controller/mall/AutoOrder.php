@@ -180,7 +180,7 @@ class AutoOrder extends Api
                     ->field("at.id,at.user_id,at.front_img,at.reverse_img,at.hand_img")
                     ->join("user u","u.id=at.user_id")
                     ->where($wh)
-                    ->where('at.add_time','<=',strtotime("-2 day"));
+                    ->where('at.add_time','<=',strtotime("-2 day"))
                     ->order("at.id","asc")
                     ->limit($this->limit)
                     ->select();

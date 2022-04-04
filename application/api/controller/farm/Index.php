@@ -350,6 +350,7 @@ class Index extends Api
      * @ApiParams   (name="kind_id", type="string", description="蛋分类id")
      * @ApiParams   (name="number", type="string", description="数量")
      * @ApiParams   (name="paypwd", type="string", description="支付密码")
+     * @ApiParams   (name="google_code", type="string", description="谷歌验证码")
      * 
      */
     public function giveEgg()
@@ -358,6 +359,7 @@ class Index extends Api
         $kind_id        = $this->request->post('kind_id');
         $number         = $this->request->post('number/d',0);
         $paypwd         = $this->request->post('paypwd');
+        $google_code = $this->request->post('google_code');
 
         if(!in_array($kind_id,[1,2,3,4]) || $number<=0){
             $this->error("参数错误");
@@ -383,6 +385,17 @@ class Index extends Api
             $this->error(__('Paypwd is incorrect'));
         }
 
+        $google_secret = Db::name("user_secret")->where("user_id",$this->auth->id)->value("google_secret"); 
+        if(!empty($google_secret)){
+            $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
+            $checkResult = $ga->verifyCode($google_secret, $google_code);
+            if(!$checkResult){
+                $this->error("谷歌验证码错误!");
+            }        
+        }else{
+            $this->error("请先绑定谷歌验证,进行谷歌验证!");
+        }
+        
         $rate = 0;
         $rate_config = Db::name("egg_kind")->where("id",$kind_id)->value("rate_config");
         // if($rate_config>0){

@@ -420,6 +420,7 @@ class Order extends Api
         $recharge_account = $this->request->post("recharge_account","");
         $number     = $this->request->post("number/d",1);
         $paypwd     = $this->request->post('paypwd',"");
+        $google_code = $this->request->post('google_code');
 
         if($number <= 0){
             $this->error("参数错误");
@@ -446,6 +447,17 @@ class Order extends Api
         if($info['user_id'] == $this->auth->id){
             $this->error("不能购买给自己的产品");
         }
+        
+        $google_secret = Db::name("user_secret")->where("user_id",$this->auth->id)->value("google_secret"); 
+        if(!empty($google_secret)){
+            $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
+            $checkResult = $ga->verifyCode($google_secret, $google_code);
+            if(!$checkResult){
+                $this->error("谷歌验证码错误!");
+            }        
+        }else{
+            $this->error("请先绑定谷歌验证,进行谷歌验证!");
+        }
 
         $egg_where = [];
         $egg_where['user_id'] = $this->auth->id;
@@ -459,7 +471,7 @@ class Order extends Api
         // if($rate_config>0){
         //     $rate = $sell_egg*$rate_config/100;
         // }   
-        if($kind_id == 3){
+        if($info['kind_id'] == 3){
             $rate = ceil($sell_egg/5)*$rate_config;
         }else{
             $rate = ceil($sell_egg/10)*$rate_config;

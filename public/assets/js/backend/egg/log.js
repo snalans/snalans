@@ -40,7 +40,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'user.serial_number', title: __('User.serial_number'), operate: 'LIKE'},
                         {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
                         {field: 'hatch_id', title: '窝ID', operate: 'LIKE'},
-                        {field: 'eggkind.name', title: __('Eggkind.name'), operate: 'LIKE'},
+                        {field: 'kind_id', title: "蛋名称", formatter:Table.api.formatter.normal, searchList: {1: '白蛋', 2: '铜蛋', 3: '银蛋', 4: '金蛋', 5: '彩蛋'}},
                         {field: 'type', title: __('Type'), formatter: Table.api.formatter.normal, searchList: {0: '农场', 1: '订单', 2: '互转', 3: '合成', 4: '管理员操作', 5: '积分兑换', 9: '手续费',10:'农场主等级升级',11:'农场主等级降级'}},
                         {field: 'order_sn', title: __('Order_sn'), operate: 'LIKE'},
                         {field: 'before', title: '变动前', operate: false},

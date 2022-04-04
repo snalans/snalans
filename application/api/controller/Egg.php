@@ -381,12 +381,14 @@ class Egg extends Api
      * @ApiMethod (Post)
      * @ApiParams   (name="order_sn", type="integer", description="订单编号")
      * @ApiParams   (name="paypwd", type="string", description="支付密码")
+     * @ApiParams   (name="google_code", type="string", description="谷歌验证码")
     */
     public function market_sale()
     {
-        $user_id  = $this->auth->id;
+        $user_id   = $this->auth->id;
         $order_sn  = $this->request->post("order_sn",0);
-        $paypwd         = $this->request->post('paypwd',"");
+        $paypwd    = $this->request->post('paypwd',"");
+        $google_code = $this->request->post('google_code');
 
         //订单
         $order = Db::name("egg_order")
@@ -405,6 +407,16 @@ class Egg extends Api
         $auth = new \app\common\library\Auth();
         if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
             $this->error('支付密码错误');
+        }
+        $google_secret = Db::name("user_secret")->where("user_id",$this->auth->id)->value("google_secret"); 
+        if(!empty($google_secret)){
+            $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
+            $checkResult = $ga->verifyCode($google_secret, $google_code);
+            if(!$checkResult){
+                $this->error("谷歌验证码错误!");
+            }        
+        }else{
+            $this->error("请先绑定谷歌验证,进行谷歌验证!");
         }
 
         //出售单数

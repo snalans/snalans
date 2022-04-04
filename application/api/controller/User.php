@@ -33,6 +33,7 @@ class User extends Api
 
     /**
      * 会员中心
+     * @ApiWeigh   (11)
      * 
      * @ApiReturnParams   (name="avatar", type="string", description="头像")
      * @ApiReturnParams   (name="nickname", type="string", description="昵称")
@@ -99,9 +100,11 @@ class User extends Api
      * 会员登录
      *
      * @ApiMethod (POST)
+     * @ApiWeigh   (10)
      * @param string $account  账号
      * @param string $password 密码
      * @param string $captcha  验证码（/captcha.html）
+     * @param string $google_code 谷歌验证码
      * 
      * @ApiReturnParams   (name="serial_number", type="string", description="用户编号")
      * @ApiReturnParams   (name="nickname", type="string", description="昵称")
@@ -118,10 +121,10 @@ class User extends Api
         $account  = $this->request->post('account');
         $password = $this->request->post('password');
         $captcha  = $this->request->post('captcha');
+        $google_code = $this->request->post('google_code');
 
         // $start_time = strtotime("2022-3-30 01:00:00");
         // $end_time = strtotime("2022-3-31 12:00:00");
-
         // if(time() >= $start_time && time() < $end_time){
         //     if(!in_array($account,['17095989213','15060060723','18059119783','15705917729'])){
         //         $this->error("系统维护中");
@@ -141,13 +144,13 @@ class User extends Api
         }
         $pr_num = Cache::get($account)?Cache::get($account):1;
         if(!empty($pr_num) && $pr_num > 5){
-            $this->error("今日密码次数超限24小时候后在试");
+            $this->error("今日密码次数超限24小时候后再试");
         }
 
         if(!in_array($account,['13305910944','17095989213','17095989212']))
         {            
             if(!captcha_check($captcha)){
-                 $this->error("验证码错误");
+                $this->error("验证码错误");
             }
         }
         $wh = [];
@@ -167,6 +170,14 @@ class User extends Api
         $ret = $this->auth->login($account, $password);
         if ($ret) {
             $data = ['userinfo' => $this->auth->getUserinfo()];
+            $google_secret = Db::name("user_secret")->where("user_id",$data['userinfo']['user_id'])->value("google_secret"); 
+            if(!empty($google_secret)){
+                $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
+                $checkResult = $ga->verifyCode($google_secret, $google_code);
+                if(!$checkResult){
+                    $this->error("谷歌验证码错误!");
+                }        
+            }
             $wh = [];
             $wh['user_id']      = $data['userinfo']['user_id'];
             $wh['createtime']   = ['<>',$data['userinfo']['createtime']];
@@ -228,6 +239,7 @@ class User extends Api
 
     /**
      * 注册会员
+     * @ApiWeigh   (9)
      *
      * @ApiMethod (POST)
      * @param string $mobile   手机号
@@ -857,7 +869,10 @@ class User extends Api
         $this->success('',$list);
     }
 
-    // 提示用户重置密码后才能登录
+    /**
+     * 提示用户重置密码后才能登录
+     * @ApiInternal
+     */
     public function changePwd($mobile='')
     {
         $wh = [];
@@ -870,7 +885,10 @@ class User extends Api
         return false;
     }
 
-    //移除需要重置的手机号
+    /*
+     * 移除需要重置的手机号
+     * @ApiInternal
+     */
     public function moveMobile($mobile='')
     {
         $wh = [];
@@ -884,5 +902,104 @@ class User extends Api
             $data['valid_time'] = time();
             Db::name("egg_valid_mobile")->where("id",$info['id'])->update($data);
         }
+    }
+
+
+    /**
+     * 谷歌是否绑定过
+     * @ApiWeigh   (14)
+     * @ApiMethod (POST)
+     * 
+     * @ApiReturnParams   (name="is_bing", type="int", description="是否绑定过 0=否 1=是")
+     * @ApiReturnParams   (name="google_secret", type="int", description="密钥")
+     */
+    public function google()
+    {
+        $google_secret = Db::name("user_secret")->where("user_id",$this->auth->id)->value("google_secret"); 
+        $data = [];
+        $data['is_bing'] = empty($google_secret)?0:1;  
+        $data['google_secret'] = '';
+        if(empty($google_secret)){
+            $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
+            $data['google_secret'] = $ga->createSecret();        
+        }
+        $this->success("success",$data);
+    }
+
+
+    /**
+     * 绑定谷歌命令
+     * @ApiWeigh   (13)
+     * @ApiMethod (POST)
+     * @ApiParams   (name="google_code", type="string",required=true, description="验证码")
+     * @ApiParams   (name="google_secret", type="string",required=true, description="密钥")
+     */
+    public function bindGoogle()
+    {
+        if ($this->request->isPost()) 
+        {            
+            $google_secret = Db::name("user_secret")->where("user_id",$this->auth->id)->value("google_secret"); 
+            if(empty($google_secret)){
+                $google_code    = input("google_code",'');
+                $google_secret  = input("google_secret",'');
+                if(empty($google_code) || empty($google_secret)){
+                    $this->error("验证码不能为空!");
+                }            
+                $info = Db::name("user_secret")->where("google_secret",$google_secret)->find(); 
+                if(!empty($info)){
+                    $this->error("密钥无效,请重新获取。");
+                }
+                $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
+                $checkResult = $ga->verifyCode($google_secret, $google_code);
+                if($checkResult){
+                    $data = [];
+                    $data['user_id']        = $this->auth->id;
+                    $data['google_secret']  = $google_secret;
+                    $data['add_time']       = time();
+                    $rs = Db::name("user_secret")->insert($data);
+                    if($rs){
+                        $this->success("绑定成功!");
+                    }
+                } else{
+                    $this->error("验证码错误!");
+                } 
+            } else{
+                $this->success("已经绑定!");
+            }
+        }
+        $this->error("绑定失败!");
+    }
+
+    /**
+     * 解绑绑定谷歌命令
+     * @ApiWeigh   (12)
+     * @ApiMethod (POST)
+     * @ApiParams   (name="google_code", type="string",required=true, description="验证码")
+     */
+    public function unbindGoogle()
+    {
+        if ($this->request->isPost()) 
+        {
+            $google_code    = input("google_code",'');
+            if(empty($google_code)){
+                $this->error("验证码不能为空!");
+            }            
+            $google_secret = Db::name("user_secret")->where("user_id",$this->auth->id)->value("google_secret"); 
+            if(!empty($google_secret)){
+                $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
+                $checkResult = $ga->verifyCode($google_secret, $google_code);
+                if($checkResult){
+                    $rs = Db::name("user_secret")->where("user_id",$this->auth->id)->delete();
+                    if($rs){
+                        $this->success("解除绑定成功!");
+                    }
+                } else{
+                    $this->error("验证码错误!");
+                }          
+            }else{
+                $this->success("已经解除绑定!");
+            }
+        }
+        $this->error("解除绑定失败!");
     }
 }
