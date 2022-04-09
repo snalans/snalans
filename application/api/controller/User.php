@@ -48,6 +48,7 @@ class User extends Api
      * @ApiReturnParams   (name="release", type="string", description="发布数量")
      * @ApiReturnParams   (name="buy_num", type="string", description="买到数量")
      * @ApiReturnParams   (name="sell_num", type="string", description="卖出数量")
+     * @ApiReturnParams   (name="is_google_secret", type="string", description="是否绑定谷歌验证 1是 0否")
      */
     public function index()
     {
@@ -93,6 +94,8 @@ class User extends Api
         $wh['sell_user_id'] = $this->auth->id;
         $wh['sell_del']     = 0;
         $result['sell_num'] = Db::name("mall_order")->where($wh)->count();
+        $google_secret = Db::name("user_secret")->where("user_id",$this->auth->id)->find();
+        $result['is_google_secret'] = empty($google_secret)?0:1;
         $this->success('', $result);
     }
 
@@ -791,7 +794,7 @@ class User extends Api
 
         $real_name = Db::name("egg_attestation")->where("user_id",$this->auth->id)->value("name");
         if($real_name != $name){
-            $this->error("跟实名的名字不一样");
+            $this->error("收款信息与实名信息不符");
         }
 
         $wh = [];
@@ -931,8 +934,9 @@ class User extends Api
      * 绑定谷歌命令
      * @ApiWeigh   (13)
      * @ApiMethod (POST)
-     * @ApiParams   (name="google_code", type="string",required=true, description="验证码")
      * @ApiParams   (name="google_secret", type="string",required=true, description="密钥")
+     * @ApiParams   (name="google_code", type="string",required=true, description="验证码")
+     * @ApiParams   (name="code", type="string",required=true, description="手机验证码")
      */
     public function bindGoogle()
     {
@@ -942,12 +946,17 @@ class User extends Api
             if(empty($google_secret)){
                 $google_code    = input("google_code",'');
                 $google_secret  = input("google_secret",'');
+                $code           = input("code",'');
                 if(empty($google_code) || empty($google_secret)){
                     $this->error("验证码不能为空!");
                 }            
                 $info = Db::name("user_secret")->where("google_secret",$google_secret)->find(); 
                 if(!empty($info)){
                     $this->error("密钥无效,请重新获取。");
+                }
+                $ret = Sms::check($this->auth->mobile, $code, 'secret');
+                if (!$ret) {
+                    $this->error(__('Captcha is incorrect'));
                 }
                 $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
                 $checkResult = $ga->verifyCode($google_secret, $google_code);
