@@ -421,7 +421,9 @@ class Egg extends Api
 
         //出售单数
         $where = [];
-        $where["sell_user_id"]  = $user_id;
+        if($user_id > 308){
+            $where["sell_user_id"]  = $user_id;
+        }        
         $where["status"]        = ['in',[0,2,3]];
         $count = Db::name("egg_order")->field("id")->where($where)->count();
         if($count>0){
