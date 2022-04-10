@@ -116,11 +116,11 @@ class OrderList extends Api
         $wh = [];
         $wh['order_sn'] = $order_sn;
         if($type == 1){            
-            $field = "order_sn,name,price,number,amount,sell_user_id,sell_serial_umber,attestation_type,attestation_image,attestation_account,kind_id,status,refund_status,pay_img,pay_time,note,createtime";
+            $field = "order_sn,name,price,number,amount,sell_user_id,sell_serial_umber,attestation_type,attestation_image,attestation_account,kind_id,status,refund_status,pay_img,pay_time,note,sale_time,createtime";
 
             $wh['buy_user_id'] = $this->auth->id;
         }else{
-            $field = "order_sn,name,price,number,amount,buy_serial_umber,kind_id,status,refund_status,pay_img,pay_time,note,createtime";
+            $field = "order_sn,name,price,number,amount,buy_serial_umber,kind_id,status,refund_status,pay_img,pay_time,note,sale_time,createtime";
 
             $wh['sell_user_id'] = $this->auth->id;
         }
@@ -129,6 +129,7 @@ class OrderList extends Api
             $this->error("订单不存在。");
         }
         $data['pay_time'] = $data['pay_time']?date("Y-m-d H:i",$data['pay_time']):"";
+        $data['sale_time'] = empty($data['sale_time'])?"":date("Y-m-d H:i",$data['sale_time']);
         $data['createtime'] = date("Y-m-d H:i",$data['createtime']);
         $data['pay_list'] = "";
         if($type == 1 && $data['status'] == 0){
