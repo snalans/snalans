@@ -8,6 +8,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     index_url: 'user/attestation/index' + location.search,
                     add_url: 'user/attestation/add',
                     edit_url: 'user/attestation/edit',
+                    info_url: 'user/attestation/edit_info',
                     del_url: 'user/attestation/del',
                     multi_url: 'user/attestation/multi',
                     import_url: 'user/attestation/import',
@@ -63,6 +64,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                     }
                                 },
                                 extend: 'data-area=\'["400px", "380px"]\''
+                            },
+                            {name: 'edit_info', text: '编辑', title: '编辑', icon: 'fa fa-edit', classname: 'btn btn-xs btn-primary btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.info_url
+                                ,extend: 'data-area=\'["400px", "380px"]\''
                             }
                         ], events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
@@ -76,6 +80,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Controller.api.bindevent();
         },
         edit: function () {
+            Controller.api.bindevent();
+        },
+        edit_info: function () {
             Controller.api.bindevent();
         },
         api: {
