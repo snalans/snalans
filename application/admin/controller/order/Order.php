@@ -77,6 +77,13 @@ class Order extends Backend
                     $params[$this->dataLimitField] = $this->auth->id;
                 }
                 $result = false;
+                $wh = [];
+                $wh['sell_user_id'] = $params['user_id'];
+                $wh['status']       = 5;
+                $info = Db::name("egg_order")->where($wh)->find();
+                if(!empty($info)){
+                    $this->error("已经存在挂单！");
+                }
                 Db::startTrans();
                 try {
                     $rate_config = Db::name("egg_kind")->where("id",$params['kind_id'])->value("rate_config");
