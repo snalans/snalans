@@ -64,6 +64,66 @@ class Order extends Backend
     }
 
     /**
+     * 添加
+     */
+    public function add()
+    {
+        if ($this->request->isPost()) {
+            $params = $this->request->post("row/a");
+            if ($params) {
+                $params = $this->preExcludeFields($params);
+
+                if ($this->dataLimit && $this->dataLimitFieldAutoFill) {
+                    $params[$this->dataLimitField] = $this->auth->id;
+                }
+                $result = false;
+                Db::startTrans();
+                try {
+                    $rate_config = Db::name("egg_kind")->where("id",$params['kind_id'])->value("rate_config");
+                    if($params['kind_id'] == 3 && false){
+                        $rate = ceil($params['number']/5)*$rate_config;
+                    }else{
+                        $rate = ceil($params['number']/10)*$rate_config;
+                    }      
+                    $params['name'] = Db::name("egg_kind")->where("id",$params['kind_id'])->value("name");
+                    $userinfo = Db::name("user")->where("id",$params['user_id'])->find();
+                    $params['sell_user_id']      = $userinfo['id'];
+                    $params['sell_serial_umber'] = $userinfo['serial_number'];
+                    $params['sell_mobile']       = $userinfo['mobile'];
+                    $params['amount']            = $params['number']*$params['price'];
+                    $params['rate']              = $rate;
+                    $params['order_sn']          = date("Ymdhis", time()).mt_rand(1000,9999);
+                    $params['status']            = 5;
+                    //是否采用模型验证
+                    if ($this->modelValidate) {
+                        $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.add' : $name) : $this->modelValidate;
+                        $this->model->validateFailException(true)->validate($validate);
+                    }
+                    $result = $this->model->allowField(true)->save($params);
+                    Db::commit();
+                } catch (ValidateException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (PDOException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (Exception $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                }
+                if ($result !== false) {
+                    $this->success();
+                } else {
+                    $this->error(__('No rows were inserted'));
+                }
+            }
+            $this->error(__('Parameter %s can not be empty', ''));
+        }
+        return $this->view->fetch();
+    }
+
+    /**
      * 编辑
      */
     public function edit($ids = null)

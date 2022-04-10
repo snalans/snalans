@@ -1,69 +1,15 @@
 <form id="add-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
 
     <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Sell_user_id')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-sell_user_id" data-rule="required" data-source="sell/user/index" class="form-control selectpage" name="row[sell_user_id]" type="text" value="">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Sell_serial_umber')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-sell_serial_umber" data-rule="required" class="form-control" name="row[sell_serial_umber]" type="text" value="">
-        </div>
-    </div>
-    <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Sell_mobile')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input id="c-sell_mobile" data-rule="required" class="form-control" name="row[sell_mobile]" type="text" value="">
+            <input id="c-user_id" data-rule="required" data-source="user/user/index" class="form-control selectpage"  data-field="mobile" data-params='{"custom[id]":["elt","308"]}' name="row[user_id]" type="text" value="">
         </div>
     </div>
     <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Order_sn')}:</label>
+        <label class="control-label col-xs-12 col-sm-2">{:__('Kind_name')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input id="c-order_sn" data-rule="required" class="form-control" name="row[order_sn]" type="text" value="">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Attestation_name')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-attestation_name" data-rule="required" class="form-control" name="row[attestation_name]" type="text" value="">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Attestation_address')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-attestation_address" data-rule="required" class="form-control" name="row[attestation_address]" type="text" value="">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Buy_user_id')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-buy_user_id" data-rule="required" data-source="buy/user/index" class="form-control selectpage" name="row[buy_user_id]" type="text" value="">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Buy_serial_umber')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-buy_serial_umber" data-rule="required" class="form-control" name="row[buy_serial_umber]" type="text" value="">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Buy_mobile')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-buy_mobile" data-rule="required" class="form-control" name="row[buy_mobile]" type="text" value="">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Pay_img')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-pay_img" data-rule="required" class="form-control" name="row[pay_img]" type="text" value="">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Name')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-name" data-rule="required" class="form-control" name="row[name]" type="text" value="">
+            <input id="c-kind_id" data-rule="required" data-source="egg/kind/index" data-order-by="weigh desc" class="form-control selectpage" data-params='{"custom[id]":["in","1,2,3"]}' name="row[kind_id]" type="text" value="1">
         </div>
     </div>
     <div class="form-group">
@@ -76,30 +22,6 @@
         <label class="control-label col-xs-12 col-sm-2">{:__('Number')}:</label>
         <div class="col-xs-12 col-sm-8">
             <input id="c-number" data-rule="required" class="form-control" name="row[number]" type="number" value="0">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Amount')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-amount" data-rule="required" class="form-control" step="0.01" name="row[amount]" type="number" value="0.00">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Status')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-status" data-rule="required" class="form-control" name="row[status]" type="number" value="0">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Note')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-note" data-rule="required" class="form-control" name="row[note]" type="text" value="">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Pay_time')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-pay_time" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[pay_time]" type="text" value="{:date('Y-m-d H:i:s')}">
         </div>
     </div>
     <div class="form-group layer-footer">

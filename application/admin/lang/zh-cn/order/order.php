@@ -4,6 +4,7 @@ return [
     'Sell_user_id'        => '卖家ID',
     'Sell_serial_umber'   => '卖家编号',
     'Sell_mobile'         => '卖家手机号',
+    'Kind_name'           => '蛋名称',
     'Order_sn'            => '订单号',
     'Attestation_type'    => '收款方式',
     'Real_name'           => '收款姓名',
