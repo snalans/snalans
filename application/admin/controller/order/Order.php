@@ -78,7 +78,7 @@ class Order extends Backend
                 }
                 $result = false;
                 $wh = [];
-                $wh['sell_user_id'] = $params['user_id'];
+                $wh['buy_user_id'] = $params['user_id'];
                 $wh['status']       = 5;
                 $info = Db::name("egg_order")->where($wh)->find();
                 if(!empty($info)){
@@ -94,9 +94,9 @@ class Order extends Backend
                     }      
                     $params['name'] = Db::name("egg_kind")->where("id",$params['kind_id'])->value("name");
                     $userinfo = Db::name("user")->where("id",$params['user_id'])->find();
-                    $params['sell_user_id']      = $userinfo['id'];
-                    $params['sell_serial_umber'] = $userinfo['serial_number'];
-                    $params['sell_mobile']       = $userinfo['mobile'];
+                    $params['buy_user_id']      = $userinfo['id'];
+                    $params['buy_serial_umber'] = $userinfo['serial_number'];
+                    $params['buy_mobile']       = $userinfo['mobile'];
                     $params['amount']            = $params['number']*$params['price'];
                     $params['rate']              = $rate;
                     $params['order_sn']          = date("Ymdhis", time()).mt_rand(1000,9999);
