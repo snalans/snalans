@@ -134,6 +134,7 @@ class Egg extends Api
      * @ApiReturnParams   (name="price", type="integer", description="价格")
      * @ApiReturnParams   (name="status", type="integer", description="状态默认：9=全部 0=待付款 1=完成 2=待确认 3=申诉 4=无效（撤单） 5=挂单  6退款")
      * @ApiReturnParams   (name="order_sn", type="integer", description="订单编号")
+     * @ApiReturnParams   (name="type", type="integer", description="收款方式 1=支付 2=微信 3=钱包 4=银联")
      */
     public function market_hall()
     {
@@ -195,10 +196,10 @@ class Egg extends Api
             ->field("id,buy_serial_umber,name,price,status,order_sn,number,rate,buy_user_id")
             ->where($order_where)
             ->order('price desc,id asc')
-            ->paginate($limit);
-//            ->page($page, $limit)
-//            ->select();
-
+            ->paginate($limit)->each(function ($item,$index){
+                $item['type'] = Db::name("egg_charge_code")->where("user_id",$item['buy_user_id'])->value("group_concat(type)");
+                return $item;
+            });
 
 //        $order_count = Db::name("egg_order")->where($order_where)->count();
 //        if($order_count>($page*$limit)){
