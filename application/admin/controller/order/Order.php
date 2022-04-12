@@ -79,7 +79,8 @@ class Order extends Backend
                 $result = false;
                 $wh = [];
                 $wh['buy_user_id'] = $params['user_id'];
-                $wh['status']       = 5;
+                $wh['kind_id']     = $params['kind_id'];
+                $wh['status']      = 5;
                 $info = Db::name("egg_order")->where($wh)->find();
                 if(!empty($info)){
                     $this->error("已经存在挂单！");
