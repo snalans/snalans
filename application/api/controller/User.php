@@ -693,6 +693,10 @@ class User extends Api
         $hand_img       = $this->request->post("hand_img");
         $hands_img      = $this->request->post("hands_img");
 
+        if (!\app\common\library\Validate::check_id_card($id_card)) {
+            $this->error(__('Id_card is incorrect'));
+        }
+
         $birth = strlen($id_card)==15 ? ('19' . substr($id_card, 6, 4)) : substr($id_card, 6, 6);
         $after_date = date("Ym",strtotime("-65 year"));
         $before_date = date("Ym",strtotime("-18 year"));
@@ -700,10 +704,6 @@ class User extends Api
             $this->error("身份证年龄不符合审核标准");
         }
         
-        if (!\app\common\library\Validate::check_id_card($id_card)) {
-            $this->error(__('Id_card is incorrect'));
-        }
-
         $wh = [];
         $wh['id_card'] = $id_card;
         $wh['user_id'] = ['<>',$this->auth->id];
