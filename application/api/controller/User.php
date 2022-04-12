@@ -693,6 +693,13 @@ class User extends Api
         $hand_img       = $this->request->post("hand_img");
         $hands_img      = $this->request->post("hands_img");
 
+        $birth = strlen($id_card)==15 ? ('19' . substr($id_card, 6, 4)) : substr($id_card, 6, 6);
+        $after_date = date("Ym",strtotime("-65 year"));
+        $before_date = date("Ym",strtotime("-18 year"));
+        if($after_date > $birth || $before_date < $birth){
+            $this->error("身份证年龄不符合审核标准");
+        }
+        
         if (!\app\common\library\Validate::check_id_card($id_card)) {
             $this->error(__('Id_card is incorrect'));
         }
@@ -704,7 +711,6 @@ class User extends Api
         if(!empty($have)){
             $this->error("身份证已经注册过,请更换");
         }
-
         if (!$name || !$id_card || !$front_img || !$reverse_img || !$hand_img) {
             $this->error(__('Invalid parameters'));
         }
