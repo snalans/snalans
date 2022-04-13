@@ -113,8 +113,8 @@ class Index extends Api
         if(empty($result)){
             $this->error(__('The nest does not exist, please try again'));
         }
-        $userLevelConfig = new \app\common\model\UserLevelConfig();
-        $userLevelConfig->update_vip($this->auth->id);
+        // $userLevelConfig = new \app\common\model\UserLevelConfig();
+        // $userLevelConfig->update_vip($this->auth->id);
 
         // 执行加蛋孵化
         if($result['status']==1){
@@ -401,7 +401,7 @@ class Index extends Api
         // if($rate_config>0){
         //     $rate = $number*$rate_config/100;
         // }        
-        if($kind_id == 3){
+        if($kind_id == 3 && false){
             $rate = ceil($number/5)*$rate_config;
         }else{
             $rate = ceil($number/10)*$rate_config;

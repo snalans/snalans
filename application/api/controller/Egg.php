@@ -299,7 +299,7 @@ class Egg extends Api
         // if($egg_kind_info['rate_config']>0){
         //     $rate = $number*$egg_kind_info['rate_config']/100;
         // }           
-        if($kind_id == 3){
+        if($kind_id == 3 && false){
             $rate = ceil($number/5)*$egg_kind_info['rate_config'];
         }else{
             $rate = ceil($number/10)*$egg_kind_info['rate_config'];

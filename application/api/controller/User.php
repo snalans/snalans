@@ -697,11 +697,11 @@ class User extends Api
             $this->error(__('Id_card is incorrect'));
         }
 
-        $birth = strlen($id_card)==15 ? ('19' . substr($id_card, 6, 4)) : substr($id_card, 6, 6);
-        $after_date = date("Ym",strtotime("-65 year"));
-        $before_date = date("Ym",strtotime("-18 year"));
+        $birth = strlen($id_card)==15 ? ('19' . substr($id_card, 6, 6)) : substr($id_card, 6, 8);
+        $after_date = date("Ymd",strtotime("-65 year"));
+        $before_date = date("Ymd",strtotime("-18 year"));
         if($after_date > $birth || $before_date < $birth){
-            $this->error("身份证年龄不符合审核标准");
+            $this->error("您的年龄不符合认证标准 $after_date ~ $before_date");
         }
         
         $wh = [];

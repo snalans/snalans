@@ -471,7 +471,7 @@ class Order extends Api
         // if($rate_config>0){
         //     $rate = $sell_egg*$rate_config/100;
         // }   
-        if($info['kind_id'] == 3){
+        if($info['kind_id'] == 3 && false){
             $rate = ceil($sell_egg/5)*$rate_config;
         }else{
             $rate = ceil($sell_egg/10)*$rate_config;
