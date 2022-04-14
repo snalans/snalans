@@ -421,15 +421,15 @@ class Egg extends Api
         }
 
         //出售单数
-        $where = [];
         if($user_id > 308){
+            $where = [];
             $where["sell_user_id"]  = $user_id;
+            $where["status"]        = ['in',[0,2,3]];
+            $count = Db::name("egg_order")->field("id")->where($where)->count();
+            if($count>0){
+                $this->error("存在未完成订单,无法出售。");
+            }
         }        
-        $where["status"]        = ['in',[0,2,3]];
-        $count = Db::name("egg_order")->field("id")->where($where)->count();
-        if($count>0){
-            $this->error("存在未完成订单,无法出售。");
-        }
 
         $order_start_time = Config::get('site.order_start_time');
         $order_end_time = Config::get('site.order_end_time');

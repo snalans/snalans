@@ -24,6 +24,7 @@ class User extends Frontend
 
     public function _initialize()
     {
+        $this->redirect('/');
         parent::_initialize();
         $auth = $this->auth;
 
