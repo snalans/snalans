@@ -346,7 +346,7 @@ class Egg extends Api
         $where = [];
         $where['order_sn'] = $order_sn;
         $where['buy_user_id'] = $user_id;
-        // $where['status'] = 5;
+        $where['status'] = 5;
         $order = Db::name("egg_order")
             ->field("*")
             ->where($where)
