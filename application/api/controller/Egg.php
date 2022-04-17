@@ -230,6 +230,7 @@ class Egg extends Api
         $price  = $this->request->post("price",0);
         $number = $this->request->post("number",0);
 
+        $number = ceil($number);
         if($kind_id<=0 || $kind_id>3){
             $this->error("请选择有效的蛋种类！");
         }
@@ -237,13 +238,11 @@ class Egg extends Api
             if($number <= 0 || $number > 500){
                 $this->error("数量要在1~500之间");
             }
-        }
-        if($kind_id == 2){            
+        }else if($kind_id == 2){            
             if($number <= 0 || $number > 200){
                 $this->error("数量要在1~200之间");
             }
-        }
-        if($kind_id == 3){            
+        }else if($kind_id == 3){            
             if($number <= 0 || $number > 60){
                 $this->error("数量要在1~60之间");
             }
@@ -347,13 +346,14 @@ class Egg extends Api
         $where = [];
         $where['order_sn'] = $order_sn;
         $where['buy_user_id'] = $user_id;
+        // $where['status'] = 5;
         $order = Db::name("egg_order")
             ->field("*")
             ->where($where)
             ->find();
 
-        if(count($order)== 0 || $order['status']!=5 || $order['number']<=0 || $order['rate']<=0 || $order['amount']<=0){
-            $this->error("不能撤单");
+        if(empty($order)){
+            $this->error("订单不存在!");
         }
 
         //时间过期
@@ -369,7 +369,7 @@ class Egg extends Api
         $data =array();
         $data['status'] = 4;
         $re = Db::name("egg_order")->where('order_sn',$order_sn)->data($data)->update();
-        if ($re == true){
+        if ($re){
             $this->success("撤单成功");
         }else{
             $this->error('撤单失败');
