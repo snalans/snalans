@@ -106,12 +106,12 @@ class Index extends Api
         if($this->auth->status != 'normal' || $this->auth->is_attestation != 1){
             $this->error("账号无效或者未认证");
         }
-        
+
         $is_hatch = Cache::get("hatch_".$this->auth->id);
         if(!empty($is_hatch)){
             $this->error("不要频繁点击!");
         }
-        Cache::set("hatch_".$this->auth->id,1,3); 
+        Cache::set("hatch_".$this->auth->id,1,2); 
 
         $wh = [];
         $wh['id']       = $egg_hatch_id;
