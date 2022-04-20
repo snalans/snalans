@@ -4,6 +4,7 @@ namespace app\api\controller\farm;
 use app\common\controller\Api;
 use think\Validate;
 use think\Config;
+use think\Cache;
 use think\Log;
 use think\Db;
 
