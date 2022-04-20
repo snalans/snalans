@@ -698,7 +698,7 @@ class User extends Api
         }
 
         $birth = strlen($id_card)==15 ? ('19' . substr($id_card, 6, 6)) : substr($id_card, 6, 8);
-        $after_date = date("Ymd",strtotime("-66 year"));
+        $after_date = date("Ymd",strtotime("-71 year"));
         $before_date = date("Ymd",strtotime("-17 year"));
         if($after_date > $birth || $before_date < $birth){
             $this->error("您的年龄不符合认证标准");
