@@ -448,16 +448,8 @@ class Order extends Api
             $this->error("不能购买给自己的产品");
         }
         
-        $google_secret = Db::name("user_secret")->where("user_id",$this->auth->id)->value("google_secret"); 
-        if(!empty($google_secret)){
-            $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
-            $checkResult = $ga->verifyCode($google_secret, $google_code);
-            if(!$checkResult){
-                $this->error("谷歌验证码错误!");
-            }        
-        }else{
-            $this->error("请先绑定谷歌验证,进行谷歌验证!");
-        }
+        $v_user = new \app\api\controller\User;
+        $v_user->validSecret($google_code,$this->auth->id,true);
 
         $egg_where = [];
         $egg_where['user_id'] = $this->auth->id;

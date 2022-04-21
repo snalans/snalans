@@ -371,6 +371,7 @@ class Index extends Api
         if(!in_array($kind_id,[1,2,3,4]) || $number<=0){
             $this->error("参数错误");
         }
+        
         $wh = [];
         if (Validate::regex($serial_number, "^1\d{10}$")) {
             $wh['mobile']           = $serial_number;
@@ -392,16 +393,8 @@ class Index extends Api
             $this->error(__('Paypwd is incorrect'));
         }
 
-        $google_secret = Db::name("user_secret")->where("user_id",$this->auth->id)->value("google_secret"); 
-        if(!empty($google_secret)){
-            $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
-            $checkResult = $ga->verifyCode($google_secret, $google_code);
-            if(!$checkResult){
-                $this->error("谷歌验证码错误!");
-            }        
-        }else{
-            $this->error("请先绑定谷歌验证,进行谷歌验证!");
-        }
+        $v_user = new \app\api\controller\User;
+        $v_user->validSecret($google_code,$this->auth->id,true);
         
         $rate = 0;
         $rate_config = Db::name("egg_kind")->where("id",$kind_id)->value("rate_config");

@@ -173,14 +173,7 @@ class User extends Api
         $ret = $this->auth->login($account, $password);
         if ($ret) {
             $data = ['userinfo' => $this->auth->getUserinfo()];
-            $google_secret = Db::name("user_secret")->where("user_id",$data['userinfo']['user_id'])->value("google_secret"); 
-            if(!empty($google_secret)){
-                $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
-                $checkResult = $ga->verifyCode($google_secret, $google_code);
-                if(!$checkResult){
-                    $this->error("谷歌验证码错误!");
-                }        
-            }
+            $this->validSecret($google_code,$data['userinfo']['user_id']);
             $wh = [];
             $wh['user_id']      = $data['userinfo']['user_id'];
             $wh['createtime']   = ['<>',$data['userinfo']['createtime']];
@@ -1016,5 +1009,26 @@ class User extends Api
             }
         }
         $this->error("解除绑定失败!");
+    }
+
+    /**
+     * 验证谷歌验证码命令
+     * @ApiInternal
+     *
+     */
+    public function validSecret($google_code='',$user_id=0,$flag=false)
+    {
+        $google_secret = Db::name("user_secret")->where("user_id",$user_id)->value("google_secret"); 
+        if(!empty($google_secret)){
+            $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
+            $checkResult = $ga->verifyCode($google_secret, $google_code);
+            if(!$checkResult){
+                $this->error("谷歌验证码错误!");
+            }        
+        }else{
+            if($flag){
+                $this->error("请先绑定谷歌验证器,进行谷歌验证!");
+            }
+        }
     }
 }

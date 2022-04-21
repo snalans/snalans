@@ -134,7 +134,6 @@ class Egg extends Api
      * @ApiReturnParams   (name="price", type="integer", description="价格")
      * @ApiReturnParams   (name="status", type="integer", description="状态默认：9=全部 0=待付款 1=完成 2=待确认 3=申诉 4=无效（撤单） 5=挂单  6退款")
      * @ApiReturnParams   (name="order_sn", type="integer", description="订单编号")
-     * @ApiReturnParams   (name="type", type="integer", description="收款方式 1=支付 2=微信 3=钱包 4=银联")
      */
     public function market_hall()
     {
@@ -196,22 +195,11 @@ class Egg extends Api
             ->field("id,buy_serial_umber,name,price,status,order_sn,number,rate,buy_user_id")
             ->where($order_where)
             ->order('price desc,id asc')
-            ->paginate($limit)->each(function ($item,$index){
-                $item['type'] = Db::name("egg_charge_code")->where("user_id",$item['buy_user_id'])->value("group_concat(type)");
-                return $item;
-            });
-
-//        $order_count = Db::name("egg_order")->where($order_where)->count();
-//        if($order_count>($page*$limit)){
-//            $has_next = 1;
-//        }else{
-//            $has_next = 0;
-//        }
+            ->paginate($limit);
 
         $list = array();
         $list['my_order'] = $my_order;
         $list['order'] = $order;
-//        $list['has_next'] = $has_next;
         $this->success('查询成功',$list);
     }
 
@@ -409,19 +397,11 @@ class Egg extends Api
         if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
             $this->error('支付密码错误');
         }
-        $google_secret = Db::name("user_secret")->where("user_id",$this->auth->id)->value("google_secret"); 
-        if(!empty($google_secret)){
-            $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
-            $checkResult = $ga->verifyCode($google_secret, $google_code);
-            if(!$checkResult){
-                $this->error("谷歌验证码错误!");
-            }        
-        }else{
-            $this->error("请先绑定谷歌验证,进行谷歌验证!");
-        }
 
         //出售单数
-        if($user_id > 308){
+        if($user_id > 308){            
+            $v_user = new \app\api\controller\User;
+            $v_user->validSecret($google_code,$this->auth->id,true);
             $where = [];
             $where["sell_user_id"]  = $user_id;
             $where["status"]        = ['in',[0,2,3]];
