@@ -947,7 +947,7 @@ class User extends Api
                 $google_secret  = input("google_secret",'');
                 $code           = input("code",'');
                 if(empty($google_code) || empty($google_secret)){
-                    $this->error("验证码不能为空!");
+                    $this->error("谷歌验证码和密钥不能为空!");
                 }            
                 $info = Db::name("user_secret")->where("google_secret",$google_secret)->find(); 
                 if(!empty($info)){
