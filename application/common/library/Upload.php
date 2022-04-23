@@ -353,7 +353,7 @@ class Upload
             $file->setSaveName($fileName)->setUploadInfo($info);
         } else {
             $config = Config::get('upload');
-            if(isset($config['BucketId']) && false)
+            if(isset($config['BucketId']))
             {
                 $this->getBackblazeb2();
                 $client = new Client($config['accountId'],$config['applicationKey']);           
