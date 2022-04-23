@@ -4648,7 +4648,7 @@
                                                         <td>event</td>
                                                         <td>string</td>
                                                         <td>是</td>
-                                                        <td>事件名称 默认注册：register 修改登录密码： resetpwd 修改支付密码： resetpay</td>
+                                                        <td>事件名称 默认注册：register 修改登录密码： resetpwd 修改支付密码： resetpay 绑定谷歌验证器：secret</td>
                                                     </tr>
                                                                                                     </tbody>
                                             </table>
@@ -4678,7 +4678,7 @@
                                                         </div>
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="event">event</label>
-                                                            <input type="string" class="form-control input-sm" id="event" required placeholder="事件名称 默认注册：register 修改登录密码： resetpwd 修改支付密码： resetpay" name="event">
+                                                            <input type="string" class="form-control input-sm" id="event" required placeholder="事件名称 默认注册：register 修改登录密码： resetpwd 修改支付密码： resetpay 绑定谷歌验证器：secret" name="event">
                                                         </div>
                                                                                                                 <div class="form-group form-group-submit">
                                                             <button type="submit" class="btn btn-success send" rel="52">提交</button>
@@ -6247,6 +6247,12 @@
                                                         <td>是</td>
                                                         <td>支付密码</td>
                                                     </tr>
+                                                                                                        <tr>
+                                                        <td>google_code</td>
+                                                        <td>string</td>
+                                                        <td>是</td>
+                                                        <td>谷歌验证码</td>
+                                                    </tr>
                                                                                                     </tbody>
                                             </table>
                                                                                     </div>
@@ -6284,6 +6290,10 @@
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="paypwd">paypwd</label>
                                                             <input type="string" class="form-control input-sm" id="paypwd" required placeholder="支付密码" name="paypwd">
+                                                        </div>
+                                                                                                                <div class="form-group">
+                                                            <label class="control-label" for="google_code">google_code</label>
+                                                            <input type="string" class="form-control input-sm" id="google_code" required placeholder="谷歌验证码" name="google_code">
                                                         </div>
                                                                                                                 <div class="form-group form-group-submit">
                                                             <button type="submit" class="btn btn-success send" rel="17">提交</button>
@@ -7459,16 +7469,22 @@
                                                 </thead>
                                                 <tbody>
                                                                                                         <tr>
+                                                        <td>google_secret</td>
+                                                        <td>string</td>
+                                                        <td>是</td>
+                                                        <td>密钥</td>
+                                                    </tr>
+                                                                                                        <tr>
                                                         <td>google_code</td>
                                                         <td>string</td>
                                                         <td>是</td>
                                                         <td>验证码</td>
                                                     </tr>
                                                                                                         <tr>
-                                                        <td>google_secret</td>
+                                                        <td>code</td>
                                                         <td>string</td>
                                                         <td>是</td>
-                                                        <td>密钥</td>
+                                                        <td>手机验证码</td>
                                                     </tr>
                                                                                                     </tbody>
                                             </table>
@@ -7493,12 +7509,16 @@
                                                 <div class="panel-body">
                                                     <form enctype="application/x-www-form-urlencoded" role="form" action="/api/user/bindGoogle" method="POST" name="form75" id="form75">
                                                                                                                 <div class="form-group">
+                                                            <label class="control-label" for="google_secret">google_secret</label>
+                                                            <input type="string" class="form-control input-sm" id="google_secret" required placeholder="密钥" name="google_secret">
+                                                        </div>
+                                                                                                                <div class="form-group">
                                                             <label class="control-label" for="google_code">google_code</label>
                                                             <input type="string" class="form-control input-sm" id="google_code" required placeholder="验证码" name="google_code">
                                                         </div>
                                                                                                                 <div class="form-group">
-                                                            <label class="control-label" for="google_secret">google_secret</label>
-                                                            <input type="string" class="form-control input-sm" id="google_secret" required placeholder="密钥" name="google_secret">
+                                                            <label class="control-label" for="code">code</label>
+                                                            <input type="string" class="form-control input-sm" id="code" required placeholder="手机验证码" name="code">
                                                         </div>
                                                                                                                 <div class="form-group form-group-submit">
                                                             <button type="submit" class="btn btn-success send" rel="75">提交</button>
@@ -7838,6 +7858,11 @@
                                                                 <td>sell_num</td>
                                                                 <td>string</td>
                                                                 <td>卖出数量</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>is_google_secret</td>
+                                                                <td>string</td>
+                                                                <td>是否绑定谷歌验证 1是 0否</td>
                                                             </tr>
                                                                                                                     </tbody>
                                                     </table>
@@ -11019,6 +11044,12 @@
                                                         <td>是</td>
                                                         <td>支付密码</td>
                                                     </tr>
+                                                                                                        <tr>
+                                                        <td>google_code</td>
+                                                        <td>string</td>
+                                                        <td>是</td>
+                                                        <td>谷歌验证码</td>
+                                                    </tr>
                                                                                                     </tbody>
                                             </table>
                                                                                     </div>
@@ -11048,6 +11079,10 @@
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="paypwd">paypwd</label>
                                                             <input type="string" class="form-control input-sm" id="paypwd" required placeholder="支付密码" name="paypwd">
+                                                        </div>
+                                                                                                                <div class="form-group">
+                                                            <label class="control-label" for="google_code">google_code</label>
+                                                            <input type="string" class="form-control input-sm" id="google_code" required placeholder="谷歌验证码" name="google_code">
                                                         </div>
                                                                                                                 <div class="form-group form-group-submit">
                                                             <button type="submit" class="btn btn-success send" rel="7">提交</button>
@@ -12588,7 +12623,7 @@
 
                 </div>
                 <div class="col-md-6" align="right">
-                    Generated on 2022-04-03 13:59:50 <a href="./" target="_blank">农场</a>
+                    Generated on 2022-04-23 18:15:55 <a href="./" target="_blank">农场</a>
                 </div>
             </div>
 

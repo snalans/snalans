@@ -21,7 +21,7 @@ class Sms extends Api
      *
      * @ApiMethod (POST)
      * @ApiParams   (name="mobile", type="string", description="手机号")
-     * @ApiParams   (name="event", type="string", description="事件名称 默认注册：register 修改登录密码： resetpwd 修改支付密码： resetpay")
+     * @ApiParams   (name="event", type="string", description="事件名称 默认注册：register 修改登录密码： resetpwd 修改支付密码： resetpay 绑定谷歌验证器：secret")
      */
     public function send()
     {
