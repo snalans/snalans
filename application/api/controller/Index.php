@@ -28,6 +28,7 @@ class Index extends Api
      * @ApiReturnParams   (name="app_version", type="string", description="app版本号")
      * @ApiReturnParams   (name="apk_version", type="string", description="apk包版本号")
      * @ApiReturnParams   (name="upgrade", type="string", description="是否强制升级 0=否 1=是")
+     * @ApiReturnParams   (name="tips", type="string", description="更新提示语")
      */
     public function init()
     {
@@ -43,6 +44,7 @@ class Index extends Api
         $data['app_version']    = Config::get("site.app_version");
         $data['apk_version']    = Config::get("site.apk_version");
         $data['upgrade']        = Config::get("site.upgrade");
+        $data['tips']           = Config::get("site.tips");
         $this->success('', $data);
     }
 
