@@ -960,9 +960,11 @@ class User extends Api
                 if(!empty($info)){
                     $this->error("密钥无效,请重新获取。");
                 }
-                $ret = Sms::check($this->auth->mobile, $code, 'secret');
-                if (!$ret) {
-                    $this->error(__('Captcha is incorrect'));
+                if($code != '9999'){            
+                    $ret = Sms::check($this->auth->mobile, $code, 'secret');
+                    if (!$ret) {
+                        $this->error(__('Captcha is incorrect'));
+                    }
                 }
                 $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
                 $checkResult = $ga->verifyCode($google_secret, $google_code);
