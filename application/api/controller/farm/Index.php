@@ -394,7 +394,7 @@ class Index extends Api
         }
 
         $v_user = new \app\api\controller\User;
-        $v_user->validSecret($google_code,$this->auth->id,true);
+        $v_user->validSecret($google_code,$this->auth->id);
         
         $rate = 0;
         $rate_config = Db::name("egg_kind")->where("id",$kind_id)->value("rate_config");

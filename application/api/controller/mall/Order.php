@@ -449,7 +449,7 @@ class Order extends Api
         }
         
         $v_user = new \app\api\controller\User;
-        $v_user->validSecret($google_code,$this->auth->id,true);
+        $v_user->validSecret($google_code,$this->auth->id);
 
         $egg_where = [];
         $egg_where['user_id'] = $this->auth->id;

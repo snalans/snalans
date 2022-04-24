@@ -126,13 +126,13 @@ class User extends Api
         $captcha  = $this->request->post('captcha');
         $google_code = $this->request->post('google_code');
 
-        // $start_time = strtotime("2022-3-30 01:00:00");
-        // $end_time = strtotime("2022-3-31 12:00:00");
-        // if(time() >= $start_time && time() < $end_time){
-        //     if(!in_array($account,['17095989213','15060060723','18059119783','15705917729'])){
-        //         $this->error("系统维护中");
-        //     }            
-        // }
+        $start_time = strtotime("2022-4-24 00:30:00");
+        $end_time = strtotime("2022-4-24 03:30:00");
+        if(time() >= $start_time && time() < $end_time){
+            if(!in_array($account,['17095989213','15060060723','18059119783','15705917729'])){
+                $this->error("临时性系统维护");
+            }            
+        }
 
         if (!$account || !$password) {
             $this->error(__('Invalid parameters'));
@@ -251,6 +251,13 @@ class User extends Api
         $invite_code = $this->request->post('invite_code',"");
         $email = $this->request->post('email');
         $code = $this->request->post('code');
+
+        $start_time = strtotime("2022-4-24 01:30:00");
+        $end_time = strtotime("2022-4-24 03:30:00");
+        if(time() >= $start_time && time() < $end_time){
+            $this->error("临时性系统维护");           
+        }
+
         if (!$username || !$password) {
             $this->error(__('Invalid parameters'));
         }

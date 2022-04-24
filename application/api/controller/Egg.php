@@ -401,7 +401,7 @@ class Egg extends Api
         //出售单数
         if($user_id > 308){            
             $v_user = new \app\api\controller\User;
-            $v_user->validSecret($google_code,$this->auth->id,true);
+            $v_user->validSecret($google_code,$this->auth->id);
             $where = [];
             $where["sell_user_id"]  = $user_id;
             $where["status"]        = ['in',[0,2,3]];
