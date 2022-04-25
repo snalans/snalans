@@ -147,7 +147,7 @@ class Index extends Api
     {        
         $result = Db::name("egg_hatch_config")->where("kind_id",$egg['kind_id'])->find();
         if(time() >= ($egg['uptime'] + $this->alldate)){      
-            if($egg['add_time'] >= $result['new_time'] && $result['add_num'] > 0){
+            if($egg['createtime'] >= $result['new_time'] && $result['add_num'] > 0){
                 $result['raw_cycle'] = $result['raw_cycle']+$result['add_num'];
                 $result['grow_cycle'] = $result['hatch_cycle']+$result['raw_cycle']*$result['max'];
             }      
