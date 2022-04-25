@@ -33,6 +33,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'grow_cycle', title: __('Grow_cycle'), operate:false},
                         {field: 'raw_cycle', title: __('Raw_cycle'), operate:false},
                         {field: 'max', title: __('Max'), operate:false},
+                        {field: 'new_time', title: __('启动时间'), operate:false, addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
+                        {field: 'add_num', title: __('增量数值'), operate:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]

@@ -16,7 +16,7 @@ class Index extends Api
 {
     protected $noNeedLogin = [];
     protected $noNeedRight = '*';
-    public    $alldate = 3600*24;   //签到周期
+    public    $alldate = 5;   //签到周期
 
     public function _initialize()
     {
@@ -146,7 +146,11 @@ class Index extends Api
     public function checkCycle($egg=[])
     {        
         $result = Db::name("egg_hatch_config")->where("kind_id",$egg['kind_id'])->find();
-        if(time() >= ($egg['uptime'] + $this->alldate)){            
+        if(time() >= ($egg['uptime'] + $this->alldate)){      
+            if($egg['add_time'] >= $result['new_time'] && $result['add_num'] > 0){
+                $result['raw_cycle'] = $result['raw_cycle']+$result['add_num'];
+                $result['grow_cycle'] = $result['hatch_cycle']+$result['raw_cycle']*$result['max'];
+            }      
             $data = [];
             $data['hatch_num']  = $egg['hatch_num']+1;
             $data['uptime']     = time();
