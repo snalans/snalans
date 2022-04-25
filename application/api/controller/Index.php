@@ -96,7 +96,7 @@ class Index extends Api
     {
         $type_id    = $this->request->get('type_id',1);
         $page       = $this->request->get("page",1);        
-        $per_page   = $this->request->get("per_page",10);
+        $per_page   = $this->request->get("per_page",50);
         $wh = [];
         $wh['status']       = 1;
         $wh['news_type_id'] = $type_id;
