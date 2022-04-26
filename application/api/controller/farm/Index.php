@@ -61,29 +61,23 @@ class Index extends Api
         $data['egg_list'] = $egg_list;
 
         $nest_list = Db::name("egg_hatch")->alias("eh")
+                    ->field("eh.id,en.name,eh.kind_id,eh.status,eh.hatch_num,eh.position,eh.shape,eh.is_reap,eh.uptime,eh.createtime,hc.grow_cycle,hc.raw_cycle,hc.max,hc.new_time,hc.add_num")
                     ->join("egg_nest_kind en","en.id=eh.nest_kind_id","LEFT")
-                    ->field("eh.id,en.name,eh.kind_id,eh.status,eh.hatch_num,eh.position,eh.shape,eh.is_reap,eh.uptime,eh.createtime")
+                    ->join("egg_hatch_config hc","hc.kind_id=eh.kind_id","LEFT")
                     ->where("eh.user_id",$this->auth->id)
                     ->where("eh.is_close",0)
                     ->order("en.kind_id","ASC")
                     ->order("eh.position","ASC")
                     ->select();
-        $config = Db::name("egg_hatch_config")->find();
         if(!empty($nest_list)){  
             foreach ($nest_list as $key => $value) {
                 $surplus = "";
                 if($value['status']==0){
-                    $date = 0;
-                    foreach ($config as $k => $val) {
-                        if($val['kind_id'] == $value['kind_id']){
-                            if($value['createtime'] >= $val['new_time'] && $val['add_num'] > 0){
-                                $val['raw_cycle'] = $val['raw_cycle']+$val['add_num'];
-                                $val['grow_cycle'] = $val['hatch_cycle']+$val['raw_cycle']*$val['max'];
-                            }
-                            $date = $val['grow_cycle'] - $value['hatch_num'];    
-                            break;
-                        }
+                    if($value['createtime'] >= $value['new_time'] && $value['add_num'] > 0){
+                        $value['raw_cycle'] = $value['raw_cycle']+$value['add_num'];
+                        $value['grow_cycle'] = $value['hatch_cycle']+$value['raw_cycle']*$value['max'];
                     }
+                    $date = $value['grow_cycle'] - $value['hatch_num'];    
                     $hours = 24-intval((time()-$value['uptime'])/3600);
                     $surplus = $date."天".($hours>0?$hours:0)."小时";
                 }
