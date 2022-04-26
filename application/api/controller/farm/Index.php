@@ -61,7 +61,7 @@ class Index extends Api
         $data['egg_list'] = $egg_list;
 
         $nest_list = Db::name("egg_hatch")->alias("eh")
-                    ->field("eh.id,en.name,eh.kind_id,eh.status,eh.hatch_num,eh.position,eh.shape,eh.is_reap,eh.uptime,eh.createtime,hc.grow_cycle,hc.raw_cycle,hc.max,hc.new_time,hc.add_num")
+                    ->field("eh.id,en.name,eh.kind_id,eh.status,eh.hatch_num,eh.position,eh.shape,eh.is_reap,eh.uptime,eh.createtime,hc.grow_cycle,hc.hatch_cycle,hc.raw_cycle,hc.max,hc.new_time,hc.add_num")
                     ->join("egg_nest_kind en","en.id=eh.nest_kind_id","LEFT")
                     ->join("egg_hatch_config hc","hc.kind_id=eh.kind_id","LEFT")
                     ->where("eh.user_id",$this->auth->id)
