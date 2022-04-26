@@ -62,18 +62,27 @@ class Index extends Api
 
         $nest_list = Db::name("egg_hatch")->alias("eh")
                     ->join("egg_nest_kind en","en.id=eh.nest_kind_id","LEFT")
-                    ->field("eh.id,en.name,eh.kind_id,eh.status,eh.hatch_num,eh.position,eh.shape,eh.is_reap,eh.uptime")
+                    ->field("eh.id,en.name,eh.kind_id,eh.status,eh.hatch_num,eh.position,eh.shape,eh.is_reap,eh.uptime,eh.createtime")
                     ->where("eh.user_id",$this->auth->id)
                     ->where("eh.is_close",0)
                     ->order("en.kind_id","ASC")
                     ->order("eh.position","ASC")
                     ->select();
-        $config = Db::name("egg_hatch_config")->column("grow_cycle","kind_id");
-        if(!empty($nest_list)){            
+        $config = Db::name("egg_hatch_config")->find();
+        if(!empty($nest_list)){  
             foreach ($nest_list as $key => $value) {
                 $surplus = "";
                 if($value['status']==0){
-                    $date = $config[$value['kind_id']] - $value['hatch_num'];
+                    foreach ($config as $k => $val) {
+                        if($val['kind_id'] == $value['kind_id']){
+                            if($value['createtime'] >= $val['new_time'] && $val['add_num'] > 0){
+                                $val['raw_cycle'] = $val['raw_cycle']+$val['add_num'];
+                                $val['grow_cycle'] = $val['hatch_cycle']+$val['raw_cycle']*$val['max'];
+                            }
+                            $date = $val['grow_cycle'] - $value['hatch_num'];    
+                            break;
+                        }
+                    }
                     $hours = 24-intval((time()-$value['uptime'])/3600);
                     $surplus = $date."天".($hours>0?$hours:0)."小时";
                 }

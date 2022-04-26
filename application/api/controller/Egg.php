@@ -456,7 +456,7 @@ class Egg extends Api
             ->where($pay_where)
             ->count();
         if($pay_count==0){
-            $this->error("请往会员中心添加支付方式");
+            $this->error("请往会员中心添加收款方式");
         }
 
         DB::startTrans();
