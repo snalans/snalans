@@ -73,6 +73,7 @@ class Index extends Api
             foreach ($nest_list as $key => $value) {
                 $surplus = "";
                 if($value['status']==0){
+                    $date = 0;
                     foreach ($config as $k => $val) {
                         if($val['kind_id'] == $value['kind_id']){
                             if($value['createtime'] >= $val['new_time'] && $val['add_num'] > 0){
