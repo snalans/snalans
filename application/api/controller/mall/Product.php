@@ -83,7 +83,7 @@ class Product extends Api
         if(!empty($title)){
             $whs['u.serial_number'] = $title;
         }
-        $list = Db::name("mall_product")->alias('p')
+        $list = Db::name("mall_product")->alias('p')->cache(true,300)
                     ->field("p.id,p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,u.avatar,u.serial_number")
                     ->join("user u","u.id=p.user_id","LEFT")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
@@ -130,7 +130,7 @@ class Product extends Api
     {
         $id = $this->request->post("id","");
         
-        $info = Db::name("mall_product")->alias('p')
+        $info = Db::name("mall_product")->alias('p')->cache(true,300)
                     ->field("p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,p.stock,p.is_virtual,p.content,p.add_time,u.avatar,u.serial_number")
                     ->join("user u","u.id=p.user_id","LEFT")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
@@ -153,7 +153,7 @@ class Product extends Api
      */
     public function getCateList()
     {
-        $list = Db::name("mall_product_cate")
+        $list = Db::name("mall_product_cate")->cache(true,300)
                 ->field(["status","weigh"],true)
                 ->where("status",1)
                 ->order("weigh","DESC")

@@ -33,8 +33,8 @@ class Index extends Api
     public function init()
     {
         $data = [];
-        $data['egg_info']       = Db::name("egg_kind")->field("id,name,image,egg_image,ch_image,bg_image,stock")->order("id","asc")->select();
-        $data['share_image']    = Db::name("egg_news")->where("news_type_id",4)->value("image");
+        $data['egg_info']       = Db::name("egg_kind")->cache(true,300)->field("id,name,image,egg_image,ch_image,bg_image,stock")->order("id","asc")->select();
+        $data['share_image']    = Db::name("egg_news")->cache(true,300)->where("news_type_id",4)->value("image");
         $data['invite_url']     = Config::get("site.invite_url");
         $data['is_open']        = Config::get("site.is_open");
         $data['adroid']         = Config::get("site.android_url");
@@ -56,7 +56,7 @@ class Index extends Api
     {
         $wh = [];
         $wh['status'] = 1;
-        $result = Db::name("egg_kind")->field(['valid_number','rate_config','weigh'],true)->where($wh)->order("weigh","DESC")->select();
+        $result = Db::name("egg_kind")->cache(true,300)->field(['valid_number','rate_config','weigh'],true)->where($wh)->order("weigh","DESC")->select();
         $this->success('success',$result);
     }
 
@@ -73,8 +73,7 @@ class Index extends Api
     public function getNewsType()
     {
         $type_id = $this->request->get('type_id',3);
-
-        $result = Db::name("egg_news_type")->where("id",$type_id)->find();
+        $result = Db::name("egg_news_type")->cache(true)->where("id",$type_id)->find();
         $this->success('success',$result);
     }
 
@@ -100,7 +99,7 @@ class Index extends Api
         $wh = [];
         $wh['status']       = 1;
         $wh['news_type_id'] = $type_id;
-        $result = Db::name("egg_news")
+        $result = Db::name("egg_news")->cache(true,300)
                     ->field("id,title,description,image,add_time")
                     ->where($wh)
                     ->order("weigh","DESC")
@@ -136,7 +135,7 @@ class Index extends Api
         }else if(!empty($title)){
             $wh['title'] = $title;
         }        
-        $result = Db::name("egg_news")->where($wh)->find();
+        $result = Db::name("egg_news")->cache(true)->where($wh)->find();
         if(!empty($result)){
             $result['add_time'] = date("Y-m-d H:i:s",$result['add_time']);
         }

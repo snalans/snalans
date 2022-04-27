@@ -71,7 +71,7 @@ class Order extends Api
             }            
         }
 
-        $list = Db::name("mall_order")->alias("mo")
+        $list = Db::name("mall_order")->alias("mo")->cache(true,45)
                     ->field("mo.order_sn,mo.title,mo.image,mo.price,mo.number,mo.rate,mo.total_price,mo.status,mo.is_virtual,u.serial_number,ek.name,ek.image as egg_image")
                     ->join("user u","u.id=$wh_str","LEFT")
                     ->join("egg_kind ek","ek.id=mo.kind_id","LEFT")
@@ -153,7 +153,7 @@ class Order extends Api
             $wh_str = "mo.buy_user_id";
         }
 
-        $info = Db::name("mall_order")->alias('mo')
+        $info = Db::name("mall_order")->alias('mo')->cache(true,45)
                     ->field("mo.order_sn,mo.title,mo.image,mo.sell_user_id,mo.price,mo.number,mo.rate,mo.total_price,ek.name,ek.image as egg_image,mo.status,mo.contactor,mo.contactor_phone,mo.address,mo.express_name,mo.express_no,mo.recharge_account,mo.is_virtual,mo.received_time,mo.send_time,mo.add_time,u.mobile,u.serial_number")
                     ->join("user u","u.id=$wh_str","LEFT")
                     ->join("egg_kind ek","ek.id=mo.kind_id","LEFT")

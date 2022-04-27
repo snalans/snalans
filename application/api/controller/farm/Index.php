@@ -149,7 +149,7 @@ class Index extends Api
      */
     public function checkCycle($egg=[])
     {        
-        $result = Db::name("egg_hatch_config")->where("kind_id",$egg['kind_id'])->find();
+        $result = Db::name("egg_hatch_config")->cache(true,60)->where("kind_id",$egg['kind_id'])->find();
         if(time() >= ($egg['uptime'] + $this->alldate)){      
             if($egg['createtime'] >= $result['new_time'] && $result['add_num'] > 0){
                 $result['raw_cycle'] = $result['raw_cycle']+$result['add_num'];
