@@ -322,27 +322,31 @@ class Index extends Api
             $valid_number = Db::name("egg_kind")->where("id",$result['kind_id'])->value("valid_number");
             if($valid_number>0){
                 //更新农场主等级，$user_id用户id，注意要在积分更新之后调用
-                $new_valid_number = $valid_number+$this->auth->valid_number;
-                $v_rs = Db::name("user")->where("id",$this->auth->id)->update(['valid_number'=>$new_valid_number]);
-                $v_log = Db::name("egg_valid_number_log")->insert([
-                    'user_id'=>$this->auth->id,
-                    'origin_user_id'=>$this->auth->id,
-                    'number'=>$valid_number,
-                    'before'=>$this->auth->valid_number,
-                    'after'=>$new_valid_number,
-                    'add_time'=>time(),
-                ]);
-                if($v_rs){                    
-                    $userLevelConfig = new \app\common\model\UserLevelConfig();
-                    $userLevelConfig->update_vip($this->auth->id);
-                    //上级发放有效值
-                    $wh = [];
-                    $wh['user_id'] = $this->auth->id;
-                    $wh['level']   = ['<=',3];
-                    $plist = Db::name("membership_chain")->where($wh)->order("level","ASC")->select();
-                    if(!empty($plist)){
-                        foreach ($plist as $key => $value) {                         
-                            $userLevelConfig->update_vip($value['ancestral_id']);
+                if($this->auth->valid_number < 195)
+                {
+                    $new_valid_number = $valid_number+$this->auth->valid_number;
+                    $new_valid_number = $new_valid_number>195?195:$new_valid_number;
+                    $v_rs = Db::name("user")->where("id",$this->auth->id)->update(['valid_number'=>$new_valid_number]);
+                    $v_log = Db::name("egg_valid_number_log")->insert([
+                        'user_id'=>$this->auth->id,
+                        'origin_user_id'=>$this->auth->id,
+                        'number'=>$valid_number,
+                        'before'=>$this->auth->valid_number,
+                        'after'=>$new_valid_number,
+                        'add_time'=>time(),
+                    ]);
+                    if($v_rs){                    
+                        $userLevelConfig = new \app\common\model\UserLevelConfig();
+                        $userLevelConfig->update_vip($this->auth->id);
+                        //上级发放有效值
+                        $wh = [];
+                        $wh['user_id'] = $this->auth->id;
+                        $wh['level']   = ['<=',3];
+                        $plist = Db::name("membership_chain")->where($wh)->order("level","ASC")->select();
+                        if(!empty($plist)){
+                            foreach ($plist as $key => $value) {                         
+                                $userLevelConfig->update_vip($value['ancestral_id']);
+                            }
                         }
                     }
                 }
