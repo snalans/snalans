@@ -74,7 +74,7 @@ class User extends Api
         $wh['u.status']       = 'normal';
         $wh['u.is_attestation'] = 1;
         $wh['c.level']        = ['<',4];
-        $sum = Db::name("membership_chain")->alias("c")
+        $sum = Db::name("membership_chain")->alias("c")->cache(true,15)
                 ->join("user u","u.id=c.user_id","LEFT")
                 ->where($wh)
                 ->sum("u.valid_number");
@@ -85,7 +85,7 @@ class User extends Api
         $wh = [];
         $wh['user_id'] = $this->auth->id;
         $wh['status']  = 1;
-        $result['release'] = Db::name("mall_product")->where($wh)->count();
+        $result['release'] = 0;//Db::name("mall_product")->where($wh)->count();
         $wh = [];
         $wh['buy_user_id'] = $this->auth->id;
         $wh['buy_del']     = 0;

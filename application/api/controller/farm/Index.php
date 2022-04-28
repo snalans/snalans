@@ -232,7 +232,7 @@ class Index extends Api
      */
     public function feedReward($user_id=0,$kind_id=0,$reward=0)
     {        
-        $pInfo = Db::name("user")->field("pid,serial_number")->where('id',$user_id)->find();
+        $pInfo = Db::name("user")->field("pid,serial_number")->cache(true,300)->where('id',$user_id)->find();
         if(!empty($pInfo['pid']) && $reward>0){
             $pid = $pInfo['pid'];
             $wh = [];
@@ -243,7 +243,7 @@ class Index extends Api
             $result = Db::name("egg_hatch")->field("id,position")->where($wh)->find();
             $note = "会员编号：".$pInfo['serial_number']."喂养奖励";
             if(!empty($result)){
-                $per_reward = Db::name("egg_kind")->where("id",$kind_id)->value("per_reward");
+                $per_reward = Db::name("egg_kind")->cache(true,60)->where("id",$kind_id)->value("per_reward");
                 if($per_reward>0){
                     Db::startTrans();
                     try {

@@ -320,7 +320,7 @@ function addUser(data) {
         _html += '<img src="' + data.avatar + '">';
         _html += '<span class="user-name">' + data.name + '</span>';
         _html += '<span class="layui-badge" style="margin-left:5px">0</span>';
-        _html += '<i class="layui-icon close" style="padding-left: 10px;" onclick="signOut(' + data.id + ')">ဇ</i>';
+        _html += '<i class="layui-icon close" onclick="signOut(' + data.id + ')">ဇ</i>';
         _html += '</li>';
     
         // 添加左侧列表
