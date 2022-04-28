@@ -562,6 +562,7 @@ class User extends Api
      * 获取直推列表
      *
      * @ApiMethod (GET)
+     * @ApiParams   (name="mobile", type="string", description="手机号或者编号")
      * @ApiParams   (name="page", type="int", description="页码")
      * @ApiParams   (name="per_page", type="int", description="数量")
      * 
@@ -584,10 +585,18 @@ class User extends Api
      */
     public function getChildInfo()
     {
+        $mobile     = $this->request->get("mobile","");
         $page       = $this->request->get("page",1);
         $per_page   = $this->request->get("per_page",15);
-        $wh = [];
-        $wh['u.pid']            = $this->auth->id;
+        $wh = [];      
+        $wh['u.pid'] = $this->auth->id;  
+        if(!empty($mobile)){            
+            if (Validate::regex($mobile, "^1\d{10}$")) {
+                $wh['u.mobile']           = $mobile;
+            }else{
+                $wh['u.serial_number']    = $mobile;
+            }
+        }
         $list = Db::name("user")->alias("u")
                 ->field("u.id,u.avatar,u.nickname,u.serial_number,l.title,u.valid_number,u.is_attestation,u.mobile,u.status,u.createtime")
                 ->join("user_level_config l","l.level=u.level","LEFT")
