@@ -133,6 +133,19 @@ $(function () {
         var top = $(".chat-box").scrollTop();
     });
 
+    $("#search_msg").on("change",function(){
+        var mobile = $(this).val();
+        $.ajax({
+            url:'../../user/user/getUserInfo',
+            type:'post',
+            data:{"mobile":mobile},
+            dataType:'json',
+            success:function(data)
+            {
+                addUser(data.data)
+            }
+        })
+    })
 });
 
 var isShow = false;

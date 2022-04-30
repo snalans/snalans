@@ -335,6 +335,20 @@ class User extends Backend
         return $this->view->fetch();
     }
 
+    /*
+     * 查询会员信息
+     */
+    public function getUserInfo()
+    {
+        $mobile = input("mobile","");
+        if (Validate::regex($mobile, "^1\d{10}$")) {
+            $info = Db::name("user")->field("id,mobile as name,avatar,loginip as ip")->where("mobile",$mobile)->find();
+            if(!empty($info)){
+                $this->success('success','',$info);
+            }
+        }
+        $this->error("不存在");
+    }
 
     /**
      * 编辑信息
