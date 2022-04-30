@@ -39,11 +39,14 @@ class RewardConfig extends Model
     {
         if($flag){
             $pid = $user_id;
+            $note = "有效值达标";
         }else{            
             $result = Db::name("user")->field("pid,serial_number")->where("id",$user_id)->find();
             $pid = $result['pid'];
+            $serial_number = $result['serial_number'];
+            $note = "会员编号：".$serial_number.'升级,获得直推奖励';
         }
-        $serial_number = $result['serial_number'];
+        
         if($pid){
             $wh = [];
             $wh['user_id']          = $pid;
@@ -99,7 +102,7 @@ class RewardConfig extends Model
                     $log['reward_config_id'] = $info['id'];
                     $log['type']             = 2;
                     $log['number']           = 1;
-                    $log['note']             = "会员编号：".$serial_number.'升级,获得直推奖励';
+                    $log['note']             = $note;
                     $log['createtime']       = time();
                     $log_rs = Db::name("egg_nest_log")->insertGetId($log); 
                     if($hatch_id && $log_rs){
