@@ -349,6 +349,8 @@ class Index extends Api
                             }
                         }
                     }
+                    // 直推奖励
+                    \app\admin\model\egg\RewardConfig::getAward($this->auth->id);
                 }
             }
         }
