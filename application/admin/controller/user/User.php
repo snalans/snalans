@@ -347,7 +347,7 @@ class User extends Backend
                 $this->success('success','',$info);
             }
         }
-        $this->error("不存在");
+        $this->error("用户不存在");
     }
 
     /**

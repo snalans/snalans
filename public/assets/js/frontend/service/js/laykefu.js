@@ -140,9 +140,12 @@ $(function () {
             type:'post',
             data:{"mobile":mobile},
             dataType:'json',
-            success:function(data)
-            {
-                addUser(data.data)
+            success:function(data){
+                if(data.code == 1){
+                    addUser(data.data)
+                }else{
+                    layer.msg(data.msg)
+                }
             }
         })
     })
