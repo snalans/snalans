@@ -133,8 +133,6 @@ class Attestation extends Backend
                                 $userLevelConfig->update_vip($value['ancestral_id']);
                             }
                         }
-                        // 直推奖励
-                        \app\admin\model\egg\RewardConfig::getAward($row['user_id']);
                     }
                     $result = $row->allowField(true)->save($params);
                     Db::commit();
@@ -149,6 +147,10 @@ class Attestation extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
+                    if($params['is_attestation'] == 1){                        
+                        // 直推奖励
+                        \app\admin\model\egg\RewardConfig::getAward($row['user_id']);
+                    }
                     $this->success();
                 } else {
                     $this->error(__('No rows were updated'));
