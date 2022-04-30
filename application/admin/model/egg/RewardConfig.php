@@ -33,12 +33,16 @@ class RewardConfig extends Model
     
 
     /*
-     * 直推奖励
+     * 直推奖励 flag true:自己  false:上级
      */
-    public static function getAward($user_id=0)
+    public static function getAward($user_id=0,$flag=false)
     {
-        $result = Db::name("user")->field("pid,serial_number")->where("id",$user_id)->find();
-        $pid = $result['pid'];
+        if($flag){
+            $pid = $user_id;
+        }else{            
+            $result = Db::name("user")->field("pid,serial_number")->where("id",$user_id)->find();
+            $pid = $result['pid'];
+        }
         $serial_number = $result['serial_number'];
         if($pid){
             $wh = [];
