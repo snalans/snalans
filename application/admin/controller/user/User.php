@@ -20,7 +20,7 @@ class User extends Backend
 
     protected $relationSearch = true;
     protected $searchFields = 'id,username,mobile';
-    protected $noNeedLogin = ['getUserInfo'];
+    protected $noNeedRight = '*';
 
     /**
      * @var \app\admin\model\User

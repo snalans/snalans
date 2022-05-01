@@ -115,7 +115,7 @@ class Index extends Api
         if(!empty($is_hatch)){
             $this->error("不要频繁点击!");
         }
-        Cache::set("hatch_".$this->auth->id,1,2); 
+        Cache::set("hatch_".$this->auth->id,1,1); 
 
         $wh = [];
         $wh['id']       = $egg_hatch_id;
@@ -256,7 +256,7 @@ class Index extends Api
                         $inc_log = Db::name("egg_log")->insert(['user_id'=>$pid,'kind_id'=>$kind_id,'type'=>0,'number'=>$add_num,'before'=>$before,'after'=>($before+$add_num),'note'=>$note,'createtime'=>time()]);
                         if($inc_rs && $inc_log){
                             Db::commit();
-                            Log::record('喂养发放成功。'.$note,'reward');
+                            // Log::record('喂养发放成功。'.$note,'reward');
                         }else{
                             Db::rollback();
                             Log::record('喂养发放失败。'.$note,'reward');
