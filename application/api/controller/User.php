@@ -137,7 +137,7 @@ class User extends Api
         if (!$account || !$password) {
             $this->error(__('Invalid parameters'));
         }  
-        
+
         $pr_num = Cache::get($account)?Cache::get($account):1;
         if(!empty($pr_num) && $pr_num > 5){
             $this->error("今日密码次数超限24小时候后再试");
@@ -149,15 +149,7 @@ class User extends Api
                 $this->error("验证码错误");
             }
         }
-        $wh = [];
-        $wh['id'] = ['>',308];
-        $wh['loginip'] = $ip;
-        $wh['logintime'] = ['>=',strtotime(date("Y-m-d"))];
-        $num = Db::name("user")->where($wh)->count();
-        if($num > 5){
-            $this->error("登录异常,请稍后重试");
-        }
-
+        
         $flag = $this->changePwd($account);
         if($flag){
             $this->error("您的账号登录异常请修改密码重新登陆");
