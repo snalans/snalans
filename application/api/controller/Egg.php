@@ -236,6 +236,10 @@ class Egg extends Api
             }
         }
 
+        if (empty($this->auth->paypwd)) {
+            $this->error('请先前往个人中心设置支付密码!');
+        }
+
         $egg_kind_info = Db::name("egg_kind")
             ->field("name,rate_config")
             ->where('id',$kind_id)
@@ -398,10 +402,10 @@ class Egg extends Api
             $this->error('支付密码错误');
         }
 
+        $v_user = new \app\api\controller\User;
+        $v_user->validSecret($google_code,$this->auth->id);
         //出售单数
         if($user_id > 308){            
-            $v_user = new \app\api\controller\User;
-            $v_user->validSecret($google_code,$this->auth->id);
             $where = [];
             $where["sell_user_id"]  = $user_id;
             $where["status"]        = ['in',[0,2,3]];

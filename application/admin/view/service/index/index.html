@@ -137,6 +137,14 @@
 转接提示层 -->
 
 <style type="text/css">
+.layui-layout-admin .layui-side{
+    width: 220px;
+    overflow: hidden;
+}
+.layui-side-scroll{
+    overflow: hidden;
+    height: 95%;
+}
 #user_list{
     overflow-y: scroll;
     height: 90%;
@@ -145,6 +153,12 @@ i.layui-icon.close {
     float: left;
     padding-top: 20px;
 }    
+.layui-body{
+    left: 220px;
+}
+.layui-badge{
+    margin-left: 12px !important;
+}
 </style>
 <script>
 var uinfo = {$uinfo};
