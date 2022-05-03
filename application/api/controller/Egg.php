@@ -237,7 +237,7 @@ class Egg extends Api
         }
 
         if (empty($this->auth->paypwd)) {
-            $this->error('请先前往个人中心设置支付密码!');
+            $this->error('请前往个人中心右上角设置支付密码!');
         }
 
         $egg_kind_info = Db::name("egg_kind")
