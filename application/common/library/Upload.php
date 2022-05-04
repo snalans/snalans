@@ -356,7 +356,6 @@ class Upload
             if(isset($config['BucketId']))
             {
                 $this->getBackblazeb2();
-                exit;
                 $client = new Client($config['accountId'],$config['applicationKey']);           
                 $arr_name = explode(".",$this->fileInfo['name']);
                 $b2_filename = "/".date("Ymd")."/".md5(current($arr_name).time()).".".end($arr_name);
