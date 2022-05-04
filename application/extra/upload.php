@@ -39,7 +39,7 @@ return [
      */
     'HostName'       => 'https://oss.eggloop.co',
     'BucketName'     => 'fram-EGGsovVLOop',
-    'BucketId'       => '3d5fef290be30f3275f70317',
+    'BucketId'       => '',//'3d5fef290be30f3275f70317',
     'accountId'      => 'dff9b3f25737',
     'applicationKey' => '004db0df7f19ad41e1f4e996b6d3cca82eda5eb34c',
 ];
