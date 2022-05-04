@@ -69,7 +69,7 @@ class Hsms
         }else if($event=='register'){                
             $log_msg .= '您申请注册会员，验证码：'.$code.'。请不要把验证码泄漏给其他人，如非本人请勿操作。 ';
         }else if($event=='secret'){                
-            $log_msg .= '您申请绑定谷歌验证,验证码：'.$code.'。请不要把验证码泄漏给其他人,如非本人请勿操作。 ';
+            $log_msg .= '您申请绑定谷歌验证器,验证码：'.$code.'。请不要把验证码泄漏给其他人,如非本人请勿操作。 ';
         }else if($event=='virtual'){                
             $log_msg .= '你申请的（话费/油卡）充值审核通过，以为你自动充值';
         }else if($event=='order'){

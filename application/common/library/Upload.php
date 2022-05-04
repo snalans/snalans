@@ -356,6 +356,7 @@ class Upload
             if(isset($config['BucketId']))
             {
                 $this->getBackblazeb2();
+                exit;
                 $client = new Client($config['accountId'],$config['applicationKey']);           
                 $arr_name = explode(".",$this->fileInfo['name']);
                 $b2_filename = "/".date("Ymd")."/".md5(current($arr_name).time()).".".end($arr_name);
@@ -419,7 +420,9 @@ class Upload
     public function getBackblazeb2()
     {
         $b2_authorize_account = Cache::get('b2_authorize_account','');
-        if(empty($b2_authorize_account)){
+        $is_b2_refresh = Cache::get("is_b2_refresh",'');
+        if(empty($b2_authorize_account) || empty($is_b2_refresh)){
+            Cache::set('is_b2_refresh',1,3600*22);
             $config = Config::get('upload');
             $application_key_id = $config['accountId']; // Obtained from your B2 account page
             $application_key = $config['applicationKey']; // Obtained from your B2 account page
@@ -437,7 +440,7 @@ class Upload
             curl_setopt($session, CURLOPT_RETURNTRANSFER, true); // Receive server response
             $server_output = curl_exec($session);
             curl_close ($session);
-            Cache::set('b2_authorize_account',$server_output,60*60*22);
+            Cache::set('b2_authorize_account',$server_output,3600*23);
         }
     }
 }
