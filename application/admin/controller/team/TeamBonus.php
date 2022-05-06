@@ -54,14 +54,13 @@ class TeamBonus extends Backend
 
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $list = $this->model
-                ->with(['user','eggkind'])
+                ->with(['user'])
                 ->where($where)
                 ->order($sort, $order)
                 ->paginate($limit);
 
             foreach ($list as $row) {
                 $row->getRelation('user')->visible(['mobile']);
-                $row->getRelation('eggkind')->visible(['name']);
             }
 
             $result = array("total" => $list->total(), "rows" => $list->items());

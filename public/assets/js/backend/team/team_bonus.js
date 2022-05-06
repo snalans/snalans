@@ -27,7 +27,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'total_number', title: __('Total_number'),operate:false},
                         //{field: 'user_id', title: __('User_id')},
                         {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
-                        {field: 'eggkind.name', title: __('Eggkind.name'), operate: 'LIKE'},
+                        {field: 'kind_id', title: "蛋名称", formatter:Table.api.formatter.normal, searchList: {1: '白蛋', 2: '铜蛋', 3: '银蛋', 4: '金蛋', 5: '彩蛋'}},
                         {field: 'last_time', title: __('Last_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {field: 'level', title: __('Level'),operate:false},
                         {field: 'score', title: __('Score'),operate:false},
