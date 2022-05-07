@@ -10,7 +10,7 @@ return [
     'Total category'          => '总分类数',
     'Total admin'             => '总管理员数',
     'Today user signup'       => '今日注册',
-    'Today user login'        => '今日登录',
+    'Today user login'        => '今日活跃',
     'Today order'             => '今日订单',
     'Unsettle order'          => '未处理订单',
     'Three dnu'               => '三日新增',
