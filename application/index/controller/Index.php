@@ -12,7 +12,7 @@ class Index extends Frontend
     protected $layout = '';
 
     public function index()
-    {
+    { 
         return $this->view->fetch();
     }
 
