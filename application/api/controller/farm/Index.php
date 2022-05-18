@@ -71,7 +71,7 @@ class Index extends Api
                     ->select();
         if(!empty($nest_list)){  
             foreach ($nest_list as $key => $value) {
-                $surplus = "";
+                $surplus = 0;
                 if($value['status']==0){
                     if($value['createtime'] >= $value['new_time'] && $value['add_num'] > 0){
                         $value['raw_cycle'] = $value['raw_cycle']+$value['add_num'];
