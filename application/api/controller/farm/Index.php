@@ -83,7 +83,7 @@ class Index extends Api
                     // $surplus = $date."天".($hours>0?$hours:0)."小时";
                     // $hours = date("H:i:s",time()-$value['uptime']);
                     // $surplus = $date."天".$hours;
-                    $seconds = $date*3600*24 + time()-$value['uptime'];
+                    $seconds = $date*3600*24 - (time()-$value['uptime']);
                 }
                 $nest_list[$key]['surplus'] = $surplus;
                 if($value['is_reap'] == 1){
