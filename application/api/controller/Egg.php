@@ -432,9 +432,10 @@ class Egg extends Api
         $egg_where['kind_id'] = $order['kind_id'];
         $egg_num = Db::name("egg")->where($egg_where)->value('sum(number-freezing)');
 
+        $lock_num = Cache::get("locking_".$user_id."_".$order['kind_id'],0);
         //蛋数量不够
         $total_egg = $order['number'] + $order['rate'];
-        if($total_egg>$egg_num){
+        if($total_egg>($egg_num-$lock_num)){
             $this->error("您的可交易蛋资产不足".$total_egg.'个！');
         }
 
@@ -642,11 +643,12 @@ class Egg extends Api
 
 
             if ($re == false || $add_rs == false ||  $log_add == false ) {
-                DB::rollback();
+                DB::rollback();                
                 $this->error("确认支付失败");
             } else {
                 //通知买家
                 \app\common\library\Hsms::send($order['buy_mobile'], '','order');
+                Cache::set("locking_".$order['buy_user_id']."_".$order['kind_id'],$order['number'],3600*12);
                 DB::commit();
             }
         }//end try
