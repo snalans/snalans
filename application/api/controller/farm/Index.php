@@ -16,7 +16,7 @@ class Index extends Api
 {
     protected $noNeedLogin = [];
     protected $noNeedRight = '*';
-    public    $alldate = 3600*24;   //签到周期
+    public    $alldate = 5;   //签到周期
 
     public function _initialize()
     {
@@ -72,18 +72,14 @@ class Index extends Api
         if(!empty($nest_list)){  
             foreach ($nest_list as $key => $value) {
                 $surplus = "";
-                $seconds = 0;
                 if($value['status']==0){
                     if($value['createtime'] >= $value['new_time'] && $value['add_num'] > 0){
                         $value['raw_cycle'] = $value['raw_cycle']+$value['add_num'];
                         $value['grow_cycle'] = $value['hatch_cycle']+$value['raw_cycle']*$value['max'];
                     }
                     $date = $value['grow_cycle'] - $value['hatch_num'];    
-                    // $hours = 24-intval((time()-$value['uptime'])/3600); 
-                    // $surplus = $date."天".($hours>0?$hours:0)."小时";
-                    // $hours = date("H:i:s",time()-$value['uptime']);
-                    // $surplus = $date."天".$hours;
-                    $seconds = $date*3600*24 - (time()-$value['uptime']);
+                    // $hours = 24-intval((time()-$value['uptime'])/3600);
+                    $surplus = $date * 3600 *24;
                 }
                 $nest_list[$key]['surplus'] = $surplus;
                 if($value['is_reap'] == 1){
@@ -92,7 +88,7 @@ class Index extends Api
                 if($value['shape'] == 1){
                     $nest_list[$key]['shape'] = time() > ($value['uptime']+$this->alldate)?0:2;
                 }
-                // $seconds = $value['createtime'] + $this->alldate - time();
+                $seconds = $value['uptime'] + $this->alldate - time();
                 $nest_list[$key]['seconds'] = $seconds<=0 ? 0 : $seconds;
             }
         }
