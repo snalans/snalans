@@ -16,7 +16,7 @@ class Index extends Api
 {
     protected $noNeedLogin = [];
     protected $noNeedRight = '*';
-    public    $alldate = 8;   //签到周期
+    public    $alldate = 5;   //签到周期
 
     public function _initialize()
     {
@@ -190,8 +190,7 @@ class Index extends Api
                         $data['status']     = 1;
                         $flag = true;
                     }
-                    echo $data['hatch_num']."====".$result['raw_cycle'];
-                    if($data['hatch_num'] > $result['hatch_cycle'] && ($data['hatch_num']-$result['hatch_cycle'])%$result['raw_cycle'] == 0){
+                    if($egg['hatch_num'] > $result['hatch_cycle'] && ($egg['hatch_num']-$result['hatch_cycle'])%$result['raw_cycle'] == 0){
                         $wh = [];
                         $wh['user_id']      = $this->auth->id;
                         $wh['type']         = 0;
