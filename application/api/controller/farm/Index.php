@@ -16,7 +16,7 @@ class Index extends Api
 {
     protected $noNeedLogin = [];
     protected $noNeedRight = '*';
-    public    $alldate = 20;   //签到周期
+    public    $alldate = 10;   //签到周期
 
     public function _initialize()
     {
@@ -189,6 +189,8 @@ class Index extends Api
                         $data['is_reap']    = 0;
                         $data['status']     = 1;
                         $flag = true;
+                    }
+                    if($result['raw_cycle'] == $data['hatch_num']){
                         $wh = [];
                         $wh['user_id']      = $this->auth->id;
                         $wh['type']         = 0;

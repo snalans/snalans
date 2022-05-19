@@ -14,7 +14,6 @@ class Index extends Frontend
 
     public function index()
     { 
-        echo floor(1.9145);exit;
         return $this->view->fetch();
     }
 
