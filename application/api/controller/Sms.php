@@ -50,7 +50,7 @@ class Sms extends Api
         }
         if ($event) {
             $userinfo = User::getByMobile($mobile);
-            if($userinfo->status != 'normal'){
+            if(!empty($userinfo) && $userinfo->status != 'normal'){
                 $this->error('账户已被锁定，无法发送!');
             }
             if ($event == 'register' && $userinfo) {
@@ -65,7 +65,7 @@ class Sms extends Api
                 }else if($this->auth->mobile != $mobile){
                     $this->error(__('请使用账户绑定的手机号'));
                 }                
-            } elseif (in_array($event, ['changepwd', 'resetpwd']) && !$userinfo) {
+            } elseif (in_array($event, ['changepwd', 'resetpwd','secret']) && !$userinfo) {
                 //未注册
                 $this->error(__('未注册'));
             }
