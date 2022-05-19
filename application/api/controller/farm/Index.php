@@ -191,7 +191,7 @@ class Index extends Api
                         $flag = true;
                     }
                     echo $data['hatch_num']."====".$result['raw_cycle'];
-                    if($data['hatch_num']%$result['raw_cycle'] == 0){
+                    if($data['hatch_num'] > $result['hatch_cycle'] && ($data['hatch_num']-$result['hatch_cycle'])%$result['raw_cycle'] == 0){
                         $wh = [];
                         $wh['user_id']      = $this->auth->id;
                         $wh['type']         = 0;
