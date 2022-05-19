@@ -6,6 +6,7 @@ use app\common\controller\Api;
 use app\common\library\Hsms as Smslib;
 use app\common\model\User;
 use think\Hook;
+use think\Log;
 
 /**
  * 手机短信接口
@@ -21,7 +22,7 @@ class Sms extends Api
      *
      * @ApiMethod (POST)
      * @ApiParams   (name="mobile", type="string", description="手机号")
-     * @ApiParams   (name="event", type="string", description="事件名称 默认注册：register 修改登录密码： resetpwd 修改支付密码： resetpay 绑定谷歌验证器：secret")
+     * @ApiParams   (name="event", type="string", description="事件名称 默认注册：register 修改登录密码： resetpwd 修改支付密码： resetpay")
      */
     public function send()
     {
@@ -31,6 +32,7 @@ class Sms extends Api
         $mobile = $this->request->post("mobile");
         $event = $this->request->post("event");
         $event = $event ? $event : 'register';
+        // Log::write($mobile." >> send".json_encode(input()),'sms');
 
         if (!$mobile || !\think\Validate::regex($mobile, "^1\d{10}$")) {
             $this->error(__('手机号不正确'));
@@ -40,7 +42,7 @@ class Sms extends Api
             $this->error(__('发送频繁'));
         }
         $wh = [];
-        $wh['event'] = $event;
+        // $wh['event'] = $event;
         $wh['mobile'] = $mobile;
         $ipSendTotal = \app\common\model\Sms::where($wh)->whereTime('createtime', '-1 day')->count();
         if ($ipSendTotal >= 5) {
@@ -48,6 +50,9 @@ class Sms extends Api
         }
         if ($event) {
             $userinfo = User::getByMobile($mobile);
+            if($userinfo->status != 'normal'){
+                $this->error('账户已被锁定，无法发送!');
+            }
             if ($event == 'register' && $userinfo) {
                 //已被注册
                 $this->error(__('已被注册'));
@@ -60,7 +65,7 @@ class Sms extends Api
                 }else if($this->auth->mobile != $mobile){
                     $this->error(__('请使用账户绑定的手机号'));
                 }                
-            }   elseif (in_array($event, ['changepwd', 'resetpwd']) && !$userinfo) {
+            } elseif (in_array($event, ['changepwd', 'resetpwd']) && !$userinfo) {
                 //未注册
                 $this->error(__('未注册'));
             }
@@ -72,7 +77,7 @@ class Sms extends Api
         if ($ret) {
             $this->success(__('发送成功'));
         } else {
-            $this->error(__('发送失败，请检查短信配置是否正确'));
+            $this->error(__('发送失败，请稍后重试'));
         }
     }
 
