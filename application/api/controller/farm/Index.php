@@ -197,7 +197,8 @@ class Index extends Api
                         $wh['type']         = 0;
                         $wh['hatch_id']     = $egg['id'];
                         $wh['createtime']   = ['>',$egg['createtime']];
-                        $get_number = Db::name("egg_log")->where($wh)->order("id desc")->limit($result['raw_cycle']-1)->sum("number");
+                        $arr_number = Db::name("egg_log")->where($wh)->order("id desc")->limit($result['raw_cycle']-1)->column("number");
+                        $get_number = array_sum($arr_number);
                         $add_number = 1 - $get_number;
                     }
                     Db::startTrans();    
