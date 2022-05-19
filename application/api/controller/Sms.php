@@ -53,6 +53,16 @@ class Sms extends Api
             if(!empty($userinfo) && $userinfo->status != 'normal'){
                 $this->error('账户已被锁定，无法发送!');
             }
+            if(empty($userinfo)){
+                $ip = request()->ip();
+                $wh = [];
+                $wh['ip'] = $ip;
+                $wh['mobile'] = $mobile;
+                $num = \app\common\model\Sms::where($wh)->count();
+                if($num >= 10){
+                    $this->success('发送成功');
+                }                
+            }
             if ($event == 'register' && $userinfo) {
                 //已被注册
                 $this->error(__('已被注册'));
