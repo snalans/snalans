@@ -270,6 +270,8 @@ class User extends Backend
                                 $userLevelConfig->update_vip($value['ancestral_id']);
                             }
                         }
+                    }else if($params['status'] == 'normal'){
+                        Db::name("user")->where("id",$ids)->update(['updatetime'=>time()]);
                     }
                     $this->success();
                 } else {
