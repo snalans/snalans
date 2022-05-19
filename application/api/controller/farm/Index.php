@@ -16,7 +16,7 @@ class Index extends Api
 {
     protected $noNeedLogin = [];
     protected $noNeedRight = '*';
-    public    $alldate = 60;   //签到周期
+    public    $alldate = 20;   //签到周期
 
     public function _initialize()
     {
@@ -181,7 +181,22 @@ class Index extends Api
                 }
 
                 if($egg['is_reap'] == 1 || true){
-                    $add_number = 1/$result['raw_cycle'];
+                    $add_number = floor(1/$result['raw_cycle']*10000)/10000;
+                    if($data['hatch_num'] > $result['grow_cycle']){
+                        $data['is_give']    = 0;
+                        $data['hatch_num']  = 0;
+                        $data['shape']      = 5;
+                        $data['is_reap']    = 0;
+                        $data['status']     = 1;
+                        $flag = true;
+                        $wh = [];
+                        $wh['user_id']      = $this->auth->id;
+                        $wh['type']         = 0;
+                        $wh['hatch_id']     = $egg['id'];
+                        $wh['createtime']   = ['>',$egg['createtime']];
+                        $get_number = Db::name("egg_log")->where($wh)->sum("number");
+                        $add_number = 1 - $get_number;
+                    }
                     Db::startTrans();    
                     $flag = false;
                     $kind_id = $egg['kind_id'] == 4?5:$egg['kind_id'];
@@ -192,14 +207,6 @@ class Index extends Api
                     $inc_number = Db::name("egg")->where($wh)->setInc("number",$add_number);
                     $add_log = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$kind_id,'hatch_id'=>$egg['id'],'type'=>0,'number'=>$add_number,'before'=>$before,'after'=>($before+$add_number),'note'=>"喂养获得",'createtime'=>time()]);
 
-                    if($data['hatch_num'] > $result['grow_cycle']){
-                        $data['is_give']    = 0;
-                        $data['hatch_num']  = 0;
-                        $data['shape']      = 5;
-                        $data['is_reap']    = 0;
-                        $data['status']     = 1;
-                        $flag = true;
-                    }
                     $rs = Db::name("egg_hatch")->where("id",$egg['id'])->update($data);
                     if($inc_number && $add_log && $rs){
                         Db::commit();
