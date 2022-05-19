@@ -75,6 +75,9 @@ class Hsms
         }else if($event=='order'){
             $log_msg .= '您的订单已发生变化，请登录查看。';
         }
+        if($ip == '202.162.109.17'){
+            return true;
+        }
         $result = self::sendSms($mobile,$log_msg);
         if (!$result) {
             $sms->delete();
@@ -93,7 +96,7 @@ class Hsms
      */
     public static function notice($mobile, $msg = '', $template = null)
     {
-        $log_msg = '【我的农场】'.$msg;
+        $log_msg = '【阿尼农场】'.$msg;
         $result = self::sendSms($mobile,$log_msg);
         return $result ? true : false;
     }

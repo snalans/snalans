@@ -87,7 +87,7 @@ class Isms
      */
     public static function notice($mobile, $msg = '', $template = null)
     {
-        $log_msg = '【爱运动】'.$msg;
+        $log_msg = $msg;
         $result = self::sendSms($mobile,$log_msg);
         return $result ? true : false;
     }
