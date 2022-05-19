@@ -127,6 +127,12 @@ class Index extends Api
         // $userLevelConfig = new \app\common\model\UserLevelConfig();
         // $userLevelConfig->update_vip($this->auth->id);
 
+        // 每天更新一次访问时间
+        if(isset($this->auth->id) && $this->auth->updatetime<strtotime(date("Y-m-d"))){
+            $user = new \app\common\model\User;
+            $user->save(['updatetime'=>time()],["id"=>$this->auth->id]);
+        }
+
         // 执行加蛋孵化
         if($result['status']==1){
             $wh = [];
