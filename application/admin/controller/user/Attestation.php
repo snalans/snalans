@@ -91,6 +91,10 @@ class Attestation extends Backend
         if ($this->request->isPost()) {
             $params = $this->request->post("row/a");
             if ($params) {
+                $is_attachment = Db::name("user")->where("id",$row['user_id'])->value("is_attestation");
+                if($is_attachment != 2){
+                    $this->error("用户认证已被审核!");
+                }
                 $params = $this->preExcludeFields($params);
                 $result = false;
                 Db::startTrans();
@@ -122,7 +126,7 @@ class Attestation extends Backend
                         $add_rs = Db::name("egg")->where($wh)->inc("number",$number)->inc("frozen",$number)->update();
                         $add_log = \app\admin\model\egg\Log::saveLog($row['user_id'],1,0,'',$number,$before,($before+$number),"赠送体验蛋");
                         $userLevelConfig = new \app\common\model\UserLevelConfig();
-                        $userLevelConfig->update_vip($row['user_id']);
+                        // $userLevelConfig->update_vip($row['user_id']);
                         //上级发放有效值
                         $wh = [];
                         $wh['user_id'] = $row['user_id'];

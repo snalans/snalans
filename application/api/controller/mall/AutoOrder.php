@@ -130,7 +130,7 @@ class AutoOrder extends Api
         $wh['status']         = 'normal';
         $wh['is_attestation'] = 1;
         $wh['updatetime']     = ['<',time()-3600*24*$days];
-        $list = Db::name("user")->field("id,mobile,note")->where($wh)->limit(200)->select();
+        $list = Db::name("user")->field("id,mobile,note")->where($wh)->limit(35)->select();
         if(!empty($list)){
             $userLevelConfig = new \app\common\model\UserLevelConfig();
             foreach ($list as $key => $value) {
