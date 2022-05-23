@@ -116,7 +116,7 @@ class Attestation extends Backend
 
                     $params['note'] = date('Y-m-d H:i').":".$this->auth->username."审核结果：".$note.$row["note"];
 
-                    $rs = Db::name("user")->where("id",$row['user_id'])->update(['is_attestation'=>$params['is_attestation']]);
+                    $rs = Db::name("user")->where("id",$row['user_id'])->update(['updatetime'=>time(),'is_attestation'=>$params['is_attestation']]);
                     if($rs && $params['is_attestation'] == 1){
                         $number = Config::get("site.valid_number");
                         $wh = [];
