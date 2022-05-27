@@ -489,6 +489,9 @@ class Order extends Api
                 $this->error("虚拟商品一单只能购买一件"); 
             }
             if($info['nest_kind_id']>0){
+                if(empty($recharge_account)){
+                    $this->error("请填写转账地址方便审核"); 
+                }
                 $total = Db::name("egg_nest_kind")->where("kind_id",$info['nest_kind_id'])->value("total");
                 $wh = [];
                 $wh['user_id']      = $this->auth->id;
@@ -539,21 +542,27 @@ class Order extends Api
             $data['add_time']           = time();    
             $rs = Db::name("mall_order")->insertGetId($data);
 
-            //扣除蛋
-            $egg_where = [
-                'user_id' => $this->auth->id,
-                'kind_id' => $info['kind_id'],
-                'number'  => ['>=',$total_egg],
-            ];        
-            $add_rs = Db::name("egg")->where($egg_where)->dec('number',$total_egg)->update();
+            if(empty($info['nest_kind_id'])){                
+                //扣除蛋
+                $egg_where = [
+                    'user_id' => $this->auth->id,
+                    'kind_id' => $info['kind_id'],
+                    'number'  => ['>=',$total_egg],
+                ];        
+                $add_rs = Db::name("egg")->where($egg_where)->dec('number',$total_egg)->update();
 
-            //蛋日志
-            $log = \app\admin\model\egg\Log::saveLog($this->auth->id,$info['kind_id'],1,$order_sn,'-'.$sell_egg,$egg_num,($egg_num-$sell_egg),"商城消费");
+                //蛋日志
+                $log = \app\admin\model\egg\Log::saveLog($this->auth->id,$info['kind_id'],1,$order_sn,'-'.$sell_egg,$egg_num,($egg_num-$sell_egg),"商城消费");
 
-            //蛋手续费
-            $log_fee = true;
-            if($rate > 0){
-                $log_fee = \app\admin\model\egg\Log::saveLog($this->auth->id,$info['kind_id'],9,$order_sn,'-'.$rate,($egg_num-$sell_egg),($egg_num-$total_egg),"商城消费手续费");
+                //蛋手续费
+                $log_fee = true;
+                if($rate > 0){
+                    $log_fee = \app\admin\model\egg\Log::saveLog($this->auth->id,$info['kind_id'],9,$order_sn,'-'.$rate,($egg_num-$sell_egg),($egg_num-$total_egg),"商城消费手续费");
+                }
+            }else{
+                $add_rs     = true;
+                $log        = true;
+                $log_fee    = true;
             }
 
             $wh = [];
@@ -574,7 +583,11 @@ class Order extends Api
             $this->error($e->getMessage());
         }   
         if($info['is_virtual'] == 0){
-            $this->success('购买成功,等待发货');
+            if(empty($info['nest_kind_id'])){
+                $this->success('购买成功,等待发货');
+            }else{
+                $this->success('购买成功,请尽快充值,等待审核');
+            }
         }else{  
             $this->success('申请成功,等待审核');
         }
