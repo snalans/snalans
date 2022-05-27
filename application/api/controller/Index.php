@@ -29,7 +29,7 @@ class Index extends Api
      * @ApiReturnParams   (name="apk_version", type="string", description="apk包版本号")
      * @ApiReturnParams   (name="upgrade", type="string", description="是否强制升级 0=否 1=是")
      * @ApiReturnParams   (name="tips", type="string", description="更新提示语")
-     * @ApiReturnParams   (name="is_attestation", type="int", description="是否需要认证 1=是 0=否")
+     * @ApiReturnParams   (name="re_attestation", type="int", description="是否需要认证 1=是 0=否")
      */
     public function init()
     {
@@ -46,10 +46,10 @@ class Index extends Api
         $data['apk_version']    = Config::get("site.apk_version");
         $data['upgrade']        = Config::get("site.upgrade");
         $data['tips']           = Config::get("site.tips");
-        $data['is_attestation'] = 0;
+        $data['re_attestation'] = 0;
         $time = Config::get("site.atte_time",0);
         if($this->auth->updatetime < strtotime($time) && $this->auth->is_attestation == 1){
-            $data['is_attestation'] = 1;
+            $data['re_attestation'] = 1;
         }
         $this->success('', $data);
     }

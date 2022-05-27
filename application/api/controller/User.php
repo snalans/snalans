@@ -49,6 +49,7 @@ class User extends Api
      * @ApiReturnParams   (name="buy_num", type="string", description="买到数量")
      * @ApiReturnParams   (name="sell_num", type="string", description="卖出数量")
      * @ApiReturnParams   (name="is_google_secret", type="string", description="是否绑定谷歌验证 1是 0否")
+     * @ApiReturnParams   (name="re_attestation", type="int", description="是否二次验证 1=是 0=否")
      */
     public function index()
     {
@@ -96,6 +97,11 @@ class User extends Api
         $result['sell_num'] = Db::name("mall_order")->cache(true,300)->where($wh)->count();
         $google_secret = Db::name("user_secret")->cache(true)->where("user_id",$this->auth->id)->find();
         $result['is_google_secret'] = empty($google_secret)?0:1;
+        $result['re_attestation'] = 0;
+        $time = Config::get("site.atte_time",0);
+        if($this->auth->updatetime < strtotime($time) && $this->auth->is_attestation == 1){
+            $data['re_attestation'] = 1;
+        }
         $this->success('', $result);
     }
 
