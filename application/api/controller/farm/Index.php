@@ -129,6 +129,15 @@ class Index extends Api
         if(empty($result)){
             $this->error(__('The nest does not exist, please try again'));
         }
+        if($result['is_give'] == 1){
+            $wh = [];
+            $wh['user_id'] = $this->auth->id;
+            $wh['type']    = ['in',[10,11]];
+            $log_type = Db::name("egg_log")->where($wh)->order("createtime desc")->value("type");
+            if($log_type == 11){
+                $this->error("降级之后赠送蛋不能进行孵化或喂养");
+            }
+        }
         // $userLevelConfig = new \app\common\model\UserLevelConfig();
         // $userLevelConfig->update_vip($this->auth->id);
 
