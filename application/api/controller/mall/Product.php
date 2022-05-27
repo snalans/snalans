@@ -121,6 +121,7 @@ class Product extends Api
      * @ApiReturnParams   (name="name", type="string", description="蛋名称")         
      * @ApiReturnParams   (name="stock", type="integer", description="商品库存")    
      * @ApiReturnParams   (name="is_virtual", type="integer", description="是否虚拟商品 0=否 1=是")           
+     * @ApiReturnParams   (name="nest_kind_id", type="integer", description="窝类型ID 0=不是窝")           
      * @ApiReturnParams   (name="content", type="string", description="商品内容")     
      * @ApiReturnParams   (name="add_time", type="string", description="商品发布时间")        
      * @ApiReturnParams   (name="avatar", type="string", description="卖家头像")    
@@ -131,7 +132,7 @@ class Product extends Api
         $id = $this->request->post("id","");
         
         $info = Db::name("mall_product")->alias('p')->cache(true,300)
-                    ->field("p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,p.stock,p.is_virtual,p.content,p.add_time,u.avatar,u.serial_number")
+                    ->field("p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,p.stock,p.is_virtual,p.content,p.add_time,u.avatar,u.serial_number,p.nest_kind_id")
                     ->join("user u","u.id=p.user_id","LEFT")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
                     ->where("p.id",$id)

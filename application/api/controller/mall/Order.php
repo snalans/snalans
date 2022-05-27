@@ -483,10 +483,7 @@ class Order extends Api
             if(empty($address)){
                 $this->error("请选择配送地址");            
             }
-        }else{
-            if(empty($recharge_account)){
-                $this->error("充值账户不能为空"); 
-            }
+        }else{            
             if($number != 1){
                 $this->error("虚拟商品一单只能购买一件"); 
             }
@@ -500,6 +497,8 @@ class Order extends Api
                 if($num >= $total){
                     $this->error("窝数量达上限,无法购买。"); 
                 }
+            }else if(empty($recharge_account)){
+                $this->error("充值账户不能为空"); 
             }
         }
 
