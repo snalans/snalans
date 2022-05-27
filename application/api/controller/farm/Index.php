@@ -135,7 +135,7 @@ class Index extends Api
             $wh['type']    = ['in',[10,11]];
             $log_type = Db::name("egg_log")->where($wh)->order("createtime desc")->value("type");
             if($log_type == 11){
-                $this->error("降级之后赠送蛋不能进行孵化或喂养");
+                $this->error("降级之后赠送的蛋不能进行孵化或喂养");
             }
         }
         // $userLevelConfig = new \app\common\model\UserLevelConfig();
