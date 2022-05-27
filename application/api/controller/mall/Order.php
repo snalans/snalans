@@ -5,6 +5,7 @@ use app\common\controller\Api;
 use think\Validate;
 use think\Config;
 use think\Db;
+use think\Cache;
 
 /**
  * 商城订单接口
