@@ -203,6 +203,7 @@ class Index extends Api
                         $data['is_reap']    = 0;
                         $data['status']     = 1;
                         $flag = true;
+                        \app\admin\model\egg\RewardConfig::decAward($egg['id']);
                     }
                     if($egg['hatch_num'] > $result['hatch_cycle'] && ($egg['hatch_num']-$result['hatch_cycle'])%$result['raw_cycle'] == 0){
                         $wh = [];

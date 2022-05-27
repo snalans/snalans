@@ -68,54 +68,107 @@ class RewardConfig extends Model
             $wh['valid_number'] = ['<=',$valid_number];
             $info = Db::name("egg_reward_config")->where($wh)->order("nest_kind_id","DESC")->find();
             if(!empty($info)){
-                if($info['nest_kind_id']==1){                        
-                    // 已拥有5个白窝直接跳过
-                    $wh = [];
-                    $wh['user_id'] = $pid;
-                    $wh['nest_kind_id'] = 1;
-                    $num = Db::name("egg_hatch")->where($wh)->count();
-                    if($num >= 5){
-                        return false;
-                    }             
-                }
-                if($info['number']>0){  
-                    Db::startTrans();
+                $total = Db::name("egg_nest_kind")->where("kind_id",$info['nest_kind_id'])->value("total");
+                $wh = [];
+                $wh['user_id']      = $pid;
+                $wh['nest_kind_id'] = $info['nest_kind_id'];
+                $wh['is_close']     = 0;
+                $num = Db::name("egg_hatch")->where($wh)->count();
+                if($num >= $total){
+                    return false;
+                }          
+                
                     $wh = [];
                     $wh['user_id']        = $pid;
                     $wh['nest_kind_id']   = $info['nest_kind_id'];
                     $wh['kind_id']        = $info['nest_kind_id'];
-                    $position = Db::name("egg_hatch")->where($wh)->max("position");
-                    $data = [];
-                    $data['user_id']        = $pid;
-                    $data['nest_kind_id']   = $info['nest_kind_id'];
-                    $data['kind_id']        = $info['nest_kind_id'];
-                    $data['status']         = 1;
-                    $data['hatch_num']      = 0;
-                    $data['shape']          = 0;
-                    $data['is_reap']        = 0;
-                    $data['position']       = $position+1;
-                    $data['createtime']     = time();
-                    $hatch_id = Db::name("egg_hatch")->insertGetId($data);   
-                    $log = [];
-                    $log['user_id']          = $pid;
-                    $log['nest_kind_id']     = $info['nest_kind_id'];
-                    $log['reward_config_id'] = $info['id'];
-                    $log['type']             = 2;
-                    $log['number']           = 1;
-                    $log['note']             = $note;
-                    $log['createtime']       = time();
-                    $log_rs = Db::name("egg_nest_log")->insertGetId($log); 
-                    if($hatch_id && $log_rs){
-                        Db::commit();
+                    $wh['is_close']       = 1;
+                    $hinfo = Db::name("egg_hatch")->where($wh)->find();
+                    if(!empty($hinfo)){
+                        $rs = Db::name("user")->where("id",$hinfo['user_id'])->update(['status'=>0]);   
                     }else{
-                        Db::rollback();
+                        Db::startTrans();
+                        $wh = [];
+                        $wh['user_id']        = $pid;
+                        $wh['nest_kind_id']   = $info['nest_kind_id'];
+                        $wh['kind_id']        = $info['nest_kind_id'];
+                        $position = Db::name("egg_hatch")->where($wh)->max("position");
+                        $data = [];
+                        $data['user_id']        = $pid;
+                        $data['nest_kind_id']   = $info['nest_kind_id'];
+                        $data['kind_id']        = $info['nest_kind_id'];
+                        $data['status']         = 1;
+                        $data['hatch_num']      = 0;
+                        $data['shape']          = 0;
+                        $data['is_reap']        = 0;
+                        $data['position']       = $position+1;
+                        $data['createtime']     = time();
+                        $hatch_id = Db::name("egg_hatch")->insertGetId($data);   
+                        $log = [];
+                        $log['user_id']          = $pid;
+                        $log['nest_kind_id']     = $info['nest_kind_id'];
+                        $log['reward_config_id'] = $info['id'];
+                        $log['type']             = 2;
+                        $log['number']           = 1;
+                        $log['note']             = $note;
+                        $log['createtime']       = time();
+                        $log_rs = Db::name("egg_nest_log")->insertGetId($log); 
+                        if($hatch_id && $log_rs){
+                            Db::commit();
+                        }else{
+                            Db::rollback();
+                        }
                     }
-                }
+                
             }
         }
     }
 
+    /*
+     * 未达标直推奖励回收
+     */
+    public static function decAward($hatch_id=0)
+    {
+        $wh = [];
+        $wh['id']       = $hatch_id;
+        $wh['is_buy']   = 0;
+        $hinfo = Db::name("egg_hatch")->where("id",$hatch_id)->find();   
+        if($hinfo['kind_id'] == 1 && $hinfo['position'] <= 3){            
+            return true;
+        }else if($hinfo['kind_id'] == 2 && $hinfo['position'] <= 2){
+            return true;
+        }else if($hinfo['kind_id'] == 3 && $hinfo['position'] <= 1){
+            return true;
+        }
+        $valid_number = Db::name("user")->where("id",$hinfo['user_id'])->value("valid_number");
+        $wh = [];
+        $wh['pid']              = $hinfo['user_id'];
+        $wh['status']           = 'normal';
+        $wh['is_attestation']   = 1;
+        $number = Db::name("user")->where($wh)->count();
 
+        $info = Db::name("egg_reward_config")->where("nest_kind_id",$hinfo['kind_id'])->find();
+        if(!empty($info)){  
+            if($info['number'] > $number || $info['valid_number'] > $valid_number){                
+                Db::startTrans();
+                $rs = Db::name("user")->where("id",$hinfo['user_id'])->update(['status'=>1]);   
+                $log = [];
+                $log['user_id']          = $hinfo['kind_id'];
+                $log['nest_kind_id']     = $info['nest_kind_id'];
+                $log['reward_config_id'] = $info['id'];
+                $log['type']             = 2;
+                $log['number']           = -1;
+                $log['note']             = "未达到条件回收";
+                $log['createtime']       = time();
+                $log_rs = Db::name("egg_nest_log")->insertGetId($log);   
+                if($rs && $log_rs){
+                    Db::commit();
+                }else{
+                    Db::rollback();
+                }
+            }
+        }
+    }
 
 
     public function eggnestkind()
