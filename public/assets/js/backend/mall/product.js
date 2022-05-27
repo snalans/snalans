@@ -60,7 +60,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'cate_id', title: "商品分类", visible: false},
                         {field: 'images', title: __('Images'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.images},
                         {field: 'price', title: __('Price'), operate:false},
-                        {field: 'eggkind.name', title: "蛋类型", operate: false},
+                        {field: 'kind_id', title: "价格单位", formatter: Table.api.formatter.normal, searchList: {0: 'usdt',1: '白蛋',2: '铜蛋',3: '银蛋'}},
                         {field: 'stock', title: __('Stock'), operate: false},
                         {field: 'sell_num', title: __('Sell_num'), operate: false},
                         {field: 'virtual_sales', title: __('Virtual_sales'), operate: false},

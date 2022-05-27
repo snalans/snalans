@@ -3,6 +3,7 @@
 return [
     'User_id'           => '卖家ID',
     'Title'             => '商品名称',
+    'Nest_kind_id'      => '窝类型',
     'Product_cate'      => '商品分类',
     'Images'            => '商品图片',
     'Price'             => '支付价格',

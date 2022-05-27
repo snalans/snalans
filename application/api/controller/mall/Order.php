@@ -490,6 +490,17 @@ class Order extends Api
             if($number != 1){
                 $this->error("虚拟商品一单只能购买一件"); 
             }
+            if($info['nest_kind_id']>0){
+                $total = Db::name("egg_nest_kind")->where("kind_id",$info['nest_kind_id'])->value("total");
+                $wh = [];
+                $wh['user_id']      = $this->auth->id;
+                $wh['nest_kind_id'] = $info['nest_kind_id'];
+                $wh['is_close']     = 0;
+                $num = Db::name("egg_hatch")->where($wh)->count();
+                if($num >= $total){
+                    $this->error("窝数量达上限,无法购买。"); 
+                }
+            }
         }
 
         $auth = new \app\common\library\Auth();

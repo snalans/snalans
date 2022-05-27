@@ -35,7 +35,7 @@
 
         <label class="control-label col-xs-12 col-sm-2">{:__('Kind_id')}:</label>
         <div class="col-xs-6 col-sm-3">
-            <input id="c-kind_id" data-rule="required" data-source="egg/kind/index" class="form-control selectpage" name="row[kind_id]" data-params='{"custom[id]":["in","1,2,3"]}' data-order-by="weigh desc" type="text" value="{$row.kind_id|htmlentities}">
+            <input id="c-kind_id" data-source="egg/kind/index" class="form-control selectpage" name="row[kind_id]" data-params='{"custom[id]":["in","0,1,2,3"]}' data-order-by="weigh desc" type="text" value="{$row.kind_id|htmlentities}" placeholder="默认：usdt">
         </div>
     </div>
     <div class="form-group">
@@ -52,27 +52,27 @@
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Is_virtual')}:</label>
         <div class="col-xs-6 col-sm-3">
-
             <div class="radio">
             <label for="row[is_virtual]-1"><input id="row[is_virtual]-1" name="row[is_virtual]" type="radio" value="1" {in name="$row.is_virtual" value="1"}checked{/in} /> 是</label> 
             <label for="row[is_virtual]-0"><input id="row[is_virtual]-0" name="row[is_virtual]" type="radio" value="0" {in name="$row.is_virtual" value="0"}checked{/in} /> 否</label> 
             </div>
-
         </div>
-        <label class="control-label col-xs-12 col-sm-2">{:__('Weigh')}:</label>
+        <label class="control-label col-xs-12 col-sm-2">{:__('Nest_kind_id')}:</label>
         <div class="col-xs-6 col-sm-3">
-            <input id="c-weigh" class="form-control" name="row[weigh]" type="number" value="{$row.weigh|htmlentities}">
+            <input id="c-nest_kind_id" data-source="egg/nest_kind/index" class="form-control selectpage" name="row[nest_kind_id]" data-params='{"custom[id]":["in","0,1,2,3"]}' data-order-by="weigh desc" type="text" value="{$row.nest_kind_id|htmlentities}" placeholder="虚拟商品窝需要选择">
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Status')}:</label>
         <div class="col-xs-6 col-sm-3">
-
             <div class="radio">
             <label for="row[status]-1"><input id="row[status]-1" name="row[status]" type="radio" value="1" {in name="$row.status" value="1"}checked{/in} /> 上架</label> 
             <label for="row[status]-0"><input id="row[status]-0" name="row[status]" type="radio" value="0" {in name="$row.status" value="0"}checked{/in} /> 下架</label> 
             </div>
-
+        </div>
+        <label class="control-label col-xs-12 col-sm-2">{:__('Weigh')}:</label>
+        <div class="col-xs-6 col-sm-3">
+            <input id="c-weigh" class="form-control" name="row[weigh]" type="number" value="{$row.weigh|htmlentities}">
         </div>
     </div>
     <div class="form-group">

@@ -55,7 +55,7 @@ class Product extends Backend
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
 
             $list = $this->model
-                    ->with(['user','cate','eggkind'])
+                    ->with(['user','cate'])
                     ->where($where)
                     ->where("product.status",">",-1)
                     ->order($sort, $order)
@@ -65,7 +65,6 @@ class Product extends Backend
                 
                 $row->getRelation('user')->visible(['mobile']);
                 $row->getRelation('cate')->visible(['title']);
-                $row->getRelation('eggkind')->visible(['name']);
             }
 
             $result = array("total" => $list->total(), "rows" => $list->items());
