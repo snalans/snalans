@@ -111,6 +111,11 @@ class Index extends Api
             $this->error("账号无效或者未认证");
         }
 
+        $time = Config::get("site.atte_time",0);
+        if($this->auth->updatetime < strtotime($time)){
+            $this->error("不允许操作!");
+        }
+
         $is_hatch = Cache::get("hatch_".$this->auth->id);
         if(!empty($is_hatch)){
             $this->error("不要频繁点击!");
@@ -414,6 +419,12 @@ class Index extends Api
         if(empty($user_id)){
             $this->error("账号无效或者未认证");
         }
+
+        $time = Config::get("site.atte_time",0);
+        if($this->auth->updatetime < strtotime($time)){
+            $this->error("不允许操作!");
+        }
+
         if($user_id == $this->auth->id){
             $this->error("不允许自己给自己转账");
         }

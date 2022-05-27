@@ -1027,4 +1027,25 @@ class User extends Api
             }
         }
     }
+
+    /**
+     * 重新验证用户信息
+     * @ApiWeigh   (15)
+     * @ApiMethod (POST)
+     * @ApiParams   (name="name", type="string",required=true, description="姓名")
+     * @ApiParams   (name="idcard", type="string",required=true, description="身份证")
+     */
+    public function attestation()
+    {
+        $name       = input("name",'');
+        $idcard     = input("idcard",'');
+        $info = Db::name("egg_attestation")->field("name,id_card")->where("user_id",$this->auth->id)->find();
+        if($info['name'] == $name && $info['id_card'] == $idcard){
+            $rs = Db::name("user")->where("id",$this->auth->id)->update(['updatetime'=>time()]);
+            if($rs !== false){
+                $this->success("验证成功!");
+            }
+        }
+        $this->error("验证失败,请重试!");
+    }
 }

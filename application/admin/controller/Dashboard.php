@@ -110,7 +110,7 @@ class Dashboard extends Backend
                     ->join("user u","u.id=e.user_id","LEFT")
                     ->where(['e.kind_id'=>1,'u.status'=>'normal'])
                     ->order(['e.number'=>'desc'])
-                    ->limit(100)
+                    ->limit(200)
                     ->select();
         $wh['e.kind_id']    = 2;
         $egglist2 = Db::name("egg")->alias("e")
@@ -118,7 +118,7 @@ class Dashboard extends Backend
                     ->join("user u","u.id=e.user_id","LEFT")
                     ->where($wh)
                     ->order(['e.number'=>'desc'])
-                    ->limit(100)
+                    ->limit(200)
                     ->select();
         $wh['e.kind_id']    = 3;
         $egglist3 = Db::name("egg")->alias("e")
@@ -126,7 +126,7 @@ class Dashboard extends Backend
                     ->join("user u","u.id=e.user_id","LEFT")
                     ->where($wh)
                     ->order(['e.number'=>'desc'])
-                    ->limit(100)
+                    ->limit(200)
                     ->select();
         $wh['e.kind_id']    = 4;
         $egglist4 = Db::name("egg")->alias("e")

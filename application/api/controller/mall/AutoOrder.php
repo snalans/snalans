@@ -130,19 +130,22 @@ class AutoOrder extends Api
         $wh['status']         = 'normal';
         $wh['is_attestation'] = 1;
         $wh['updatetime']     = ['<',time()-3600*24*$days];
-        $list = Db::name("user")->field("id,mobile,note")->where($wh)->limit(35)->select();
+        $list = Db::name("user")->field("id,mobile,note")->where($wh)->limit(5)->select();
         if(!empty($list)){
+            print_r($list);
             $userLevelConfig = new \app\common\model\UserLevelConfig();
             foreach ($list as $key => $value) {
                 $rs = Db::name("user")->where("id",$value['id'])->update(['status'=>'hidden','note'=>"太久不玩拉黑 ".$value['note']]);
                 if($rs){                    
-                    $wh = [];
-                    $wh['user_id'] = $value['id'];
-                    $wh['level']   = ['<=',3];
-                    $plist = Db::name("membership_chain")->where($wh)->order("level","ASC")->select();
+                    $whs = [];
+                    $whs['user_id'] = $value['id'];
+                    $whs['level']   = ['<=',3];
+                    $plist = Db::name("membership_chain")->where($whs)->order("level","ASC")->select();
+                    print_r($plist);
                     if(!empty($plist)){
-                        foreach ($plist as $key => $value) {                         
-                            $userLevelConfig->update_vip($value['ancestral_id']);
+                        foreach ($plist as $k => $val) {                         
+                            $rss = $userLevelConfig->update_vip($val['ancestral_id']);
+                            var_dump($rss);
                         }
                     }
                 }

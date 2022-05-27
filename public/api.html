@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
-        <title>农场</title>
+        <title>阿尼农场</title>
 
         <!-- Bootstrap Core CSS -->
         <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -123,7 +123,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="./" target="_blank">农场</a>
+                    <a class="navbar-brand" href="./" target="_blank">阿尼农场</a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <form class="navbar-form navbar-right">
@@ -335,6 +335,10 @@
                                             </div>
                                         <a href="#会员接口" class="list-group-item" data-toggle="collapse" data-parent="#sidebar">会员接口  <i class="fa fa-caret-down"></i></a>
                     <div class="child collapse" id="会员接口">
+                                                <a href="javascript:;" data-id="77" class="list-group-item">重新验证用户信息                            <span class="tag">
+                                                                    <span class="label label-success pull-right noneedlogin">登</span>
+                                                            </span>
+                        </a>
                                                 <a href="javascript:;" data-id="74" class="list-group-item">谷歌是否绑定过                            <span class="tag">
                                                                     <span class="label label-success pull-right noneedlogin">登</span>
                                                             </span>
@@ -355,10 +359,6 @@
                                                             </span>
                         </a>
                                                 <a href="javascript:;" data-id="61" class="list-group-item">注册会员                            <span class="tag">
-                                                            </span>
-                        </a>
-                                                <a href="javascript:;" data-id="63" class="list-group-item">修改会员个人信息                            <span class="tag">
-                                                                    <span class="label label-success pull-right noneedlogin">登</span>
                                                             </span>
                         </a>
                                                 <a href="javascript:;" data-id="64" class="list-group-item">修改手机号                            <span class="tag">
@@ -392,6 +392,10 @@
                                                             </span>
                         </a>
                                                 <a href="javascript:;" data-id="73" class="list-group-item">moveMobile                            <span class="tag">
+                                                                    <span class="label label-success pull-right noneedlogin">登</span>
+                                                            </span>
+                        </a>
+                                                <a href="javascript:;" data-id="63" class="list-group-item">修改会员个人信息                            <span class="tag">
                                                                     <span class="label label-success pull-right noneedlogin">登</span>
                                                             </span>
                         </a>
@@ -4648,7 +4652,7 @@
                                                         <td>event</td>
                                                         <td>string</td>
                                                         <td>是</td>
-                                                        <td>事件名称 默认注册：register 修改登录密码： resetpwd 修改支付密码： resetpay 绑定谷歌验证器：secret</td>
+                                                        <td>事件名称 默认注册：register 修改登录密码： resetpwd 修改支付密码： resetpay</td>
                                                     </tr>
                                                                                                     </tbody>
                                             </table>
@@ -4678,7 +4682,7 @@
                                                         </div>
                                                                                                                 <div class="form-group">
                                                             <label class="control-label" for="event">event</label>
-                                                            <input type="string" class="form-control input-sm" id="event" required placeholder="事件名称 默认注册：register 修改登录密码： resetpwd 修改支付密码： resetpay 绑定谷歌验证器：secret" name="event">
+                                                            <input type="string" class="form-control input-sm" id="event" required placeholder="事件名称 默认注册：register 修改登录密码： resetpwd 修改支付密码： resetpay" name="event">
                                                         </div>
                                                                                                                 <div class="form-group form-group-submit">
                                                             <button type="submit" class="btn btn-success send" rel="52">提交</button>
@@ -5030,6 +5034,11 @@
                                                                 <td>tips</td>
                                                                 <td>string</td>
                                                                 <td>更新提示语</td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <td>is_attestation</td>
+                                                                <td>int</td>
+                                                                <td>是否需要认证 1=是 0=否</td>
                                                             </tr>
                                                                                                                     </tbody>
                                                     </table>
@@ -7282,6 +7291,147 @@
                                 <h2>会员接口</h2>
                 <hr>
                                 <div class="panel panel-default">
+                    <div class="panel-heading" id="heading-77">
+                        <h4 class="panel-title">
+                            <span class="label label-primary">POST</span>
+                            <a data-toggle="collapse" data-parent="#accordion77" href="#collapseOne77"> 重新验证用户信息 <span class="text-muted">/api/user/attestation</span></a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne77" class="panel-collapse collapse">
+                        <div class="panel-body">
+
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" id="doctab77">
+                                <li class="active"><a href="#info77" data-toggle="tab">基础信息</a></li>
+                                <li><a href="#sandbox77" data-toggle="tab">在线测试</a></li>
+                                <li><a href="#sample77" data-toggle="tab">返回示例</a></li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+
+                                <div class="tab-pane active" id="info77">
+                                    <div class="well">
+                                        重新验证用户信息                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>权限</strong></div>
+                                        <div class="panel-body">
+                                            <table class="table table-hover">
+                                                <tbody>
+                                                <tr>
+                                                    <td>登录</td>
+                                                    <td>是</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>鉴权</td>
+                                                    <td>否</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>Headers</strong></div>
+                                        <div class="panel-body">
+                                                                                        无
+                                                                                    </div>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>参数</strong></div>
+                                        <div class="panel-body">
+                                                                                        <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>名称</th>
+                                                        <th>类型</th>
+                                                        <th>必选</th>
+                                                        <th>描述</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                        <tr>
+                                                        <td>name</td>
+                                                        <td>string</td>
+                                                        <td>是</td>
+                                                        <td>姓名</td>
+                                                    </tr>
+                                                                                                        <tr>
+                                                        <td>idcard</td>
+                                                        <td>string</td>
+                                                        <td>是</td>
+                                                        <td>身份证</td>
+                                                    </tr>
+                                                                                                    </tbody>
+                                            </table>
+                                                                                    </div>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>正文</strong></div>
+                                        <div class="panel-body">
+                                            无                                        </div>
+                                    </div>
+                                </div><!-- #info -->
+
+                                <div class="tab-pane" id="sandbox77">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                                                                        <div class="panel panel-default">
+                                                <div class="panel-heading"><strong>参数</strong>
+                                                <div class="pull-right">
+                                                    <a href="javascript:" class="btn btn-xs btn-info btn-append">追加</a>
+                                                </div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <form enctype="application/x-www-form-urlencoded" role="form" action="/api/user/attestation" method="POST" name="form77" id="form77">
+                                                                                                                <div class="form-group">
+                                                            <label class="control-label" for="name">name</label>
+                                                            <input type="string" class="form-control input-sm" id="name" required placeholder="姓名" name="name">
+                                                        </div>
+                                                                                                                <div class="form-group">
+                                                            <label class="control-label" for="idcard">idcard</label>
+                                                            <input type="string" class="form-control input-sm" id="idcard" required placeholder="身份证" name="idcard">
+                                                        </div>
+                                                                                                                <div class="form-group form-group-submit">
+                                                            <button type="submit" class="btn btn-success send" rel="77">提交</button>
+                                                            <button type="reset" class="btn btn-info" rel="77">重置</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading"><strong>响应输出</strong></div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12" style="overflow-x:auto">
+                                                            <pre id="response_headers77"></pre>
+                                                            <pre id="response77"></pre>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading"><strong>返回参数</strong></div>
+                                                <div class="panel-body">
+                                                                                                        无
+                                                                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- #sandbox -->
+
+                                <div class="tab-pane" id="sample77">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <pre id="sample_response77">无</pre>
+                                        </div>
+                                    </div>
+                                </div><!-- #sample -->
+
+                            </div><!-- .tab-content -->
+                        </div>
+                    </div>
+                </div>
+                                <div class="panel panel-default">
                     <div class="panel-heading" id="heading-74">
                         <h4 class="panel-title">
                             <span class="label label-primary">POST</span>
@@ -8258,147 +8408,6 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <pre id="sample_response61">无</pre>
-                                        </div>
-                                    </div>
-                                </div><!-- #sample -->
-
-                            </div><!-- .tab-content -->
-                        </div>
-                    </div>
-                </div>
-                                <div class="panel panel-default">
-                    <div class="panel-heading" id="heading-63">
-                        <h4 class="panel-title">
-                            <span class="label label-primary">POST</span>
-                            <a data-toggle="collapse" data-parent="#accordion63" href="#collapseOne63"> 修改会员个人信息 <span class="text-muted">/api/user/profile</span></a>
-                        </h4>
-                    </div>
-                    <div id="collapseOne63" class="panel-collapse collapse">
-                        <div class="panel-body">
-
-                            <!-- Nav tabs -->
-                            <ul class="nav nav-tabs" id="doctab63">
-                                <li class="active"><a href="#info63" data-toggle="tab">基础信息</a></li>
-                                <li><a href="#sandbox63" data-toggle="tab">在线测试</a></li>
-                                <li><a href="#sample63" data-toggle="tab">返回示例</a></li>
-                            </ul>
-
-                            <!-- Tab panes -->
-                            <div class="tab-content">
-
-                                <div class="tab-pane active" id="info63">
-                                    <div class="well">
-                                        修改会员个人信息                                    </div>
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading"><strong>权限</strong></div>
-                                        <div class="panel-body">
-                                            <table class="table table-hover">
-                                                <tbody>
-                                                <tr>
-                                                    <td>登录</td>
-                                                    <td>是</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>鉴权</td>
-                                                    <td>否</td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading"><strong>Headers</strong></div>
-                                        <div class="panel-body">
-                                                                                        无
-                                                                                    </div>
-                                    </div>
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading"><strong>参数</strong></div>
-                                        <div class="panel-body">
-                                                                                        <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>名称</th>
-                                                        <th>类型</th>
-                                                        <th>必选</th>
-                                                        <th>描述</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                                                                        <tr>
-                                                        <td>avatar</td>
-                                                        <td>string</td>
-                                                        <td>是</td>
-                                                        <td>头像地址</td>
-                                                    </tr>
-                                                                                                        <tr>
-                                                        <td>nickname</td>
-                                                        <td>string</td>
-                                                        <td>是</td>
-                                                        <td>昵称</td>
-                                                    </tr>
-                                                                                                    </tbody>
-                                            </table>
-                                                                                    </div>
-                                    </div>
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading"><strong>正文</strong></div>
-                                        <div class="panel-body">
-                                            无                                        </div>
-                                    </div>
-                                </div><!-- #info -->
-
-                                <div class="tab-pane" id="sandbox63">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                                                                        <div class="panel panel-default">
-                                                <div class="panel-heading"><strong>参数</strong>
-                                                <div class="pull-right">
-                                                    <a href="javascript:" class="btn btn-xs btn-info btn-append">追加</a>
-                                                </div>
-                                                </div>
-                                                <div class="panel-body">
-                                                    <form enctype="application/x-www-form-urlencoded" role="form" action="/api/user/profile" method="POST" name="form63" id="form63">
-                                                                                                                <div class="form-group">
-                                                            <label class="control-label" for="avatar">avatar</label>
-                                                            <input type="string" class="form-control input-sm" id="avatar" required placeholder="头像地址" name="avatar">
-                                                        </div>
-                                                                                                                <div class="form-group">
-                                                            <label class="control-label" for="nickname">nickname</label>
-                                                            <input type="string" class="form-control input-sm" id="nickname" required placeholder="昵称" name="nickname">
-                                                        </div>
-                                                                                                                <div class="form-group form-group-submit">
-                                                            <button type="submit" class="btn btn-success send" rel="63">提交</button>
-                                                            <button type="reset" class="btn btn-info" rel="63">重置</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading"><strong>响应输出</strong></div>
-                                                <div class="panel-body">
-                                                    <div class="row">
-                                                        <div class="col-md-12" style="overflow-x:auto">
-                                                            <pre id="response_headers63"></pre>
-                                                            <pre id="response63"></pre>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading"><strong>返回参数</strong></div>
-                                                <div class="panel-body">
-                                                                                                        无
-                                                                                                    </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div><!-- #sandbox -->
-
-                                <div class="tab-pane" id="sample63">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <pre id="sample_response63">无</pre>
                                         </div>
                                     </div>
                                 </div><!-- #sample -->
@@ -9867,6 +9876,147 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <pre id="sample_response73">无</pre>
+                                        </div>
+                                    </div>
+                                </div><!-- #sample -->
+
+                            </div><!-- .tab-content -->
+                        </div>
+                    </div>
+                </div>
+                                <div class="panel panel-default">
+                    <div class="panel-heading" id="heading-63">
+                        <h4 class="panel-title">
+                            <span class="label label-primary">POST</span>
+                            <a data-toggle="collapse" data-parent="#accordion63" href="#collapseOne63"> 修改会员个人信息 <span class="text-muted">/api/user/profile</span></a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne63" class="panel-collapse collapse">
+                        <div class="panel-body">
+
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" id="doctab63">
+                                <li class="active"><a href="#info63" data-toggle="tab">基础信息</a></li>
+                                <li><a href="#sandbox63" data-toggle="tab">在线测试</a></li>
+                                <li><a href="#sample63" data-toggle="tab">返回示例</a></li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+
+                                <div class="tab-pane active" id="info63">
+                                    <div class="well">
+                                        修改会员个人信息                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>权限</strong></div>
+                                        <div class="panel-body">
+                                            <table class="table table-hover">
+                                                <tbody>
+                                                <tr>
+                                                    <td>登录</td>
+                                                    <td>是</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>鉴权</td>
+                                                    <td>否</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>Headers</strong></div>
+                                        <div class="panel-body">
+                                                                                        无
+                                                                                    </div>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>参数</strong></div>
+                                        <div class="panel-body">
+                                                                                        <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>名称</th>
+                                                        <th>类型</th>
+                                                        <th>必选</th>
+                                                        <th>描述</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                                                                        <tr>
+                                                        <td>avatar</td>
+                                                        <td>string</td>
+                                                        <td>是</td>
+                                                        <td>头像地址</td>
+                                                    </tr>
+                                                                                                        <tr>
+                                                        <td>nickname</td>
+                                                        <td>string</td>
+                                                        <td>是</td>
+                                                        <td>昵称</td>
+                                                    </tr>
+                                                                                                    </tbody>
+                                            </table>
+                                                                                    </div>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><strong>正文</strong></div>
+                                        <div class="panel-body">
+                                            无                                        </div>
+                                    </div>
+                                </div><!-- #info -->
+
+                                <div class="tab-pane" id="sandbox63">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                                                                        <div class="panel panel-default">
+                                                <div class="panel-heading"><strong>参数</strong>
+                                                <div class="pull-right">
+                                                    <a href="javascript:" class="btn btn-xs btn-info btn-append">追加</a>
+                                                </div>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <form enctype="application/x-www-form-urlencoded" role="form" action="/api/user/profile" method="POST" name="form63" id="form63">
+                                                                                                                <div class="form-group">
+                                                            <label class="control-label" for="avatar">avatar</label>
+                                                            <input type="string" class="form-control input-sm" id="avatar" required placeholder="头像地址" name="avatar">
+                                                        </div>
+                                                                                                                <div class="form-group">
+                                                            <label class="control-label" for="nickname">nickname</label>
+                                                            <input type="string" class="form-control input-sm" id="nickname" required placeholder="昵称" name="nickname">
+                                                        </div>
+                                                                                                                <div class="form-group form-group-submit">
+                                                            <button type="submit" class="btn btn-success send" rel="63">提交</button>
+                                                            <button type="reset" class="btn btn-info" rel="63">重置</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading"><strong>响应输出</strong></div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12" style="overflow-x:auto">
+                                                            <pre id="response_headers63"></pre>
+                                                            <pre id="response63"></pre>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading"><strong>返回参数</strong></div>
+                                                <div class="panel-body">
+                                                                                                        无
+                                                                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- #sandbox -->
+
+                                <div class="tab-pane" id="sample63">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <pre id="sample_response63">无</pre>
                                         </div>
                                     </div>
                                 </div><!-- #sample -->
@@ -12638,7 +12788,7 @@
 
                 </div>
                 <div class="col-md-6" align="right">
-                    Generated on 2022-04-28 16:51:31 <a href="./" target="_blank">农场</a>
+                    Generated on 2022-05-27 12:28:17 <a href="./" target="_blank">阿尼农场</a>
                 </div>
             </div>
 
