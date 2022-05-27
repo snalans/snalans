@@ -468,11 +468,11 @@ class Order extends Api
             $rate = ceil($sell_egg/5)*$rate_config;
         }else{
             $rate = ceil($sell_egg/10)*$rate_config;
-        }        
+        }  
 
         $lock_num = Cache::get("locking_".$this->auth->id."_".$info['kind_id'],0);
         $total_egg = $sell_egg + $rate;
-        if($total_egg > ($egg_num-$lock_num)){
+        if($total_egg > ($egg_num-$lock_num) && empty($info['nest_kind_id'])){
             $this->error("您的可支付蛋数量不足".$total_egg.'个！');
         }
 
