@@ -2,6 +2,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
     var Controller = {
         index: function () {
+            $(".btn-add").data("area",["400px","550px"]);
             // 初始化表格参数配置
             Table.api.init({
                 extend: {
@@ -28,16 +29,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {checkbox: true},
                         {field: 'id', title: __('Id'), operate:false},
                         {field: 'user_id', title: __('User_id')},
-                        {field: 'user.serial_number', title: __('User.serial_number'), operate: 'LIKE'},
                         {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
-                        {field: 'eggnestkind.name', title: __('Eggnestkind.name'), operate: false},
-                        {field: 'eggkind.name', title: __('Eggkind.name'), operate: false},
+                        {field: 'nest_kind_id', title: __('Eggnestkind.name'), formatter: Table.api.formatter.normal, searchList: {1: '白窝', 2: '铜窝', 3: '银窝', 4: '金窝'}},
                         {field: 'hatch_num', title: __('Hatch_num'), operate:false},
                         {field: 'shape', title: __('Shape'), operate:false, formatter: Table.api.formatter.normal, searchList: {0: '蛋', 1: '鸡', 2: '鸡', 5: '无'}},
                         {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {0: '孵化中', 1: '空闲'}},
                         {field: 'is_reap', title: __('Is_reap'), operate:false, formatter: Table.api.formatter.normal, searchList: {0: '无', 1: '可收获', 2: '可收获'}},
                         {field: 'position', title: __('Position'), operate:false},
-                        {field: 'is_give', title: __('是否赠送'), formatter: Table.api.formatter.normal, searchList: {0: '否', 1: '是'}},
+                        {field: 'is_buy', title: __('是否购买'), formatter: Table.api.formatter.normal, searchList: {1: __('是'), 0: __('否')}},
+                        {field: 'is_give', title: __('窝里是否体验蛋'), formatter: Table.api.formatter.normal, searchList: {0: '否', 1: '是'}},
                         {field: 'is_close', title: __('是否关闭'), searchList: {"1": __('Yes'), "0": __('No')}, formatter: Table.api.formatter.toggle},
                         {field: 'uptime', title: __('Uptime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},

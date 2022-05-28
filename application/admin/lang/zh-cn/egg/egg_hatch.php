@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'User_id'           => '用户ID',
-    'Nest_kind_id'      => '窝类型id',
-    'Kind_id'           => '蛋类型id',
+    'User_id'           => '用户',
+    'Nest_kind_id'      => '窝类型',
+    'Kind_id'           => '蛋类型',
     'Status'            => '状态',
     'Hatch_num'         => '孵化进度',
     'Shape'             => '形态',

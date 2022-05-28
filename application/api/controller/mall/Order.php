@@ -490,7 +490,7 @@ class Order extends Api
             }
             if($info['nest_kind_id']>0){
                 if(empty($recharge_account)){
-                    $this->error("请填写转账地址方便审核"); 
+                    $this->error("请填写转账地址用于审核"); 
                 }
                 $total = Db::name("egg_nest_kind")->where("kind_id",$info['nest_kind_id'])->value("total");
                 $wh = [];

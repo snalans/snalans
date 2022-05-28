@@ -56,7 +56,7 @@ class EggHatch extends Backend
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
 
             $list = $this->model
-                    ->with(['user','eggnestkind','eggkind'])
+                    ->with(['user'])
                     ->where($where)
                     ->order($sort, $order)
                     ->paginate($limit);
@@ -64,13 +64,94 @@ class EggHatch extends Backend
             foreach ($list as $row) {
                 
                 $row->getRelation('user')->visible(['serial_number','username','mobile']);
-				$row->getRelation('eggnestkind')->visible(['name']);
-				$row->getRelation('eggkind')->visible(['name']);
             }
 
             $result = array("total" => $list->total(), "rows" => $list->items());
 
             return json($result);
+        }
+        return $this->view->fetch();
+    }
+
+    /**
+     * 添加
+     */
+    public function add()
+    {
+        if ($this->request->isPost()) {
+            $params = $this->request->post("row/a");
+            if ($params) {
+                $params = $this->preExcludeFields($params);
+
+                if ($this->dataLimit && $this->dataLimitFieldAutoFill) {
+                    $params[$this->dataLimitField] = $this->auth->id;
+                }
+                $result = false;
+
+                $total = Db::name("egg_nest_kind")->where("kind_id",$params['nest_kind_id'])->value("total");
+                $wh = [];
+                $wh['user_id']      = $params['user_id'];
+                $wh['nest_kind_id'] = $params['nest_kind_id'];
+                $wh['is_close']     = 0;
+                $num = Db::name("egg_hatch")->where($wh)->count();
+                if($num >= $total){
+                    $this->error("窝数量达上限,无法增加。"); 
+                }
+                Db::startTrans();
+                try {
+                    //是否采用模型验证
+                    if ($this->modelValidate) {
+                        $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.add' : $name) : $this->modelValidate;
+                        $this->model->validateFailException(true)->validate($validate);
+                    }
+                    $wh = [];
+                    $wh['user_id']        = $params['user_id'];
+                    $wh['nest_kind_id']   = $params['nest_kind_id'];
+                    $wh['kind_id']        = $params['nest_kind_id'];
+                    $position = Db::name("egg_hatch")->where($wh)->max("position");
+                    $data = [];
+                    $data['user_id']        = $params['user_id'];
+                    $data['nest_kind_id']   = $params['nest_kind_id'];
+                    $data['kind_id']        = $params['nest_kind_id'];
+                    $data['status']         = 1;
+                    $data['hatch_num']      = 0;
+                    $data['shape']          = 0;
+                    $data['is_reap']        = 0;
+                    $data['is_buy']         = 1;
+                    $data['position']       = $position+1;
+                    $result = Db::name("egg_hatch")->insert($data);   
+                    $log = [];
+                    $log['user_id']          = $params['user_id'];
+                    $log['nest_kind_id']     = $params['nest_kind_id'];
+                    $log['reward_config_id'] = 0;
+                    $log['type']             = 3;
+                    $log['number']           = 1;
+                    $log['note']             = empty($params['note'])?"商城购买":$params['note'];
+                    $log['createtime']       = time();
+                    $log_rs = Db::name("egg_nest_log")->insertGetId($log); 
+                    if($result && $log_rs){
+                        Db::commit();
+                    }else{
+                        Db::rollback();
+                    }
+                } catch (ValidateException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (PDOException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (Exception $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                }
+                if ($result !== false) {
+                    $this->success();
+                } else {
+                    $this->error(__('No rows were inserted'));
+                }
+            }
+            $this->error(__('Parameter %s can not be empty', ''));
         }
         return $this->view->fetch();
     }

@@ -914,6 +914,7 @@ class User extends Api
      * 
      * @ApiReturnParams   (name="is_bing", type="int", description="是否绑定过 0=否 1=是")
      * @ApiReturnParams   (name="google_secret", type="int", description="密钥")
+     * @ApiReturnParams   (name="url", type="string", description="谷歌验证器下载地址")
      */
     public function google()
     {
@@ -925,6 +926,7 @@ class User extends Api
             $ga = new \app\admin\model\PHPGangsta_GoogleAuthenticator;
             $data['google_secret'] = $ga->createSecret();        
         }
+        $data['url'] = Config::get("site.authenticator","");
         $this->success("success",$data);
     }
 
