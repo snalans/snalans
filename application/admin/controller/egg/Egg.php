@@ -101,6 +101,9 @@ class Egg extends Backend
                 }else if($params['type']==3){
                     $new_number = $row['freezing']+$params['change_number'];
                     $params['freezing'] = $new_number;
+                }else if($params['type']==4){
+                    $new_number = $row['hatchable']+$params['change_number'];
+                    $params['hatchable'] = $new_number;
                 }else{
                     if(!in_array($row['kind_id'],[1,2,3])){
                         $this->error('添加蛋积分类型错误');
