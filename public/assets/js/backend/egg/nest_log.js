@@ -29,7 +29,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'id', title: __('Id'),operate:false},
                         {field: 'user.mobile', title: '用户手机号', operate: 'LIKE'},
                         {field: 'eggnestkind.name', title: __('Eggnestkind.name'), operate: 'LIKE'},
-                        {field: 'type', title: __('Type'),formatter:Table.api.formatter.normal, searchList: {0:'农场主升级赠送', 1: '注册', 2: '直推'}},
+                        {field: 'type', title: __('Type'),formatter:Table.api.formatter.normal, searchList: {0:'农场主升级赠送', 1: '注册', 2: '直推', 3: '商城'}},
                         {field: 'number', title: __('Number'),operate:false},
                         {field: 'note', title: __('Note'), operate: false},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime}
