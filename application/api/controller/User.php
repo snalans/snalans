@@ -100,7 +100,7 @@ class User extends Api
         $result['re_attestation'] = 0;
         $time = Config::get("site.atte_time",0);
         if($this->auth->updatetime < strtotime($time) && $this->auth->is_attestation == 1){
-            $data['re_attestation'] = 1;
+            $result['re_attestation'] = 1;
         }
         $this->success('', $result);
     }
