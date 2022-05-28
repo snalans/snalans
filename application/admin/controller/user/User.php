@@ -395,7 +395,7 @@ class User extends Backend
                         $row->validateFailException(true)->validate($validate);
                     }
               
-                    $note = "管理员：".$this->auth->username." ".$params['note'];
+                    $note = "管理员：".$this->auth->username."有效值变动";
                     $log = Db::name("egg_valid_number_log")->insert([
                         'user_id'=>$row['id'],
                         'type'=>3,
