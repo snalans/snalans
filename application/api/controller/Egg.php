@@ -6,6 +6,7 @@ use app\common\controller\Api;
 use fast\Random;
 use think\config;
 use think\Db;
+use think\Cache;
 
 /**
  * 农贸市场接口
