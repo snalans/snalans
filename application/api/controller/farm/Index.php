@@ -488,8 +488,8 @@ class Index extends Api
             //写入日志
             $inc_log = Db::name("egg_log")->insert(['user_id'=>$user_id,'kind_id'=>$kind_id,'type'=>2,'number'=>$number,'before'=>$before,'after'=>($before+$number),'note'=>"用户编号：".$this->auth->serial_number." 转账获得",'createtime'=>time()]);
             if($dec_rs && $dec_log && $rate_rs && $inc_rs && $inc_log){
-                $num = Cache::set("locking_".$user_id."_".$kind_id,0);
-                if($num > 0){                    
+                $l_num = Cache::get("locking_".$user_id."_".$kind_id,0);
+                if($l_num == 0){                    
                     Cache::set("locking_".$user_id."_".$kind_id,$number,3600*12);
                 }
                 Db::commit();
