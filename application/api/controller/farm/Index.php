@@ -458,7 +458,7 @@ class Index extends Api
             $rate = ceil($number/10)*$rate_config;
         }        
 
-        $lock_num = Cache::get("locking_".$user_id."_".$kind_id,0);
+        $lock_num = Cache::get("locking_".$this->auth->id."_".$kind_id,0);
         $wh = [];
         $wh['user_id'] = $this->auth->id;
         $wh['kind_id'] = $kind_id;
