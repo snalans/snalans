@@ -649,7 +649,10 @@ class Egg extends Api
             } else {
                 //通知买家
                 \app\common\library\Hsms::send($order['buy_mobile'], '','order');
-                Cache::set("locking_".$order['buy_user_id']."_".$order['kind_id'],$order['number'],3600*12);
+                $num = Cache::set("locking_".$order['buy_user_id']."_".$order['kind_id'],0);
+                if($num > 0){
+                    Cache::set("locking_".$order['buy_user_id']."_".$order['kind_id'],$order['number'],3600*12);
+                }
                 DB::commit();
             }
         }//end try
