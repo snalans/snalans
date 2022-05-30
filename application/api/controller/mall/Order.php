@@ -574,6 +574,9 @@ class Order extends Api
             $wh['stock']    = ['>=',$number];
             $prs = Db::name("mall_product")->where($wh)->dec('stock',$number)->inc("sell_num",$number)->update();
             if ($rs && $add_rs && $log && $log_fee && $prs) {
+                if($info['user_id'] > 0){
+                    Config::set("change_flag_".$info['user_id']);
+                }
                 DB::commit();
                 // 通知卖家
                 // \app\common\library\Hsms::send($info['user_id'], '','order');

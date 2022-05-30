@@ -91,12 +91,12 @@ class User extends Api
         $wh = [];
         $wh['buy_user_id'] = $this->auth->id;
         $wh['buy_del']     = 0;
-        $result['buy_num'] = Db::name("mall_order")->cache(true,300)->where($wh)->count();
+        $result['buy_num'] = Db::name("mall_order")->where($wh)->count();
         $wh = [];
         $wh['sell_user_id'] = $this->auth->id;
         $wh['sell_del']     = 0;
-        $result['sell_num'] = Db::name("mall_order")->cache(true,300)->where($wh)->count();
-        $google_secret = Db::name("user_secret")->cache(true)->where("user_id",$this->auth->id)->find();
+        $result['sell_num'] = Db::name("mall_order")->where($wh)->count();
+        $google_secret = Db::name("user_secret")->where("user_id",$this->auth->id)->find();
         $result['is_google_secret'] = empty($google_secret)?0:1;
         $result['re_attestation'] = 0;
         $time = Config::get("site.atte_time",0);
