@@ -84,7 +84,7 @@ class Product extends Api
         if(!empty($title)){
             $whs['u.serial_number'] = $title;
         }
-        $list = Db::name("mall_product")->alias('p')->cache(true,300)
+        $list = Db::name("mall_product")->alias('p')->cache(true,60)
                     ->field("p.id,p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,u.avatar,u.serial_number,p.nest_kind_id")
                     ->join("user u","u.id=p.user_id","LEFT")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
