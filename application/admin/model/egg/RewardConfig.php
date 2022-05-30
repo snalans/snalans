@@ -147,7 +147,15 @@ class RewardConfig extends Model
         $wh['is_attestation']   = 1;
         $number = Db::name("user")->where($wh)->count();
 
-        $info = Db::name("egg_reward_config")->where("nest_kind_id",$hinfo['kind_id'])->find();
+        if($hinfo['kind_id'] == 1){
+            $orderby = $hinfo['position']==4?"number asc":"number desc";
+        }else if($hinfo['kind_id'] == 2){
+            $orderby = $hinfo['position']==3?"number asc":"number desc";
+        }else if($hinfo['kind_id'] == 3){
+            $orderby = $hinfo['position']==2?"number asc":"number desc";            
+        }
+
+        $info = Db::name("egg_reward_config")->where("nest_kind_id",$hinfo['kind_id'])->order($orderby)->find();
         if(!empty($info)){  
             if($info['number'] > $number || $info['valid_number'] > $valid_number){                
                 Db::startTrans();
