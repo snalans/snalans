@@ -161,6 +161,8 @@ class Index extends Api
                 $info = Db::name("egg_hatch")->where($wh)->find();
                 if(!empty($info)){
                     $this->hatchEgg($egg_hatch_id,$total);              
+                }else{
+                    $this->error("孵化失败,窝状态有问题.")
                 }
             }else{
                 $this->error(__('Insufficient quantity'));
