@@ -85,7 +85,7 @@ class RewardConfig extends Model
                     $wh['is_close']       = 1;
                     $hinfo = Db::name("egg_hatch")->where($wh)->find();
                     if(!empty($hinfo)){
-                        $rs = Db::name("user")->where("id",$hinfo['user_id'])->update(['status'=>0]);   
+                        $rs = Db::name("egg_hatch")->where("id",$hinfo['id'])->update(['is_close'=>0]);   
                     }else{
                         Db::startTrans();
                         $wh = [];
