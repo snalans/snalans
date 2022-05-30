@@ -16,7 +16,7 @@ class Index extends Api
 {
     protected $noNeedLogin = [];
     protected $noNeedRight = '*';
-    public    $alldate = 5;   //签到周期
+    public    $alldate = 3600*24;   //签到周期
 
     public function _initialize()
     {
@@ -162,7 +162,7 @@ class Index extends Api
                 if(!empty($info)){
                     $this->hatchEgg($egg_hatch_id,$total);              
                 }else{
-                    $this->success("孵化失败,窝状态有问题.");
+                    $this->success("孵化失败窝赠送未达标");
                 }
             }else{
                 $this->error(__('Insufficient quantity'));
