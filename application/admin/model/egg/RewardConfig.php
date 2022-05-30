@@ -76,14 +76,12 @@ class RewardConfig extends Model
                 $num = Db::name("egg_hatch")->where($wh)->count();
                 if($num >= $total){
                     return false;
-                }          
-                
+                }                          
                     $wh = [];
                     $wh['user_id']        = $pid;
                     $wh['nest_kind_id']   = $info['nest_kind_id'];
-                    $wh['kind_id']        = $info['nest_kind_id'];
                     $wh['is_close']       = 1;
-                    $hinfo = Db::name("egg_hatch")->where($wh)->find();
+                    $hinfo = Db::name("egg_hatch")->where($wh)->order("position asc")->find();
                     if(!empty($hinfo)){
                         $rs = Db::name("egg_hatch")->where("id",$hinfo['id'])->update(['is_close'=>0]);   
                     }else{
