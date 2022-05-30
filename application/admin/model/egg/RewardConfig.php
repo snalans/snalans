@@ -132,7 +132,7 @@ class RewardConfig extends Model
         $wh = [];
         $wh['id']       = $hatch_id;
         $wh['is_buy']   = 0;
-        $hinfo = Db::name("egg_hatch")->where("id",$hatch_id)->find();   
+        $hinfo = Db::name("egg_hatch")->where($wh)->find();   
         if($hinfo['kind_id'] == 1 && $hinfo['position'] <= 3){            
             return true;
         }else if($hinfo['kind_id'] == 2 && $hinfo['position'] <= 2){
@@ -151,7 +151,7 @@ class RewardConfig extends Model
         if(!empty($info)){  
             if($info['number'] > $number || $info['valid_number'] > $valid_number){                
                 Db::startTrans();
-                $rs = Db::name("user")->where("id",$hinfo['user_id'])->update(['status'=>1]);   
+                $rs = Db::name("egg_hatch")->where("id",$hatch_id)->update(['status'=>1]);   
                 $log = [];
                 $log['user_id']          = $hinfo['kind_id'];
                 $log['nest_kind_id']     = $info['nest_kind_id'];
