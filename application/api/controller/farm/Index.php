@@ -155,7 +155,7 @@ class Index extends Api
             $total = Db::name("egg")->field("kind_id,number,frozen,hatchable")->where($wh)->find();
             if(($total['kind_id'] == 1 && $total['number'] >= 1) || (in_array($total['kind_id'],[2,3,4]) && $total['hatchable'] >= 1)){
                 $flag = \app\admin\model\egg\RewardConfig::decAward($result['id']);
-                if($flag){
+                if(!$flag){
                     $this->hatchEgg($egg_hatch_id,$total);
                 }                
             }else{
