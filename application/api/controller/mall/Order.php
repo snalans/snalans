@@ -136,6 +136,7 @@ class Order extends Api
      * @ApiReturnParams   (name="mobile", type="string", description="手机号")      
      * @ApiReturnParams   (name="serial_number", type="string", description="会员编号")  
      * @ApiReturnParams   (name="is_platform", type="string", description="是否平台商品订单 1=是 0=否")  
+     * @ApiReturnParams   (name="note", type="string", description="退款理由")  
      */
     public function getOrderDetail()
     {
@@ -154,8 +155,8 @@ class Order extends Api
             $wh_str = "mo.buy_user_id";
         }
 
-        $info = Db::name("mall_order")->alias('mo')->cache(true,45)
-                    ->field("mo.order_sn,mo.title,mo.image,mo.sell_user_id,mo.price,mo.number,mo.rate,mo.total_price,ek.name,ek.image as egg_image,mo.status,mo.contactor,mo.contactor_phone,mo.address,mo.express_name,mo.express_no,mo.recharge_account,mo.is_virtual,mo.received_time,mo.send_time,mo.add_time,u.mobile,u.serial_number")
+        $info = Db::name("mall_order")->alias('mo')
+                    ->field("mo.product_id,mo.order_sn,mo.title,mo.image,mo.sell_user_id,mo.price,mo.number,mo.rate,mo.total_price,ek.name,ek.image as egg_image,mo.status,mo.contactor,mo.contactor_phone,mo.address,mo.express_name,mo.express_no,mo.recharge_account,mo.is_virtual,mo.received_time,mo.send_time,mo.add_time,u.mobile,u.serial_number,mo.note")
                     ->join("user u","u.id=$wh_str","LEFT")
                     ->join("egg_kind ek","ek.id=mo.kind_id","LEFT")
                     ->where($wh)
@@ -191,6 +192,9 @@ class Order extends Api
             $info['send_time']      = empty($info['send_time'])?"":date("Y-m-d H:i",$info['send_time']);
             $info['received_time']  = empty($info['received_time'])?"":date("Y-m-d H:i",$info['received_time']);
             $info['add_time']       = date("Y-m-d H:i",$info['add_time']);
+            if($type == 1){
+                $info['mobile'] = Db::name("mall_product")->where("id",$info['product_id'])->value("mobile");
+            }
         }
         $this->success('',$info);
     }

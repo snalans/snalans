@@ -50,6 +50,7 @@ class User extends Api
      * @ApiReturnParams   (name="sell_num", type="string", description="卖出数量")
      * @ApiReturnParams   (name="is_google_secret", type="string", description="是否绑定谷歌验证 1是 0否")
      * @ApiReturnParams   (name="re_attestation", type="int", description="是否二次验证 1=是 0=否")
+     * @ApiReturnParams   (name="change_flag", type="int", description="是否订单变动 1=是 0=否")
      */
     public function index()
     {
@@ -86,7 +87,7 @@ class User extends Api
         $wh = [];
         $wh['user_id'] = $this->auth->id;
         $wh['status']  = 1;
-        $result['release'] = 0;//Db::name("mall_product")->where($wh)->count();
+        $result['release'] = Db::name("mall_product")->where($wh)->count();
         $wh = [];
         $wh['buy_user_id'] = $this->auth->id;
         $wh['buy_del']     = 0;
@@ -102,6 +103,7 @@ class User extends Api
         if($this->auth->updatetime < strtotime($time) && $this->auth->is_attestation == 1){
             $result['re_attestation'] = 1;
         }
+        $result['change_flag'] = Config::get("change_flag_".$this->auth->id,0);
         $this->success('', $result);
     }
 

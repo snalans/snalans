@@ -281,19 +281,19 @@ class Product extends Api
      * @ApiParams   (name="images", type="string", description="图片")        
      * @ApiParams   (name="kind_id", type="integer", description="蛋类型ID")   
      * @ApiParams   (name="price", type="string", description="支付价格")
-     * @ApiParams   (name="stock", type="string", description="库存")   
+     * @ApiParams   (name="mobile", type="string", description="手机号")   
+     * @ApiParams   (name="stock", type="int", description="库存")   
      * @ApiParams   (name="content", type="integer", description="内容")     
      */
     public function save()
     {
-        // $this->error("发布商品功能还未开放,敬请期待");
-        // exit;
         $id         = $this->request->post("id","");
         $title      = $this->request->post("title","");
         $images     = $this->request->post("images","");
         $price      = $this->request->post("price",0);
         $kind_id    = $this->request->post("kind_id",1);
-        $stock      = $this->request->post("stock",1);
+        $mobile     = $this->request->post("mobile","");
+        $stock      = 1;//$this->request->post("stock",1);
         $content    = $this->request->post("content","");
 
         if(empty($title) || $stock<=0 || !in_array($kind_id,[1,2,3]))
@@ -306,6 +306,10 @@ class Product extends Api
 
         if($this->auth->status != 'normal' || $this->auth->is_attestation != 1){
             $this->error("账号无效或者未认证");
+        }
+
+        if(empty($mobile)){
+            $this->error("手机号不能为空");
         }
 
         $issue_number = Config::get("site.issue_number");
@@ -327,6 +331,7 @@ class Product extends Api
         $data['price']          = $price;
         $data['kind_id']        = $kind_id;
         $data['stock']          = $stock;
+        $data['mobile']         = $mobile;
         $data['content']        = $content;
         $data['status']         = 1;
 
