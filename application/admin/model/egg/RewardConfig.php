@@ -61,22 +61,15 @@ class RewardConfig extends Model
             $number = Db::name("user")->where($wh)->count();
 
             $wh = [];
-            if(!empty($ids)){
-                $wh['id']       = ['not in',$ids];
-            }
-            $wh['number']       = ['<=',$number];
-            $wh['valid_number'] = ['<=',$valid_number];
-            $info = Db::name("egg_reward_config")->where($wh)->order("nest_kind_id","DESC")->find();
-            if(!empty($info)){
-                $total = Db::name("egg_nest_kind")->where("kind_id",$info['nest_kind_id'])->value("total");
+            $wh['user_id']      = $pid;
+            $wh['is_close']     = 1;
+            $close_num = Db::name("egg_hatch")->where($wh)->count();
+            if(!empty($close_num)){
                 $wh = [];
-                $wh['user_id']      = $pid;
-                $wh['nest_kind_id'] = $info['nest_kind_id'];
-                $wh['is_close']     = 0;
-                $num = Db::name("egg_hatch")->where($wh)->count();
-                if($num >= $total){
-                    return false;
-                }                          
+                $wh['number']       = ['<=',$number];
+                $wh['valid_number'] = ['<=',$valid_number];
+                $info = Db::name("egg_reward_config")->where($wh)->order("nest_kind_id","DESC")->find();
+                if(!empty($info)){
                     $wh = [];
                     $wh['user_id']        = $pid;
                     $wh['nest_kind_id']   = $info['nest_kind_id'];
@@ -84,41 +77,60 @@ class RewardConfig extends Model
                     $hinfo = Db::name("egg_hatch")->where($wh)->order("position asc")->find();
                     if(!empty($hinfo)){
                         $rs = Db::name("egg_hatch")->where("id",$hinfo['id'])->update(['is_close'=>0]);   
-                    }else{
-                        Db::startTrans();
-                        $wh = [];
-                        $wh['user_id']        = $pid;
-                        $wh['nest_kind_id']   = $info['nest_kind_id'];
-                        $wh['kind_id']        = $info['nest_kind_id'];
-                        $position = Db::name("egg_hatch")->where($wh)->max("position");
-                        $data = [];
-                        $data['user_id']        = $pid;
-                        $data['nest_kind_id']   = $info['nest_kind_id'];
-                        $data['kind_id']        = $info['nest_kind_id'];
-                        $data['status']         = 1;
-                        $data['hatch_num']      = 0;
-                        $data['shape']          = 0;
-                        $data['is_reap']        = 0;
-                        $data['position']       = $position+1;
-                        $data['createtime']     = time();
-                        $hatch_id = Db::name("egg_hatch")->insertGetId($data);   
-                        $log = [];
-                        $log['user_id']          = $pid;
-                        $log['nest_kind_id']     = $info['nest_kind_id'];
-                        $log['reward_config_id'] = $info['id'];
-                        $log['type']             = 2;
-                        $log['number']           = 1;
-                        $log['note']             = $note;
-                        $log['createtime']       = time();
-                        $log_rs = Db::name("egg_nest_log")->insertGetId($log); 
-                        if($hatch_id && $log_rs){
-                            Db::commit();
-                        }else{
-                            Db::rollback();
-                        }
                     }
-                
+                }
+            }else{
+                $wh = [];
+                if(!empty($ids)){
+                    $wh['id']       = ['not in',$ids];
+                }
+                $wh['number']       = ['<=',$number];
+                $wh['valid_number'] = ['<=',$valid_number];
+                $info = Db::name("egg_reward_config")->where($wh)->order("nest_kind_id","DESC")->find();
+                if(!empty($info)){
+                    $total = Db::name("egg_nest_kind")->where("kind_id",$info['nest_kind_id'])->value("total");
+                    $wh = [];
+                    $wh['user_id']      = $pid;
+                    $wh['nest_kind_id'] = $info['nest_kind_id'];
+                    $wh['is_close']     = 0;
+                    $num = Db::name("egg_hatch")->where($wh)->count();
+                    if($num >= $total){
+                        return false;
+                    }          
+                    Db::startTrans();
+                    $wh = [];
+                    $wh['user_id']        = $pid;
+                    $wh['nest_kind_id']   = $info['nest_kind_id'];
+                    $wh['kind_id']        = $info['nest_kind_id'];
+                    $position = Db::name("egg_hatch")->where($wh)->max("position");
+                    $data = [];
+                    $data['user_id']        = $pid;
+                    $data['nest_kind_id']   = $info['nest_kind_id'];
+                    $data['kind_id']        = $info['nest_kind_id'];
+                    $data['status']         = 1;
+                    $data['hatch_num']      = 0;
+                    $data['shape']          = 0;
+                    $data['is_reap']        = 0;
+                    $data['position']       = $position+1;
+                    $data['createtime']     = time();
+                    $hatch_id = Db::name("egg_hatch")->insertGetId($data);   
+                    $log = [];
+                    $log['user_id']          = $pid;
+                    $log['nest_kind_id']     = $info['nest_kind_id'];
+                    $log['reward_config_id'] = $info['id'];
+                    $log['type']             = 2;
+                    $log['number']           = 1;
+                    $log['note']             = $note;
+                    $log['createtime']       = time();
+                    $log_rs = Db::name("egg_nest_log")->insertGetId($log); 
+                    if($hatch_id && $log_rs){
+                     Db::commit();
+                    }else{
+                     Db::rollback();
+                    }
+                }
             }
+
         }
     }
 
