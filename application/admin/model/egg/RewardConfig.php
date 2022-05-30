@@ -181,13 +181,11 @@ class RewardConfig extends Model
                 $log_rs = Db::name("egg_nest_log")->insertGetId($log);   
                 if($rs && $log_rs){
                     Db::commit();
-                    return false;
                 }else{
                     Db::rollback();
                 }
             }
         }
-        return true;
     }
 
 

@@ -154,10 +154,14 @@ class Index extends Api
             $wh['kind_id'] = $result['kind_id'];
             $total = Db::name("egg")->field("kind_id,number,frozen,hatchable")->where($wh)->find();
             if(($total['kind_id'] == 1 && $total['number'] >= 1) || (in_array($total['kind_id'],[2,3,4]) && $total['hatchable'] >= 1)){
-                $flag = \app\admin\model\egg\RewardConfig::decAward($result['id']);
-                if(!$flag){
-                    $this->hatchEgg($egg_hatch_id,$total);
-                }                
+                \app\admin\model\egg\RewardConfig::decAward($result['id']);
+                $wh = [];
+                $wh['id'] = $egg_hatch_id;
+                $wh['is_close'] = 0;
+                $info = Db::name("egg_hatch")->where($wh)->find();
+                if(!empty($info)){
+                    $this->hatchEgg($egg_hatch_id,$total);              
+                }
             }else{
                 $this->error(__('Insufficient quantity'));
             }
