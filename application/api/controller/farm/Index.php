@@ -458,12 +458,11 @@ class Index extends Api
             $rate = ceil($number/10)*$rate_config;
         }        
 
-        $lock_num = Cache::get("locking_".$this->auth->id."_".$kind_id,0);
         $wh = [];
         $wh['user_id'] = $this->auth->id;
         $wh['kind_id'] = $kind_id;
         $total = Db::name("egg")->where($wh)->value('sum(number-freezing)');
-        if(($total - $lock_num) < ($number + $rate)){
+        if($total < ($number + $rate)){
             $this->error('数量不够,转账失败!');       
         }
         
@@ -488,10 +487,6 @@ class Index extends Api
             //写入日志
             $inc_log = Db::name("egg_log")->insert(['user_id'=>$user_id,'kind_id'=>$kind_id,'type'=>2,'number'=>$number,'before'=>$before,'after'=>($before+$number),'note'=>"用户编号：".$this->auth->serial_number." 转账获得",'createtime'=>time()]);
             if($dec_rs && $dec_log && $rate_rs && $inc_rs && $inc_log){
-                $l_num = Cache::get("locking_".$user_id."_".$kind_id,0);
-                if($l_num == 0){                    
-                    Cache::set("locking_".$user_id."_".$kind_id,$number,3600*12);
-                }
                 Db::commit();
             }else{
                 Db::rollback();
