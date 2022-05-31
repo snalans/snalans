@@ -67,6 +67,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 ]
             });
 
+            table.on('load-success.bs.table', function (e, data) {
+                //这里我们手动设置底部的值
+                $("#ext1").text(data.extend.ext1);
+                $("#ext2").text(data.extend.ext2);
+                $("#ext3").text(data.extend.ext3);
+
+            });
             // 为表格绑定事件
             Table.api.bindevent(table);
         },

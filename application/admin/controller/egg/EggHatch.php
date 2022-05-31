@@ -65,8 +65,33 @@ class EggHatch extends Backend
                 
                 $row->getRelation('user')->visible(['serial_number','username','mobile']);
             }
+            $ext = [];
+            $wh = [];
+            $wh['u.level']   = 1;
+            $wh['eh.status'] = 0;
+            $ext['ext1'] = Db::name("egg_hatch")->alias("eh")
+                        ->join("user u","u.id=eh.user_id","LEFT")
+                        ->where($wh)
+                        ->group("u.id")
+                        ->count();
+            $wh = [];
+            $wh['u.level']   = 2;
+            $wh['eh.status'] = 0;
+            $ext['ext2'] = Db::name("egg_hatch")->alias("eh")
+                        ->join("user u","u.id=eh.user_id","LEFT")
+                        ->where($wh)
+                        ->group("u.id")
+                        ->count();
+            $wh = [];
+            $wh['u.level']   = 3;
+            $wh['eh.status'] = 0;
+            $ext['ext3'] = Db::name("egg_hatch")->alias("eh")
+                        ->join("user u","u.id=eh.user_id","LEFT")
+                        ->where($wh)
+                        ->group("u.id")
+                        ->count();                   
 
-            $result = array("total" => $list->total(), "rows" => $list->items());
+            $result = array("total" => $list->total(), "rows" => $list->items(),"extend"=>$ext);
 
             return json($result);
         }
