@@ -356,7 +356,10 @@ class Index extends Api
         $data['is_reap']    = 0;
         $data['uptime']     = time();
         $data['createtime'] = time();
-        $hatch_rs = Db::name("egg_hatch")->where("id",$egg_hatch_id)->update($data);
+        $wh = [];
+        $wh['id'] = $egg_hatch_id;
+        $wh['status'] = 1;
+        $hatch_rs = Db::name("egg_hatch")->where($wh)->update($data);
         if($result['frozen'] <= 0)
         {
             $valid_number = Db::name("egg_kind")->where("id",$result['kind_id'])->value("valid_number");
@@ -377,7 +380,7 @@ class Index extends Api
                     ]);
                     if($v_rs){                    
                         $userLevelConfig = new \app\common\model\UserLevelConfig();
-                        $userLevelConfig->update_vip($this->auth->id);
+                        // $userLevelConfig->update_vip($this->auth->id);
                         //上级发放有效值
                         $wh = [];
                         $wh['user_id'] = $this->auth->id;
