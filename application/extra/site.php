@@ -68,4 +68,5 @@ return array (
   'black_days' => '13',
   'atte_time' => '2022-05-22',
   'authenticator' => 'http://egg.test/',
+  'release_num' => '1',
 );

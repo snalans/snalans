@@ -438,9 +438,6 @@ class Order extends Api
         if(empty($info)){
             $this->error("无效商品");
         }
-        if($info['stock']<=0){
-            Db::name("mall_product")->where("id",$id)->update(['status'=>0]);
-        }
         if($info['stock'] < $number){
             $this->error("商品库存不够");
         }
@@ -576,6 +573,9 @@ class Order extends Api
             if ($rs && $add_rs && $log && $log_fee && $prs) {
                 if($info['user_id'] > 0){
                     Config::set("change_flag_".$info['user_id']);
+                }
+                if($info['stock'] <= $number){
+                    Db::name("mall_product")->where("id",$id)->update(['status'=>0]);
                 }
                 DB::commit();
                 // 通知卖家

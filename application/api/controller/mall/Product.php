@@ -317,12 +317,23 @@ class Product extends Api
             $this->error("有效值未达到标准，不能发布商品");
         }
 
+        $release_num = Config::get("site.release_num",0);
+        if($release_num > 0){            
+            $wh = [];
+            $wh['user_id'] = $this->auth->id;
+            $wh['kind_id'] = 1;
+            $egg_info = Db::name("egg")->where($wh)->find();
+            if($release_num > ($egg_info['number']-$egg_info['freezing'])){
+                $this->error("白蛋资产不够，不能发布商品");
+            }
+        }
+
         $wh = [];
         $wh['user_id'] = $this->auth->id;
         $wh['status']  = ['<>',-1];
         $num = Db::name("mall_product")->where($wh)->count();
-        if($num > 10){
-            $this->error("不能多于10个商品");
+        if($num > 3){
+            $this->error("发布商品已经上限");
         }
 
         $data = [];
@@ -333,7 +344,7 @@ class Product extends Api
         $data['stock']          = $stock;
         $data['mobile']         = $mobile;
         $data['content']        = $content;
-        $data['status']         = 1;
+        $data['status']         = 2;
 
         if(empty($id))
         {
@@ -342,6 +353,15 @@ class Product extends Api
             $data['add_time']       = time();
             $rs = Db::name("mall_product")->insertGetId($data);
             if(!empty($rs)){
+                if($release_num > 0){   
+                    $wh = [];
+                    $wh['user_id'] = $this->auth->id;
+                    $wh['kind_id'] = 1;
+                    Db::name("egg")->where($wh)->setDec('number',$release_num);
+                    //写入日志
+                    Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>1,'type'=>12,'order_sn'=>$rs,'number'=>-$release_num,'before'=>$egg_info['number'],'after'=>($egg_info['number']-$release_num),'note'=>"发布商品减少",'createtime'=>time()]);
+                }
+
                 $this->success("添加成功");
             } else{
                 $this->error("添加失败,请重试");
