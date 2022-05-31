@@ -976,7 +976,7 @@ class Egg extends Api
         $order = Db::name("egg_order")
             ->field("*")
             ->where($order_where)
-            ->limit(30)
+            ->limit(10)
             ->select();
         if(count($order)>0){
             foreach($order as $k=>$v) {
@@ -997,12 +997,13 @@ class Egg extends Api
 
                         if($res_user == true){
                             //未打款次数
-                            $refund_count = Db::name("user")->where('id', $v['buy_user_id'])->value('unpay_num');
+                            $wh = [];
+                            $wh['id'] = $v['buy_user_id'];
+                            $wh['status'] = 'normal';
+                            $refund_count = Db::name("user")->where($wh)->value('unpay_num');
                             if($refund_count>=3){
                                 //封买家账号
-                                $user_data = array();
-                                $user_data['status'] = 'hidden';
-                                $res_user_update = Db::name("user")->where('id', $v['buy_user_id'])->data($user_data)->update();
+                                $res_user_update = Db::name("user")->where('id', $v['buy_user_id'])->update(['status'=>'hidden']);
 
                                 //清空买家token
                                 Db::name("user_token")->where('user_id', $v['buy_user_id'])->delete();
