@@ -309,7 +309,7 @@ class Product extends Api
             $this->error("账号无效或者未认证");
         }
 
-        if(!empty($images)){
+        if(empty($images)){
             $this->error("图片不能为空");
         }
         $img_arr = explode(",",$images);
