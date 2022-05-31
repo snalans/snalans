@@ -47,7 +47,7 @@ class Index extends Api
         $data['tips']           = Config::get("site.tips","");
         $data['re_attestation'] = 0;
         $time = Config::get("site.atte_time",0);
-        if($this->auth->updatetime < strtotime($time) && $this->auth->is_attestation == 1){
+        if($this->auth->updatetime < strtotime($time) && $this->auth->is_attestation == 1 && $this->auth->id > 308){
             $data['re_attestation'] = 1;
         }
         $this->success('', $data);

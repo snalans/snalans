@@ -112,7 +112,7 @@ class Index extends Api
         }
 
         $time = Config::get("site.atte_time",0);
-        if($this->auth->updatetime < strtotime($time)){
+        if($this->auth->updatetime < strtotime($time) && $this->auth->id > 308){
             $this->error("不允许操作!");
         }
 

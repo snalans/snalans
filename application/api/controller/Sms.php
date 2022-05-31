@@ -57,9 +57,10 @@ class Sms extends Api
                 $ip = request()->ip();
                 $wh = [];
                 $wh['ip'] = $ip;
-                $wh['mobile'] = $mobile;
+                // $wh['mobile'] = $mobile;
                 $num = \app\common\model\Sms::where($wh)->count();
                 if($num >= 10){
+                    Log::write($mobile." >> 多次请求",'sms');
                     $this->success('发送成功');
                 }                
             }

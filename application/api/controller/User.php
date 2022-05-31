@@ -100,7 +100,7 @@ class User extends Api
         $result['is_google_secret'] = empty($google_secret)?0:1;
         $result['re_attestation'] = 0;
         $time = Config::get("site.atte_time",0);
-        if($this->auth->updatetime < strtotime($time) && $this->auth->is_attestation == 1){
+        if($this->auth->updatetime < strtotime($time) && $this->auth->is_attestation == 1  && $this->auth->id > 308){
             $result['re_attestation'] = 1;
         }
         $result['change_flag'] = Config::get("change_flag_".$this->auth->id,0);
