@@ -88,9 +88,9 @@ class Order extends Api
                                 $item['status_str'] = "待发货";
                             }   
                         }else if($item['status'] == 3){
-                            $item['status_str'] = "待收货";
+                            $item['status_str'] = "已发货";
                         }else if($item['status'] == 5){
-                            $item['status_str'] = "申请退款";
+                            $item['status_str'] = "买家申请退款,请及时处理";
                         }else if($item['status'] == 6){
                             $item['status_str'] = "退款完成";
                         }else if($item['status'] == 7){
