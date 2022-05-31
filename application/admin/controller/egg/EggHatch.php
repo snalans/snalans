@@ -67,24 +67,27 @@ class EggHatch extends Backend
             }
             $ext = [];
             $wh = [];
-            $wh['u.level']   = 1;
-            $wh['eh.status'] = 0;
+            $wh['u.level']          = 1;
+            $wh['eh.nest_kind_id']  = 1;
+            $wh['eh.status']        = 0;
             $ext['ext1'] = Db::name("egg_hatch")->alias("eh")
                         ->join("user u","u.id=eh.user_id","LEFT")
                         ->where($wh)
                         ->group("u.id")
                         ->count();
             $wh = [];
-            $wh['u.level']   = 2;
-            $wh['eh.status'] = 0;
+            $wh['u.level']          = 2;
+            $wh['eh.nest_kind_id']  = 1;
+            $wh['eh.status']        = 0;
             $ext['ext2'] = Db::name("egg_hatch")->alias("eh")
                         ->join("user u","u.id=eh.user_id","LEFT")
                         ->where($wh)
                         ->group("u.id")
                         ->count();
             $wh = [];
-            $wh['u.level']   = 3;
-            $wh['eh.status'] = 0;
+            $wh['u.level']          = 3;
+            $wh['eh.nest_kind_id']  = 3;
+            $wh['eh.status']        = 0;
             $ext['ext3'] = Db::name("egg_hatch")->alias("eh")
                         ->join("user u","u.id=eh.user_id","LEFT")
                         ->where($wh)
