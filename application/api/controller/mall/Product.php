@@ -309,8 +309,8 @@ class Product extends Api
             $this->error("账号无效或者未认证");
         }
 
-        if(empty($mobile)){
-            $this->error("手机号不能为空");
+        if (!Validate::regex($mobile, "^1\d{10}$")) {
+            $this->error(__('Mobile is incorrect'));
         }
 
         $issue_number = Config::get("site.issue_number");
