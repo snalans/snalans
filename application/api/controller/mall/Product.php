@@ -310,7 +310,7 @@ class Product extends Api
         }
 
         if (!Validate::regex($mobile, "^1\d{10}$")) {
-            $this->error(__('Mobile is incorrect'));
+            $this->error("手机号错误");
         }
 
         $issue_number = Config::get("site.issue_number");
