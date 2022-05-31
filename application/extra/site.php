@@ -67,6 +67,6 @@ return array (
   'apk_version' => '100',
   'black_days' => '13',
   'atte_time' => '2022-05-22',
-  'authenticator' => 'http://egg.test/',
+  'authenticator' => 'https://apk.eggloop.co/authenticator.apk',
   'release_num' => '1',
 );

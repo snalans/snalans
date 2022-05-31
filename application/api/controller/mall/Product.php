@@ -191,7 +191,7 @@ class Product extends Api
 
         $wh = [];
         $wh['p.user_id'] = $this->auth->id;
-        $wh['p.status']  = $status;
+        $wh['p.status']  = $status==1?['>',0]:0;
 
         $list = Db::name("mall_product")->alias('p')
                     ->field("p.id,p.title,p.images,p.sell_num,p.price,ek.name,ek.image as egg_image")
@@ -211,7 +211,7 @@ class Product extends Api
 
         $wh = [];
         $wh['user_id'] = $this->auth->id;
-        $wh['status'] = 1;
+        $wh['status'] = ['>',0];
         $list['on_num'] = Db::name("mall_product")->where($wh)->count();
         $wh = [];
         $wh['user_id'] = $this->auth->id;
