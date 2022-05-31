@@ -331,7 +331,7 @@ class Product extends Api
 
         $wh = [];
         $wh['user_id'] = $this->auth->id;
-        $wh['status']  = ['<>',-1];
+        $wh['status']  = ['>',0];
         $num = Db::name("mall_product")->where($wh)->count();
         if($num > 3){
             $this->error("发布商品已经上限");
