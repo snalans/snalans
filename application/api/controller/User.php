@@ -86,7 +86,7 @@ class User extends Api
 
         $wh = [];
         $wh['user_id'] = $this->auth->id;
-        $wh['status']  = 1;
+        $wh['status']  = ['>',0];
         $result['release'] = Db::name("mall_product")->where($wh)->count();
         $wh = [];
         $wh['buy_user_id'] = $this->auth->id;

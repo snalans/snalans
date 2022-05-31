@@ -212,7 +212,7 @@ class Product extends Api
 
         $wh = [];
         $wh['user_id'] = $this->auth->id;
-        $wh['status'] = ['>',0];
+        $wh['status'] =  1;
         $list['on_num'] = Db::name("mall_product")->where($wh)->count();
         $wh = [];
         $wh['user_id'] = $this->auth->id;
