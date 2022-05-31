@@ -37,9 +37,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {checkbox: true},
                         {field: 'id', title: __('Id'), operate:false},
                         {field: 'user_id', title: __('User_id')},
-                        {field: 'user.serial_number', title: __('User.serial_number'), operate: 'LIKE'},
+                        {field: 'user.serial_number', title: __('User.serial_number'), operate: false},
                         {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
-                        {field: 'hatch_id', title: '窝ID', operate: 'LIKE'},
+                        {field: 'hatch_id', title: '窝ID', operate: false},
                         {field: 'kind_id', title: "蛋名称", formatter:Table.api.formatter.normal, searchList: {1: '白蛋', 2: '铜蛋', 3: '银蛋', 4: '金蛋', 5: '彩蛋'}},
                         {field: 'type', title: __('Type'), formatter: Table.api.formatter.normal, searchList: {0: '农场', 1: '订单', 2: '互转', 3: '合成', 4: '管理员操作', 5: '积分兑换', 9: '手续费',10:'农场主等级升级',11:'农场主等级降级',12:'发布商品'}},
                         {field: 'order_sn', title: __('Order_sn'), operate: 'LIKE'},
@@ -63,7 +63,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         },
                         {field: 'after', title: '变动后', operate: false},
                         {field: 'note', title: __('Note'), operate: false},
-                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
+                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime,defaultValue:Moment().startOf('day').format('YYYY-MM-DD') + ' 00:00:00 - ' + Moment().endOf('day').format('YYYY-MM-DD')+' 23:59:59'},
                         {field: 'operate', title: __('Operate'), table: table,buttons: [
                             {name: 'edit', text: '修改', title: '添加交易手续费', icon: 'fa fa-pencil', classname: 'btn btn-xs btn-success btn-editone btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url,
                                 visible:function(row){

@@ -54,14 +54,14 @@ class Log extends Backend
             }
 
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
-
+            
             $list = $this->model
                     ->field("log.*,user.serial_number as `user.serial_number`,user.username as `user.username`,user.mobile as `user.mobile`")
                     ->join("user user","user.id=log.user_id","LEFT")
-                    ->where($where)
+                    ->where($where)    
                     ->order($sort, $order)
                     ->paginate($limit);
-
+                    
             $filter = json_decode($this->request->get('filter'),true);
             $op = json_decode($this->request->get('op'),true);
             if(isset($filter['type'])){
