@@ -309,6 +309,14 @@ class Product extends Api
             $this->error("账号无效或者未认证");
         }
 
+        if(!empty($images)){
+            $this->error("图片不能为空");
+        }
+        $img_arr = explode(",",$images);
+        if(count($img_arr) > 9){
+            $this->error("图片数量不能超过9张");
+        }
+
         if (!Validate::regex($mobile, "^1\d{10}$")) {
             $this->error("手机号错误");
         }
