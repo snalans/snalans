@@ -178,6 +178,7 @@ class Product extends Api
      * @ApiReturnParams   (name="sell_num", type="integer", description="商品销量")  
      * @ApiReturnParams   (name="egg_image", type="string", description="蛋图片")     
      * @ApiReturnParams   (name="price", type="integer", description="支付价格") 
+     * @ApiReturnParams   (name="status", type="integer", description="状态 1=在售 2=审核中 0=下架") 
      * @ApiReturnParams   (name="name", type="string", description="蛋名称")          
      * @ApiReturnParams   (name="price_str", type="integer", description="产品价格")    
      * @ApiReturnParams   (name="on_num", type="integer", description="在售数量")     
@@ -194,7 +195,7 @@ class Product extends Api
         $wh['p.status']  = $status==1?['>',0]:0;
 
         $list = Db::name("mall_product")->alias('p')
-                    ->field("p.id,p.title,p.images,p.sell_num,p.price,ek.name,ek.image as egg_image")
+                    ->field("p.id,p.title,p.images,p.sell_num,p.price,p.status,ek.name,ek.image as egg_image")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
                     ->where($wh)
                     ->order("p.add_time desc")
