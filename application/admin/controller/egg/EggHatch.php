@@ -77,7 +77,7 @@ class EggHatch extends Backend
                         ->count();
             $wh = [];
             $wh['u.level']          = 2;
-            $wh['eh.nest_kind_id']  = 1;
+            $wh['eh.nest_kind_id']  = 2;
             $wh['eh.status']        = 0;
             $ext['ext2'] = Db::name("egg_hatch")->alias("eh")
                         ->join("user u","u.id=eh.user_id","LEFT")
