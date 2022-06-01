@@ -55,14 +55,13 @@ class Egg extends Backend
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
 
             $list = $this->model
-                    ->with(['eggkind','user'])
+                    ->with(['user'])
                     ->where($where)
                     ->order($sort, $order)
                     ->paginate($limit);
 
             foreach ($list as $row) {
                 
-                $row->getRelation('eggkind')->visible(['name']);
 				$row->getRelation('user')->visible(['username','mobile']);
             }
 

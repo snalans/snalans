@@ -66,33 +66,33 @@ class EggHatch extends Backend
                 $row->getRelation('user')->visible(['serial_number','username','mobile']);
             }
             $ext = [];
-            $wh = [];
-            $wh['u.level']          = 1;
-            $wh['eh.nest_kind_id']  = 1;
-            $wh['eh.status']        = 0;
-            $ext['ext1'] = Db::name("egg_hatch")->alias("eh")
-                        ->join("user u","u.id=eh.user_id","LEFT")
-                        ->where($wh)
-                        ->group("u.id")
-                        ->count();
-            $wh = [];
-            $wh['u.level']          = 2;
-            $wh['eh.nest_kind_id']  = 2;
-            $wh['eh.status']        = 0;
-            $ext['ext2'] = Db::name("egg_hatch")->alias("eh")
-                        ->join("user u","u.id=eh.user_id","LEFT")
-                        ->where($wh)
-                        ->group("u.id")
-                        ->count();
-            $wh = [];
-            $wh['u.level']          = 3;
-            $wh['eh.nest_kind_id']  = 3;
-            $wh['eh.status']        = 0;
-            $ext['ext3'] = Db::name("egg_hatch")->alias("eh")
-                        ->join("user u","u.id=eh.user_id","LEFT")
-                        ->where($wh)
-                        ->group("u.id")
-                        ->count();                   
+            $ext['ext1'] = "";
+            $ext['ext2'] = "";
+            $ext['ext3'] = "";
+            $sql = "SELECT `level`,COUNT(*) as num FROM (SELECT u.`level`,eh.user_id FROM `fa_egg_hatch` `eh` LEFT JOIN `fa_user` `u` ON `u`.`id`=`eh`.`user_id` WHERE `u`.`level` > 0 AND `eh`.`nest_kind_id` = 1 AND `eh`.`status` = 0 GROUP BY `u`.`id`) AS ehu GROUP BY `level`";  
+            $info = Db::query($sql);
+            if(!empty($info)){
+                foreach ($info as $key => $value) {
+                    $ext['ext1'] .= $value['level'].":".$value['num']." ";
+                }
+            }
+            
+
+            $sql = "SELECT `level`,COUNT(*) as num FROM (SELECT u.`level`,eh.user_id FROM `fa_egg_hatch` `eh` LEFT JOIN `fa_user` `u` ON `u`.`id`=`eh`.`user_id` WHERE `u`.`level` > 0 AND `eh`.`nest_kind_id` = 2 AND `eh`.`status` = 0 GROUP BY `u`.`id`) AS ehu GROUP BY `level`";  
+            $info = Db::query($sql);
+            if(!empty($info)){
+                foreach ($info as $key => $value) {
+                    $ext['ext2'] .= $value['level'].":".$value['num']." ";
+                }
+            }
+                  
+            $sql = "SELECT `level`,COUNT(*) as num FROM (SELECT u.`level`,eh.user_id FROM `fa_egg_hatch` `eh` LEFT JOIN `fa_user` `u` ON `u`.`id`=`eh`.`user_id` WHERE `u`.`level` > 0 AND `eh`.`nest_kind_id` = 3 AND `eh`.`status` = 0 GROUP BY `u`.`id`) AS ehu GROUP BY `level`";  
+            $info = Db::query($sql);
+            if(!empty($info)){
+                foreach ($info as $key => $value) {
+                    $ext['ext3'] .= $value['level'].":".$value['num']." ";
+                }
+            }   
 
             $result = array("total" => $list->total(), "rows" => $list->items(),"extend"=>$ext);
 

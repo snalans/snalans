@@ -30,7 +30,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'id', title: __('Id'), operate:false},
                         {field: 'user.username', title: __('User.username'), operate: 'LIKE'},
                         {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
-                        {field: 'eggkind.name', title: __('Eggkind.name'), operate: 'LIKE'},
+                        {field: 'kind_id', title: "蛋名称", formatter:Table.api.formatter.normal, searchList: {1: '白蛋', 2: '铜蛋', 3: '银蛋', 4: '金蛋', 5: '彩蛋'}},
                         {field: 'number', title: __('Number'), operate:false, sortable: true},
                         {field: 'freezing', title: __('Freezing'), operate:false},
                         {field: 'hatchable', title: __('Hatchable'), operate:false},

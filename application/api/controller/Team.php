@@ -288,35 +288,25 @@ class Team extends Api
                 $is_rollback = true;
                 foreach ($commission_list as $k => $v) {
                     if($v['score']>0){
+                        $asset_where = [];
+                        $asset_where['user_id'] = $v['user_id'];
+                        $asset_where['kind_id'] = $v['kind_id'];
+                        $res = Db::name("egg")->where($asset_where)->inc('point', $v['score'])->update();
                         $re = Db::name("team_bonus")->where(array('id' => $v['id']))->data(array('is_issue' => 1, 'pay_time' => time()))->update();
-                        $wh = [];
-                        $wh['user_id'] = $v['user_id'];
-                        $wh['kind_id'] = $v['kind_id'];
-                        $wh['status']  = 0;
-                        $info = Db::name("egg_hatch")->where($wh)->find();
-                        if(!empty($info)){                            
-                            $asset_where = [];
-                            $asset_where['user_id'] = $v['user_id'];
-                            $asset_where['kind_id'] = $v['kind_id'];
-                            $res = Db::name("egg")->where($asset_where)->inc('point', $v['score'])->update();
-                            //添加积分发放日志
+                        //添加积分发放日志
 
-                            $egg_name = Db::name("egg_kind")
-                                ->where('id',$v['kind_id'])
-                                ->value('name');
+                        $egg_name = Db::name("egg_kind")
+                            ->where('id',$v['kind_id'])
+                            ->value('name');
 
-                            $log = [];
-                            $log['type'] = 1;
-                            $log['user_id'] = $v['user_id'];
-                            $log['kind_id'] = $v['kind_id'];
-                            $log['score'] = $v['score'];
-                            $log['memo'] = '【'.$v['add_time'].'】获得'.$egg_name.'分红,等级'.$v['title'].$v['score'] . '积分';
-                            $log['createtime'] = time();
-                            $re1 = Db::name("egg_score_log")->insert($log);
-                        }else{
-                            $res = true;
-                            $re1 = true;
-                        }
+                        $log = [];
+                        $log['type'] = 1;
+                        $log['user_id'] = $v['user_id'];
+                        $log['kind_id'] = $v['kind_id'];
+                        $log['score'] = $v['score'];
+                        $log['memo'] = '【'.$v['add_time'].'】获得'.$egg_name.'分红,等级'.$v['title'].$v['score'] . '积分';
+                        $log['createtime'] = time();
+                        $re1 = Db::name("egg_score_log")->insert($log);
 
                         if($res==false || $re==false || $re1==false){
                             $is_rollback = false;
