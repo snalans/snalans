@@ -62,7 +62,7 @@ class Egg extends Backend
 
             foreach ($list as $row) {
                 
-				$row->getRelation('user')->visible(['username','mobile']);
+				$row->getRelation('user')->visible(['mobile']);
             }
 
             $result = array("total" => $list->total(), "rows" => $list->items());

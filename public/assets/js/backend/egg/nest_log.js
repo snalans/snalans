@@ -28,7 +28,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {checkbox: true},
                         {field: 'id', title: __('Id'),operate:false},
                         {field: 'user.mobile', title: '用户手机号', operate: 'LIKE'},
-                        {field: 'eggnestkind.name', title: __('Eggnestkind.name'), operate: 'LIKE'},
+                        {field: 'nest_kind_id', title: "窝类型", formatter:Table.api.formatter.normal, searchList: {1: '白窝', 2: '铜窝', 3: '银窝', 4: '金窝'}},
                         {field: 'type', title: __('Type'),formatter:Table.api.formatter.normal, searchList: {0:'农场主升级赠送', 1: '注册', 2: '直推', 3: '商城'}},
                         {field: 'number', title: __('Number'),operate:false},
                         {field: 'note', title: __('Note'), operate: false},
