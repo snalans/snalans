@@ -63,7 +63,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         },
                         {field: 'after', title: '变动后', operate: false},
                         {field: 'note', title: __('Note'), operate: false},
-                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime,defaultValue:Moment().startOf('day').format('YYYY-MM-DD') + ' 00:00:00 - ' + Moment().endOf('day').format('YYYY-MM-DD')+' 23:59:59'},
+                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', formatter:Table.api.formatter.datetime,defaultValue:this.today(0) + ' 00:00:00 - ' + this.today(0)+' 23:59:59'},
                         {field: 'operate', title: __('Operate'), table: table,buttons: [
                             {name: 'edit', text: '修改', title: '添加交易手续费', icon: 'fa fa-pencil', classname: 'btn btn-xs btn-success btn-editone btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url,
                                 visible:function(row){
@@ -99,6 +99,22 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));
             }
+        },
+        today:function(AddDayCount){
+            var dd = new Date();
+            dd.setDate(dd.getDate() + AddDayCount);
+            var y = dd.getFullYear(), m = dd.getMonth()+1, d = dd.getDate();
+            if(m < 10){
+                m = "0" + m;
+            }else{
+                m = m;
+            }
+            if(d < 10){
+                d = "0" + d;
+            }else{
+                d = d;
+            }
+            return y+"-"+m+"-"+d;
         }
     };
     return Controller;
