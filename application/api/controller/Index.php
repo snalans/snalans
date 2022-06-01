@@ -36,21 +36,21 @@ class Index extends Api
         $data = [];
         $data['egg_info']       = Db::name("egg_kind")->cache(true,300)->field("id,name,image,egg_image,ch_image,bg_image,stock")->order("id","asc")->select();
         $data['share_image']    = Db::name("egg_news")->cache(true,300)->where("news_type_id",4)->value("image");
-        $data['invite_url']     = Config::get("site.invite_url","http://h5.eggloop.co");
-        $data['is_open']        = Config::get("site.is_open",1);
-        $data['adroid']         = Config::get("site.android_url","");
-        $data['ios']            = Config::get("site.ios_url","");
-        $data['is_agreement']   = Config::get("site.is_agreement",0);
-        $data['app_version']    = Config::get("site.app_version","1.9.0");
-        $data['apk_version']    = Config::get("site.apk_version","1.9.0");
-        $data['upgrade']        = Config::get("site.upgrade",0);
-        $data['tips']           = Config::get("site.tips","");
+        $data['invite_url']     = Config::get("site.invite_url")??"http://h5.aneggloop.co";
+        $data['is_open']        = Config::get("site.is_open")??1;
+        $data['adroid']         = Config::get("site.android_url")??"";
+        $data['ios']            = Config::get("site.ios_url")??"";
+        $data['is_agreement']   = Config::get("site.is_agreement")??0;
+        $data['app_version']    = Config::get("site.app_version")??"";
+        $data['apk_version']    = Config::get("site.apk_version")??"";
+        $data['upgrade']        = Config::get("site.upgrade")??0;
+        $data['tips']           = Config::get("site.tips")??"";
         $data['re_attestation'] = 0;
-        $time = Config::get("site.atte_time",0);
+        $time = Config::get("site.atte_time")??0;
         if($this->auth->updatetime < strtotime($time) && $this->auth->is_attestation == 1 && $this->auth->id > 308){
             $data['re_attestation'] = 1;
         }
-        $this->success('', $data);
+        $this->success('success', $data);
     }
 
     /**
