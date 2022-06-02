@@ -247,7 +247,7 @@ class User extends Api
         if (!$username || !$password) {
             $this->error(__('Invalid parameters'));
         }
-        if(empty($invite_code)){
+        if(empty($invite_code) || strlen($invite_code) > 10){
             $this->error(__('Invalid invitation code, please check'));
         }
         $pwd_len = strlen($password);

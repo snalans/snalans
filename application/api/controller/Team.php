@@ -11,8 +11,67 @@ use think\Db;
  */
 class Team extends Api
 {
-    protected $noNeedLogin = ['bonus_commission', 'bonus_commission_data','bonus_commission_issue'];
+    protected $noNeedLogin = ['bonus_commission', 'bonus_commission_data','bonus_commission_issue','share_bonus'];
     protected $noNeedRight = '*';
+
+    /**
+     * 农场主分红发放
+     */
+    public function share_bonus()
+    {
+        $wh = [];
+        $wh['type']          = 1;
+        $wh['createtime']    = ['>',strtotime(date("Y-m-d"))];
+        $user_id = Db::name("egg_score_log")->where($wh)->order("user_id","desc")->value("user_id");
+
+        $wh = [];
+        $wh['id']                = ['>',$user_id];
+        $wh['status']            = 'normal';
+        $wh['is_attestation']    = 1;
+        $wh['level']             = ['>',0];
+        $list = Db::name("user")->where($wh)->order("user_id","asc")->limit(30)->select();
+
+        if(!empty($list)){            
+            foreach ($list as $key => $v) {
+                DB::startTrans();
+                $wh = [];
+                $wh['user_id'] = $v['user_id'];
+                $wh['kind_id'] = $v['kind_id'];
+                $wh['status']  = 0;
+                $info = Db::name("egg_hatch")->where($wh)->find();
+                if($info){
+                    $egg_name = Db::name("egg_kind")->column('name','id');
+                    $config_list = Db::name("team_config")->select();
+                    //添加积分发放日志
+                    foreach ($config_list as $key => $value) {
+                        if($value['level'] == $user['level']){
+                            $lv_title = $value['title'];
+                            $lv_score = $value['number'];
+                            break;
+                        }
+                    }                        
+                    $log = [];
+                    $log['type']    = 1;
+                    $log['user_id'] = $v['user_id'];
+                    $log['kind_id'] = $v['kind_id'];
+                    $log['score']   = $v['score'];
+                    $log['memo']    = '【'.$v['add_time'].'】获得'.$egg_name[$v['kind_id']].'分红,等级' . $lv_title . $lv_score . '积分';
+                    $log['createtime'] = time();
+                    $log_rs = Db::name("egg_score_log")->insert($log);
+                }
+                    
+                    
+                if( $is_rollback ==false){
+                    DB::rollback();
+                }else{
+                    DB::commit();
+                    $this->success("更新成功");
+                }            
+            }
+        }
+
+        $this->success("分红成功");
+    }
 
     /**
      * 农场主等级更新
