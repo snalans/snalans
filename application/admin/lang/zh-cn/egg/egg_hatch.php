@@ -6,6 +6,7 @@ return [
     'Kind_id'           => '蛋类型',
     'Status'            => '状态',
     'Hatch_num'         => '孵化进度',
+    'Buy_cycle'         => '购买周期',
     'Shape'             => '形态',
     'Is_reap'           => '是否获得',
     'Position'          => '窝的位置编号',

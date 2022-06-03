@@ -37,6 +37,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'is_reap', title: __('Is_reap'), operate:false, formatter: Table.api.formatter.normal, searchList: {0: '无', 1: '可收获', 2: '可收获'}},
                         {field: 'position', title: __('Position'), operate:false},
                         {field: 'is_buy', title: __('是否购买'), formatter: Table.api.formatter.normal, searchList: {1: __('是'), 0: __('否')}},
+                        {field: 'buy_cycle', title: __('剩余周期'), operate:false,sortable:true},
                         {field: 'is_give', title: __('窝里是否体验蛋'), operate:false, formatter: Table.api.formatter.normal, searchList: {0: '否', 1: '是'}},
                         {field: 'is_close', title: __('是否关闭'), searchList: {"1": __('Yes'), "0": __('No')}, formatter: Table.api.formatter.toggle},
                         {field: 'uptime', title: __('Uptime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
@@ -46,7 +47,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                 name: 'ajax',
                                 text: '清空',
                                 title: "删除窝里面的蛋或鸡",
-                                classname: 'btn btn-xs btn-success btn-magic btn-ajax',
+                                classname: 'btn btn-xs btn-info btn-magic btn-ajax',
                                 icon: 'fa fa-magic',
                                 url: 'egg/egg_hatch/reduction',
                                 confirm: '确认清空蛋窝?',
@@ -66,6 +67,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     ]
                 ]
             });
+            table.on('post-body.bs.table',function(){
+                $(".btn-editone").data("area",["400px","550px"]);
+            })
 
             table.on('load-success.bs.table', function (e, data) {
                 //这里我们手动设置底部的值
