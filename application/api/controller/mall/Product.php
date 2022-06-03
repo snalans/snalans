@@ -127,12 +127,13 @@ class Product extends Api
      * @ApiReturnParams   (name="add_time", type="string", description="商品发布时间")        
      * @ApiReturnParams   (name="avatar", type="string", description="卖家头像")    
      * @ApiReturnParams   (name="serial_number", type="string", description="卖家编号")   
+     * @ApiReturnParams   (name="qr_wallet", type="string", description="收款钱包地址")   
      */
     public function getDetail()
     {
         $id = $this->request->post("id","");
         
-        $info = Db::name("mall_product")->alias('p')->cache(true,300)
+        $info = Db::name("mall_product")->alias('p')->cache(true,100)
                     ->field("p.title,p.images,(p.sell_num+p.virtual_sales) as sell_num,p.price,ek.name,ek.image as egg_image,p.stock,p.is_virtual,p.content,p.add_time,u.avatar,u.serial_number,p.nest_kind_id")
                     ->join("user u","u.id=p.user_id","LEFT")
                     ->join("egg_kind ek","ek.id=p.kind_id","LEFT")
@@ -145,6 +146,7 @@ class Product extends Api
             }
             $info['price_str'] = $info['price']." ".$info['name'];
             $info['add_time']  = date("Y-m-d H:i",$info['add_time']);
+            $info['qr_wallet'] = Config::get("qr_wallet")??"";
         }
         $this->success('',$info);
     }

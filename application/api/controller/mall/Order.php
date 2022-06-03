@@ -414,18 +414,20 @@ class Order extends Api
      * @ApiParams   (name="address_id", type="integer", description="地址ID")
      * @ApiParams   (name="recharge_account", type="string", description="充值账户")
      * @ApiParams   (name="paypwd", type="string", description="支付密码")
+     * @ApiParams   (name="pay_img", type="string", description="付款截图")
     */
     public function makeOrder()
     {
         if(empty(Config::get("site.mall_is_open"))){
             $this->error("商城维护中,稍后再来交易...");
         }
-        $id         = $this->request->post("id",0);
-        $address_id = $this->request->post("address_id",0);
+        $id               = $this->request->post("id",0);
+        $address_id       = $this->request->post("address_id",0);
         $recharge_account = $this->request->post("recharge_account","");
-        $number     = $this->request->post("number/d",1);
-        $paypwd     = $this->request->post('paypwd',"");
-        $google_code = $this->request->post('google_code');
+        $number           = $this->request->post("number/d",1);
+        $paypwd           = $this->request->post('paypwd',"");
+        $google_code      = $this->request->post('google_code');
+        $pay_img          = $this->request->post('pay_img');
 
         if($number <= 0){
             $this->error("参数错误");
@@ -488,10 +490,8 @@ class Order extends Api
             if($number != 1){
                 $this->error("虚拟商品一单只能购买一件"); 
             }
-            if($info['nest_kind_id']>0){
-                if(empty($recharge_account)){
-                    $this->error("请填写转账地址用于审核"); 
-                }
+            if($info['nest_kind_id']>0)
+            {
                 $total = Db::name("egg_nest_kind")->where("kind_id",$info['nest_kind_id'])->value("total");
                 $wh = [];
                 $wh['user_id']      = $this->auth->id;
@@ -526,6 +526,7 @@ class Order extends Api
             $data['title']              = $info['title'];
             $data['price']              = $info['price'];
             $data['is_virtual']         = $info['is_virtual'];
+            $data['pay_img']            = $pay_img;
             $data['number']             = $number;
             $data['rate']               = $rate;
             $data['total_price']        = $sell_egg;
@@ -643,5 +644,27 @@ class Order extends Api
         }else{
             $this->error("删除失败,请重试");
         }
+    }
+
+
+    /**
+     * 检测是否可以购买窝
+     *
+     * @ApiMethod (POST)
+     * @ApiParams   (name="nest_kind_id", type="string", description="窝类型ID")
+     */
+    public function checkNest()
+    {
+        $nest_kind_id = input("nest_kind_id",0);
+        $total = Db::name("egg_nest_kind")->where("kind_id",$nest_kind_id)->value("total");
+        $wh = [];
+        $wh['user_id']      = $this->auth->id;
+        $wh['nest_kind_id'] = $nest_kind_id;
+        $wh['is_close']     = 0;
+        $num = Db::name("egg_hatch")->where($wh)->count();
+        if($num >= $total){
+            $this->error("窝数量达上限,无法购买。"); 
+        }
+        $this->success(); 
     }
 }
