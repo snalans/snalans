@@ -56,7 +56,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'number', title: __('Number'), operate:false},
                         {field: 'rate', title: '手续费', operate:false},
                         {field: 'total_price', title: '总价格', operate:false},
-                        {field: 'pay_img', title: '付款截图', operate:false},
+                        {field: 'pay_img', title: '付款截图', operate:false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'recharge_account', title: __('Recharge_account'), operate: false},
                         {field: 'contactor', title: __('Contactor'), operate: false},
                         {field: 'contactor_phone', title: __('Contactor_phone'), operate: false},
