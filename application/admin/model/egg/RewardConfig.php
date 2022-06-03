@@ -163,6 +163,8 @@ class RewardConfig extends Model
             $orderby = $hinfo['position']==3?"number asc":"number desc";
         }else if($hinfo['kind_id'] == 3){
             $orderby = $hinfo['position']==2?"number asc":"number desc";            
+        }else{
+            $orderby = "number asc";
         }
 
         $info = Db::name("egg_reward_config")->where("nest_kind_id",$hinfo['kind_id'])->order($orderby)->find();
