@@ -452,8 +452,6 @@ class Order extends Api
             $this->error("不能购买给自己的产品");
         }
         
-        $v_user = new \app\api\controller\User;
-        $v_user->validSecret($google_code,$this->auth->id);
 
         $egg_where = [];
         $egg_where['user_id'] = $this->auth->id;
@@ -505,10 +503,14 @@ class Order extends Api
                 $this->error("充值账户不能为空"); 
             }
         }
-
-        $auth = new \app\common\library\Auth();
-        if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
-            $this->error('支付密码错误');
+        if(empty($info['nest_kind_id'])){     
+            $auth = new \app\common\library\Auth();
+            if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
+                $this->error('支付密码错误');
+            }   
+            
+            $v_user = new \app\api\controller\User;
+            $v_user->validSecret($google_code,$this->auth->id);
         }
 
         DB::startTrans();  
