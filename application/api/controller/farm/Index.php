@@ -211,6 +211,12 @@ class Index extends Api
                         $data['shape']      = 5;
                         $data['is_reap']    = 0;
                         $data['status']     = 1;
+                        if($egg['is_buy'] == 1 && $egg['buy_cycle'] > 0){
+                            $data['buy_cycle']    = $egg['buy_cycle']-1;
+                            if($data['buy_cycle'] <=0 ){
+                                $data['is_close']     = 1;
+                            }                            
+                        }
                         $flag = true;
                         \app\admin\model\egg\RewardConfig::decAward($egg['id']);
                     }
