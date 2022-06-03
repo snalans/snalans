@@ -146,7 +146,7 @@ class Product extends Api
             }
             $info['price_str'] = $info['price']." ".$info['name'];
             $info['add_time']  = date("Y-m-d H:i",$info['add_time']);
-            $info['qr_wallet'] = Config::get("qr_wallet")??"";
+            $info['qr_wallet'] = Config::get("site.qr_wallet")??"";
         }
         $this->success('',$info);
     }
