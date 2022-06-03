@@ -44,6 +44,7 @@ class Order extends Api
      * @ApiReturnParams   (name="status", type="string", description="状态 1=交易完成 2=待发货 3=待收货 5=申请退款 6=退款完成 7=申诉中")     
      * @ApiReturnParams   (name="status_str", type="string", description="状态名称") 
      * @ApiReturnParams   (name="serial_number", type="string", description="会员编号")  
+     * @ApiReturnParams   (name="nest_kind_id", type="string", description="窝类型ID 0=不是窝")  
      */
     public function getOrderList()
     {
@@ -73,7 +74,7 @@ class Order extends Api
         }
 
         $list = Db::name("mall_order")->alias("mo")->cache(true,45)
-                    ->field("mo.order_sn,mo.title,mo.image,mo.price,mo.number,mo.rate,mo.total_price,mo.status,mo.is_virtual,u.serial_number,ek.name,ek.image as egg_image")
+                    ->field("mo.order_sn,mo.title,mo.image,mo.price,mo.number,mo.rate,mo.total_price,mo.status,mo.nest_kind_id,mo.is_virtual,u.serial_number,ek.name,ek.image as egg_image")
                     ->join("user u","u.id=$wh_str","LEFT")
                     ->join("egg_kind ek","ek.id=mo.kind_id","LEFT")
                     ->where($wh)
@@ -137,6 +138,7 @@ class Order extends Api
      * @ApiReturnParams   (name="serial_number", type="string", description="会员编号")  
      * @ApiReturnParams   (name="is_platform", type="string", description="是否平台商品订单 1=是 0=否")  
      * @ApiReturnParams   (name="note", type="string", description="退款理由")  
+     * @ApiReturnParams   (name="nest_kind_id", type="int", description="窝类型ID 0=不是窝")  
      */
     public function getOrderDetail()
     {
@@ -156,7 +158,7 @@ class Order extends Api
         }
 
         $info = Db::name("mall_order")->alias('mo')
-                    ->field("mo.product_id,mo.order_sn,mo.title,mo.image,mo.sell_user_id,mo.price,mo.number,mo.rate,mo.total_price,ek.name,ek.image as egg_image,mo.status,mo.contactor,mo.contactor_phone,mo.address,mo.express_name,mo.express_no,mo.recharge_account,mo.is_virtual,mo.received_time,mo.send_time,mo.add_time,u.mobile,u.serial_number,mo.note")
+                    ->field("mo.product_id,mo.order_sn,mo.title,mo.image,mo.sell_user_id,mo.price,mo.number,mo.rate,mo.total_price,ek.name,ek.image as egg_image,mo.status,mo.contactor,mo.contactor_phone,mo.address,mo.express_name,mo.express_no,mo.recharge_account,mo.is_virtual,mo.received_time,mo.send_time,mo.add_time,u.mobile,u.serial_number,mo.note,mo.nest_kind_id")
                     ->join("user u","u.id=$wh_str","LEFT")
                     ->join("egg_kind ek","ek.id=mo.kind_id","LEFT")
                     ->where($wh)
@@ -508,7 +510,7 @@ class Order extends Api
             if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
                 $this->error('支付密码错误');
             }   
-            
+
             $v_user = new \app\api\controller\User;
             $v_user->validSecret($google_code,$this->auth->id);
         }
@@ -528,6 +530,7 @@ class Order extends Api
             $data['title']              = $info['title'];
             $data['price']              = $info['price'];
             $data['is_virtual']         = $info['is_virtual'];
+            $data['nest_kind_id']       = $info['nest_kind_id'];
             $data['pay_img']            = $pay_img;
             $data['number']             = $number;
             $data['rate']               = $rate;
