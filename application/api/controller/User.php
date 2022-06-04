@@ -251,8 +251,11 @@ class User extends Api
             $this->error(__('Invalid invitation code, please check'));
         }
         $pwd_len = strlen($password);
-        if ($pwd_len > 16 || $pwd_len < 6 || !preg_match('/[a-z]+/',$password) || !preg_match('/[A-Z]+/',$password)) {
-            $this->error("密码长度应为6~16个字符,包含大小写字母");
+        // if ($pwd_len > 16 || $pwd_len < 6 || !preg_match('/[a-z]+/',$password) || !preg_match('/[A-Z]+/',$password)) {
+        //     $this->error("密码长度应为6~16个字符,包含大小写字母");
+        // }
+        if ($pwd_len > 16 || $pwd_len < 6) {
+            $this->error("密码长度应为6~16个字符");
         }
         if($code != '9999'){            
             $wh = [];
