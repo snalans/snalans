@@ -169,7 +169,7 @@ class Order extends Api
                 $info['status_str'] = "交易完成";
             }else if($info['status'] == 2){
                 if($info['is_virtual']==1){
-                    $info['status_str'] = empty($item['nest_kind_id'])?"待充值":"待审核";
+                    $info['status_str'] = empty($info['nest_kind_id'])?"待充值":"待审核";
                 }else{
                     $info['status_str'] = "待发货";
                 }                
