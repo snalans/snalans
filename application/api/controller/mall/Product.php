@@ -128,6 +128,7 @@ class Product extends Api
      * @ApiReturnParams   (name="avatar", type="string", description="卖家头像")    
      * @ApiReturnParams   (name="serial_number", type="string", description="卖家编号")   
      * @ApiReturnParams   (name="qr_wallet", type="string", description="收款钱包地址")   
+     * @ApiReturnParams   (name="nest_num", type="int", description="窝可以购买的数量")   
      */
     public function getDetail()
     {
@@ -143,6 +144,18 @@ class Product extends Api
             if(!empty($info['images'])){                            
                 $img_arr = explode(",",$info['images']);
                 $info['image'] = cdnurl($img_arr[0], false);
+            }
+            $info['nest_num'] = 1;
+            if(!empty($info['nest_kind_id'])){
+                if($this->auth->id){                    
+                    $total = Db::name("egg_nest_kind")->where("kind_id",$info['nest_kind_id'])->value("total");
+                    $wh = [];
+                    $wh['user_id']      = $this->auth->id;
+                    $wh['nest_kind_id'] = $info['nest_kind_id'];
+                    $wh['is_close']     = 0;
+                    $num = Db::name("egg_hatch")->where($wh)->count();
+                    $info['nest_num'] = ($total-$num)>0?($total-$num):0;
+                }
             }
             $info['price_str'] = $info['price']." ".$info['name'];
             $info['add_time']  = date("Y-m-d H:i",$info['add_time']);

@@ -84,7 +84,7 @@ class Order extends Api
                             $item['status_str'] = "交易完成";
                         }else if($item['status'] == 2){
                             if($item['is_virtual']==1){
-                                $item['status_str'] = "待充值";
+                                $item['status_str'] = empty($item['nest_kind_id'])?"待充值":"待审核";
                             }else{
                                 $item['status_str'] = "待发货";
                             }   
@@ -669,6 +669,14 @@ class Order extends Api
         $num = Db::name("egg_hatch")->where($wh)->count();
         if($num >= $total){
             $this->error("窝数量达上限,无法购买。"); 
+        }
+        $wh = [];
+        $wh['buy_user_id']  = $this->auth->id;
+        $wh['nest_kind_id'] = $nest_kind_id;
+        $wh['status']       = 2;
+        $result = Db::name("mall_order")->where($wh)->find();
+        if($result){
+            $this->error("订单还未完成无法购买"); 
         }
         $this->success(); 
     }
