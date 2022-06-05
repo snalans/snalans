@@ -47,7 +47,7 @@ class Index extends Api
         $data['upgrade']        = Config::get("site.upgrade")??0;
         $data['tips']           = Config::get("site.tips")??"";
         $data['chat_url']       = Config::get("site.chat_url")??"";
-        $data['business_id']    = 15;
+        $data['business_id']    = 1;
         $data['groupid']        = 0;
         // index/index/home?visiter_id=&visiter_name=&avatar=&groupid=0&business_id=15
         $data['re_attestation'] = 0;

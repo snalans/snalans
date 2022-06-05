@@ -341,7 +341,7 @@ class Product extends Api
             $this->error("有效值未达到标准，不能发布商品");
         }
 
-        $release_num = Config::get("site.release_num",0);
+        $release_num = Config::get("site.release_num")??0;
         if($release_num > 0){            
             $wh = [];
             $wh['user_id'] = $this->auth->id;
