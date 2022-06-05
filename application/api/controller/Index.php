@@ -49,7 +49,6 @@ class Index extends Api
         $data['chat_url']       = Config::get("site.chat_url")??"";
         $data['business_id']    = 1;
         $data['groupid']        = 0;
-        // index/index/home?visiter_id=&visiter_name=&avatar=&groupid=0&business_id=15
         $data['re_attestation'] = 0;
         $time = Config::get("site.atte_time")??0;
         if($this->auth->updatetime < strtotime($time) && $this->auth->is_attestation == 1 && $this->auth->id > 308){
