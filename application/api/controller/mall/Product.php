@@ -352,14 +352,6 @@ class Product extends Api
             }
         }
 
-        $wh = [];
-        $wh['user_id'] = $this->auth->id;
-        $wh['status']  = ['>',0];
-        $num = Db::name("mall_product")->where($wh)->count();
-        if($num > 3){
-            $this->error("发布商品已经上限");
-        }
-
         $data = [];
         $data['title']          = $title;
         $data['images']         = $images;
@@ -372,6 +364,13 @@ class Product extends Api
 
         if(empty($id))
         {
+            $wh = [];
+            $wh['user_id'] = $this->auth->id;
+            $wh['status']  = ['>',0];
+            $num = Db::name("mall_product")->where($wh)->count();
+            if($num > 3){
+                $this->error("发布商品已经上限");
+            }
             $data['user_id']        = $this->auth->id;
             $data['cate_id']        = 1;
             $data['add_time']       = time();
