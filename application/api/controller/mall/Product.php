@@ -441,16 +441,16 @@ class Product extends Api
             $wh['user_id'] = $this->auth->id;
             $wh['kind_id'] = 1;
             $egg_info = Db::name("egg")->where($wh)->find();
-            if(!empty($info['nest_kind_id'])){
-                $release_num = Config::get("site.release_num",0);
-                if($release_num > 0 && $status > 0){            
-                    if($release_num > ($egg_info['number']-$egg_info['freezing'])){
-                        $this->error("白蛋资产不够，不能上架商品");
-                    }
+
+            $release_num = Config::get("site.release_num",0);
+            if($release_num > 0 && $status > 0){            
+                if($release_num > ($egg_info['number']-$egg_info['freezing'])){
+                    $this->error("白蛋资产不够，不能上架商品");
                 }
             }
+
             $rs = Db::name("mall_product")->where("id",$id)->update(['status'=>$status]);
-            if($rs && !empty($info['nest_kind_id'])){
+            if($rs){
                 $wh = [];
                 $wh['user_id'] = $this->auth->id;
                 $wh['kind_id'] = 1;
