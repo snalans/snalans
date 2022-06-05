@@ -465,9 +465,9 @@ class Product extends Api
             }
         }
         if($rs){
-            $this->success("更新成功");
+            $this->success($status==0?"商品下架成功":"商品等待审核");
         } else{
-            $this->error("更新失败,请重试");
+            $this->error("操作失败,请重试");
         } 
     }
 }
