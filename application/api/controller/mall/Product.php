@@ -247,6 +247,7 @@ class Product extends Api
      * @ApiReturnParams   (name="images", type="string", description="商品图片")      
      * @ApiReturnParams   (name="kind_id", type="integer", description="蛋类型ID")       
      * @ApiReturnParams   (name="price", type="integer", description="支付价格")       
+     * @ApiReturnParams   (name="mobile", type="string", description="手机号")       
      * @ApiReturnParams   (name="stock", type="integer", description="商品库存")      
      * @ApiReturnParams   (name="sell_num", type="integer", description="商品销量")     
      * @ApiReturnParams   (name="status", type="integer", description="状态 0=下架 1=上架  2=审核")          
@@ -260,7 +261,7 @@ class Product extends Api
         $wh['id']       = $id;
         $wh['user_id']  = $this->auth->id;
         $info = Db::name("mall_product")
-                    ->field("title,images,kind_id,price,stock,sell_num,status,content")
+                    ->field("title,images,kind_id,mobile,price,stock,sell_num,status,content")
                     ->where($wh)
                     ->find();
 
