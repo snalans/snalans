@@ -436,7 +436,34 @@ class Product extends Api
         if($info['status'] == $status){
             $rs = true;
         }else{
+            $status = $status==1?2:0;
+            $wh = [];
+            $wh['user_id'] = $this->auth->id;
+            $wh['kind_id'] = 1;
+            $egg_info = Db::name("egg")->where($wh)->find();
+            if(!empty($info['nest_kind_id'])){
+                $release_num = Config::get("site.release_num",0);
+                if($release_num > 0 && $status > 0){            
+                    if($release_num > ($egg_info['number']-$egg_info['freezing'])){
+                        $this->error("白蛋资产不够，不能上架商品");
+                    }
+                }
+            }
             $rs = Db::name("mall_product")->where("id",$id)->update(['status'=>$status]);
+            if($rs && !empty($info['nest_kind_id'])){
+                $wh = [];
+                $wh['user_id'] = $this->auth->id;
+                $wh['kind_id'] = 1;
+                if($status > 0){
+                    Db::name("egg")->where($wh)->setDec('number',$info['price']);
+                    //写入日志
+                    Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>1,'type'=>12,'order_sn'=>$info['id'],'number'=>-$info['price'],'before'=>$egg_info['number'],'after'=>($egg_info['number']-$info['price']),'note'=>"上架商品减少",'createtime'=>time()]);
+                }else{
+                    Db::name("egg")->where($wh)->setInc('number',$info['price']);
+                    //写入日志
+                    Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>1,'type'=>12,'order_sn'=>$info['id'],'number'=>$info['price'],'before'=>$egg_info['number'],'after'=>($egg_info['number']+$info['price']),'note'=>"下架商品返回",'createtime'=>time()]);
+                }
+            }
         }
         if($rs){
             $this->success("更新成功");
