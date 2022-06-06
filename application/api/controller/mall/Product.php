@@ -469,7 +469,7 @@ class Product extends Api
                     if(!empty($log_info)){                        
                         Db::name("egg")->where($wh)->setInc('number',$log_info['number']);
                         //写入日志
-                        Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>1,'type'=>12,'order_sn'=>$info['id'],'number'=>$log_info['number'],'before'=>$egg_info['number'],'after'=>($egg_info['number']+$log_info['number']),'note'=>"下架商品返回",'createtime'=>time()]);
+                        Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>1,'type'=>12,'order_sn'=>$info['id'],'number'=>$log_info['number'],'before'=>$egg_info['number'],'after'=>($egg_info['number']+$log_info['number']),'note'=>"下架商品返还",'createtime'=>time()]);
                     }
                 }
             }

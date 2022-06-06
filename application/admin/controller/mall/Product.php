@@ -237,7 +237,7 @@ class Product extends Backend
                             $egg_info = Db::name("egg")->where($wh)->find();
                             Db::name("egg")->where($wh)->setInc('number',$log_info['number']);
                             //写入日志
-                            Db::name("egg_log")->insert(['user_id'=>$row['user_id'],'kind_id'=>1,'type'=>12,'order_sn'=>$row['id'],'number'=>$log_info['number'],'before'=>$egg_info['number'],'after'=>($egg_info['number'] + $log_info['number']),'note'=>"发布商品审核不通过返回",'createtime'=>time()]);
+                            Db::name("egg_log")->insert(['user_id'=>$row['user_id'],'kind_id'=>1,'type'=>12,'order_sn'=>$row['id'],'number'=>$log_info['number'],'before'=>$egg_info['number'],'after'=>($egg_info['number'] + $log_info['number']),'note'=>"发布商品审核不通过返还",'createtime'=>time()]);
                         }
 
                     }
