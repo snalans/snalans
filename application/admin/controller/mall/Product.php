@@ -163,12 +163,22 @@ class Product extends Backend
                 if ($result !== false) {
                     if($params['status'] == 0 && $row['user_id'] > 0){
                         $wh = [];
-                        $wh['user_id'] = $row['user_id'];
-                        $wh['kind_id'] = 1;
-                        $egg_info = Db::name("egg")->where($wh)->find();
-                        Db::name("egg")->where($wh)->setInc('number',$row['price']);
-                        //写入日志
-                        Db::name("egg_log")->insert(['user_id'=>$row['user_id'],'kind_id'=>1,'type'=>12,'order_sn'=>$row['id'],'number'=>$row['price'],'before'=>$egg_info['number'],'after'=>($egg_info['number']+$row['price']),'note'=>"发布商品审核不通过返回",'createtime'=>time()]);
+                        $wh['user_id']      = $row['user_id'];
+                        $wh['order_sn']     = $ids;
+                        $wh['kind_id']      = 1;
+                        $wh['type']         = 12;
+                        $wh['number']       = ['<',0];
+                        $log_info = Db::name("egg_log")->where($wh)->find();
+                        if(!empty($log_info)){                            
+                            $wh = [];
+                            $wh['user_id'] = $row['user_id'];
+                            $wh['kind_id'] = 1;
+                            $egg_info = Db::name("egg")->where($wh)->find();
+                            $number = abs($log_info['number']);
+                            Db::name("egg")->where($wh)->setInc('number',$number);
+                            //写入日志
+                            Db::name("egg_log")->insert(['user_id'=>$row['user_id'],'kind_id'=>1,'type'=>12,'order_sn'=>$row['id'],'number'=>$number,'before'=>$egg_info['number'],'after'=>($egg_info['number']+$number),'note'=>"发布商品审核不通过返回",'createtime'=>time()]);
+                        }
                     }
                     $this->success();
                 } else {
@@ -235,9 +245,10 @@ class Product extends Backend
                             $wh['user_id'] = $row['user_id'];
                             $wh['kind_id'] = 1;
                             $egg_info = Db::name("egg")->where($wh)->find();
-                            Db::name("egg")->where($wh)->setInc('number',$log_info['number']);
+                            $number = abs($log_info['number']);
+                            Db::name("egg")->where($wh)->setInc('number',$number);
                             //写入日志
-                            Db::name("egg_log")->insert(['user_id'=>$row['user_id'],'kind_id'=>1,'type'=>12,'order_sn'=>$row['id'],'number'=>$log_info['number'],'before'=>$egg_info['number'],'after'=>($egg_info['number'] + $log_info['number']),'note'=>"发布商品审核不通过返还",'createtime'=>time()]);
+                            Db::name("egg_log")->insert(['user_id'=>$row['user_id'],'kind_id'=>1,'type'=>12,'order_sn'=>$row['id'],'number'=>$number,'before'=>$egg_info['number'],'after'=>($egg_info['number'] + $number),'note'=>"发布商品审核不通过返还",'createtime'=>time()]);
                         }
 
                     }
