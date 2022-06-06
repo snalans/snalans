@@ -9,6 +9,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     add_url: 'mall/product/add',
                     edit_url: 'mall/product/edit',
                     del_url: 'mall/product/del',
+                    edit_appeal: 'mall/product/appeal',
                     multi_url: 'mall/product/multi',
                     import_url: 'mall/product/import',
                     table: 'mall_product',
@@ -67,7 +68,25 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'is_virtual', title: __('Is_virtual'), formatter: Table.api.formatter.normal, searchList: {1: '是',0: '否'}},
                         {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {1: '上架',0: '下架',2: '待审核'}},
                         {field: 'add_time', title: __('Add_time'), operate:'RANGE', addclass:'datetimerange', autocomplete:false, formatter: Table.api.formatter.datetime},
-                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                        {field: 'operate', title: __('Operate'), table: table, buttons:[
+                            {name: 'appeal', text: '审核', title: '是否允许上架', icon: 'fa fa-star', classname: 'btn btn-xs btn-success btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_appeal
+                                ,visible:function(row){
+                                    if(row.user_id > 0){ 
+                                        return true; 
+                                    }
+                                },
+                                extend: 'data-area=\'["500px", "450px"]\''
+                            },
+                            {name: 'edit', text: '编辑', title: '编辑信息', icon: 'fa fa-edit', classname: 'btn btn-xs btn-info btn-editone btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.edit_url,
+                                hidden:function(row){
+                                    if(row.user_id == 0){
+                                        return false;
+                                    }else{
+                                        return true;
+                                    }
+                                }
+                            }
+                        ], events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
             });
@@ -79,6 +98,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Controller.api.bindevent();
         },
         edit: function () {
+            Controller.api.bindevent();
+        },
+        appeal: function () {
             Controller.api.bindevent();
         },
         api: {

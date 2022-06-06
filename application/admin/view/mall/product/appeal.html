@@ -1,0 +1,26 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">商品名称:</label>
+        <div class="col-xs-12 col-sm-8">
+            <span class="form-control" readonly>{$row.title|htmlentities}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">审核情况:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select id="c-status" class="form-control selectpicker" name="row[status]"  data-rule="required">
+                <option value="">选择结果</option>
+                <option value="0">不通过,商品下架</option>
+                <option value="1">通过,商品上架</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>
