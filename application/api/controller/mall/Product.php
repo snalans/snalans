@@ -455,13 +455,22 @@ class Product extends Api
                 $wh['user_id'] = $this->auth->id;
                 $wh['kind_id'] = 1;
                 if($status > 0){
-                    Db::name("egg")->where($wh)->setDec('number',$info['price']);
+                    Db::name("egg")->where($wh)->setDec('number',$release_num);
                     //写入日志
-                    Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>1,'type'=>12,'order_sn'=>$info['id'],'number'=>-$info['price'],'before'=>$egg_info['number'],'after'=>($egg_info['number']-$info['price']),'note'=>"上架商品减少",'createtime'=>time()]);
+                    Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>1,'type'=>12,'order_sn'=>$info['id'],'number'=>-$release_num,'before'=>$egg_info['number'],'after'=>($egg_info['number']-$release_num),'note'=>"上架商品减少",'createtime'=>time()]);
                 }else{
-                    Db::name("egg")->where($wh)->setInc('number',$info['price']);
-                    //写入日志
-                    Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>1,'type'=>12,'order_sn'=>$info['id'],'number'=>$info['price'],'before'=>$egg_info['number'],'after'=>($egg_info['number']+$info['price']),'note'=>"下架商品返回",'createtime'=>time()]);
+                    $wh = [];
+                    $wh['user_id']      = $this->auth->id;
+                    $wh['order_sn']     = $id;
+                    $wh['kind_id']      = 1;
+                    $wh['type']         = 12;
+                    $wh['number']       = ['<',0];
+                    $log_info = Db::name("egg_log")->where($wh)->find();
+                    if(!empty($log_info)){                        
+                        Db::name("egg")->where($wh)->setInc('number',$log_info['number']);
+                        //写入日志
+                        Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>1,'type'=>12,'order_sn'=>$info['id'],'number'=>$log_info['number'],'before'=>$egg_info['number'],'after'=>($egg_info['number']+$log_info['number']),'note'=>"下架商品返回",'createtime'=>time()]);
+                    }
                 }
             }
         }
