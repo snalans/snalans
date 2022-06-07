@@ -29,7 +29,7 @@ class Team extends Api
         $wh['status']            = 'normal';
         $wh['is_attestation']    = 1;
         $wh['level']             = ['>',0];
-        $list = Db::name("user")->where($wh)->order("id","asc")->limit(10)->select();
+        $list = Db::name("user")->where($wh)->order("id","asc")->limit(50)->select();
 
         if(!empty($list)){            
             $config_list = Db::name("bonus_config")->select();
