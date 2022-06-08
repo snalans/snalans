@@ -9,6 +9,12 @@ use think\Loader;
 class Common
 {
 
+    public function appInit()
+    {
+        $allowLangList = Config::get('allow_lang_list') ?? ['zh-cn', 'en'];
+        \think\Lang::setAllowLangList($allowLangList);
+    }
+
     public function appDispatch(&$dispatch)
     {
         $pathinfoArr = explode('/', request()->pathinfo());

@@ -470,8 +470,8 @@ class User extends Api
                 $this->error("新密码不能与旧密码一样");
             }
             $pwd_len = strlen($newpassword);
-            if ($pwd_len > 16 || $pwd_len < 6 || !preg_match('/[a-z]+/',$newpassword) || !preg_match('/[A-Z]+/',$newpassword)) {
-                $this->error("密码长度应为6~16个字符,包含大小写字母");
+            if ($pwd_len > 16 || $pwd_len < 6) {
+                $this->error("密码长度应为6~16个字符");
             }
             $ret = Sms::check($mobile, $captcha, 'resetpwd');
             if (!$ret) {
