@@ -487,7 +487,7 @@ class Order extends Api
                 $this->error("请选择配送地址");            
             }
         }else{            
-            if($number != 1){
+            if($number != 1 && empty($info['nest_kind_id'])){
                 $this->error("虚拟商品一单只能购买一件"); 
             }
             if($info['nest_kind_id']>0)
