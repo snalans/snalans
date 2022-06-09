@@ -106,7 +106,7 @@ class Order extends Backend
                     if($row['is_virtual'] == 1){
                         if($params['status'] == 1){                   
                             $params['send_time']        = time();
-                        }else if($params['status'] == 6){
+                        }else if($params['status'] == 6 && empty($row['nest_kind_id'])){
                             $total_amount = $row['total_price']+$row['rate'];
                             $wh = [];
                             $wh['user_id'] = $row['buy_user_id'];
