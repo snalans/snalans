@@ -5,7 +5,6 @@ namespace app\api\controller;
 use app\common\controller\Api;
 use fast\Random;
 use think\config;
-use think\Cache;
 use think\Db;
 /**
  * 团队分红接口
@@ -20,37 +19,22 @@ class Team extends Api
      */
     public function share_bonus()
     {
-        $flag = input("flag",true);
-        $start_time = strtotime(date("Y-m-d")." 01:00:00");
-        $end_time = strtotime(date("Y-m-d")." 04:00:00");
-        if($flag){            
-            if($start_time > time() || $end_time < time()){
-                $this->error("不在有效时间内");
-            }
-        }
-
         $wh = [];
         $wh['type']          = 1;
         $wh['createtime']    = ['>',strtotime(date("Y-m-d"))];
-        $sinfo = Db::name("egg_score_log")->where($wh)->order("user_id","asc")->find();
-        if(!empty($sinfo)){
-            $user_id = Cache::get("bonus_user_id")??0;
-        }else{
-            $user_id = 0;
-        }        
+        $user_id = Db::name("egg_score_log")->where($wh)->order("user_id","asc")->value("user_id");
 
         $wh = [];
-        $wh['id']                = ['>',$user_id];
+        $wh['id']                = ['>',$user_id??0];
         $wh['status']            = 'normal';
         $wh['is_attestation']    = 1;
         $wh['level']             = ['>',0];
-        $list = Db::name("user")->where($wh)->order("id","asc")->limit(5)->select();
+        $list = Db::name("user")->where($wh)->order("id","asc")->limit(10)->select();
 
         if(!empty($list)){            
             $config_list = Db::name("bonus_config")->select();
             $egg_name = Db::name("egg_kind")->column('name','id');
             $lv_title = [1=>"一级",2=>"二级",3=>"三级",4=>"四级"];
-            $msg = "";
             foreach ($list as $k => $v) 
             {               
                 foreach ($config_list as $key => $value) 
@@ -85,13 +69,11 @@ class Team extends Api
                                 DB::rollback();
                             }            
                         }else{
-                            $msg .= $v['id']." >> ".$egg_name[$value['kind_id']]." 窝没孵化\n";
+                            echo $v['id']."》》".$egg_name[$value['kind_id']]." 窝没孵化\n\n";
                         }
                     }
                 }/*---foreach---*/
-                Cache::set("bonus_user_id",$v['id']);
             }/*---foreach---*/
-            echo $msg;
         }
 
         $this->success("分红成功");
