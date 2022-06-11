@@ -20,8 +20,8 @@ class Team extends Api
      */
     public function share_bonus()
     {
-        $flag = input("flag",true);
-        $start_time = strtotime(date("Y-m-d")." 01:00:00");
+        $flag = input("flag",1);
+        $start_time = strtotime(date("Y-m-d")." 00:30:00");
         $end_time = strtotime(date("Y-m-d")." 04:00:00");
         if($flag){            
             if($start_time > time() || $end_time < time()){
@@ -32,19 +32,20 @@ class Team extends Api
         $wh = [];
         $wh['type']          = 1;
         $wh['createtime']    = ['>',strtotime(date("Y-m-d"))];
-        $sinfo = Db::name("egg_score_log")->where($wh)->order("user_id","asc")->find();
+        $sinfo = Db::name("egg_score_log")->where($wh)->order("user_id","desc")->find();
         if(!empty($sinfo)){
             $user_id = Cache::get("bonus_user_id")??0;
+            $user_id = $user_id>$sinfo['user_id']?$user_id:$sinfo['user_id'];
         }else{
             $user_id = 0;
-        }        
-
+        }         
+        
         $wh = [];
         $wh['id']                = ['>',$user_id];
         $wh['status']            = 'normal';
         $wh['is_attestation']    = 1;
         $wh['level']             = ['>',0];
-        $list = Db::name("user")->where($wh)->order("id","asc")->limit(5)->select();
+        $list = Db::name("user")->where($wh)->order("id","asc")->limit(50)->select();
 
         if(!empty($list)){            
             $config_list = Db::name("bonus_config")->select();
@@ -77,11 +78,13 @@ class Team extends Api
                             $where = [];
                             $where['user_id'] = $v['id'];
                             $where['kind_id'] = $value['kind_id'];
-                            $res = Db::name("egg")->where($where)->inc('point', $v['score'])->update();
+                            $res = Db::name("egg")->where($where)->setInc('point', $value['point']);
 
                             if($log_rs && $res){
+                                echo $v['id']." >> ".$egg_name[$value['kind_id']]." 成功\n";
                                 DB::commit();
                             }else{                                
+                                echo $v['id']." >> ".$egg_name[$value['kind_id']]." 失败\n";
                                 DB::rollback();
                             }            
                         }else{
