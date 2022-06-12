@@ -16,7 +16,7 @@ class Index extends Api
 {
     protected $noNeedLogin = [];
     protected $noNeedRight = '*';
-    public    $alldate = 120;   //签到周期
+    public    $alldate = 24*3600;   //签到周期
 
     public function _initialize()
     {

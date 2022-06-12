@@ -138,7 +138,7 @@ class Order extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false && $log_rs && $log_re) {
-                    if($row['is_virtual'] == 1 && $params['status'] == 1){
+                    if($row['is_virtual'] == 1 && $params['status'] == 1 && empty($row['nest_kind_id'])){
                         // 通知卖家
                         $mobile = Db::name("user")->where("id",$row['buy_user_id'])->value("mobile");
                         \app\common\library\Hsms::send($mobile, '','virtual');

@@ -87,17 +87,15 @@ class Dashboard extends Backend
             'todayusersignup' => User::whereTime('jointime', 'today')->count(),
             'todayuserlogin'  => User::whereTime('updatetime', 'today')->count(),
             'sevendau'        => User::whereTime('updatetime', '-7 days')->count(),
-            'thirtydau'       => User::whereTime('updatetime', '-30 days')->count(),
+            'thirtydau'       => 0,
             'threednu'        => User::whereTime('jointime', '-3 days')->count(),
-            'sevendnu'        => User::whereTime('jointime', '-7 days')->count(),
-            'dbtablenums'     => count($dbTableList),
-            'dbsize'          => array_sum(array_map(function ($item) {
-                return $item['Data_length'] + $item['Index_length'];
-            }, $dbTableList)),
-            'attachmentnums'  => Attachment::count(),
-            'attachmentsize'  => Attachment::sum('filesize'),
-            'picturenums'     => Attachment::where('mimetype', 'like', 'image/%')->count(),
-            'picturesize'     => Attachment::where('mimetype', 'like', 'image/%')->sum('filesize'),
+            'sevendnu'        => 0,
+            'dbtablenums'     => 0,
+            'dbsize'          => 0,
+            'attachmentnums'  => 0,
+            'attachmentsize'  => 0,
+            'picturenums'     => 0,
+            'picturesize'     => 0,
         ]);
 
         $this->assignconfig('column', array_keys($userlist));
