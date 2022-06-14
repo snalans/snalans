@@ -241,7 +241,7 @@ class Order extends Api
         $data['express_no']     = $express_no;
         $rs = Db::name("mall_order")->where($wh)->update($data);
         if($rs){
-            Cache::set("change_flag_".$info['buy_user_id'],1);
+            // Cache::set("change_flag_".$info['buy_user_id'],1);
             $this->success("发货成功");
         }else{
             $this->error("发货失败,请重试");
@@ -307,6 +307,7 @@ class Order extends Api
             $log_rs = Db::name("egg_log")->insert(['user_id'=>$result['sell_user_id'],'kind_id'=>$result['kind_id'],'type'=>1,'order_sn'=>$order_sn,'number'=>$result['total_price'],'before'=>$before,'after'=>($before+$result['total_price']),'note'=>"商城订单成交",'createtime'=>time()]);
             if($rs && $grs && $log_rs){
                 Db::commit();
+                Cache::set("change_flag_".$info['sell_user_id'],1);
                 $this->success("交易成功");
             }else{
                 Db::rollback();                 
@@ -327,7 +328,8 @@ class Order extends Api
             $data['status'] = 5;
             $data['note']   = $note;
             $rs = Db::name("mall_order")->where($wh)->update($data);
-            if($rs){
+            if($rs){                
+                Cache::set("change_flag_".$info['sell_user_id'],1);
                 $this->success("申请成功");
             }else{
                 $this->error("申请失败,请重试");
