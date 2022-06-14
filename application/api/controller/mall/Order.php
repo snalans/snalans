@@ -578,7 +578,7 @@ class Order extends Api
             $prs = Db::name("mall_product")->where($wh)->dec('stock',$number)->inc("sell_num",$number)->update();
             if ($rs && $add_rs && $log && $log_fee && $prs) {
                 if($info['user_id'] > 0){
-                    Config::set("change_flag_".$info['user_id']);
+                    Config::set("change_flag_".$info['user_id'],1);
                 }
                 if($info['stock'] <= $number){
                     Db::name("mall_product")->where("id",$id)->update(['status'=>0]);

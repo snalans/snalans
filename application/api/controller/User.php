@@ -103,7 +103,7 @@ class User extends Api
         if($this->auth->updatetime < strtotime($time) && $this->auth->is_attestation == 1  && $this->auth->id > 308){
             $result['re_attestation'] = 1;
         }
-        $result['change_flag'] = Config::get("change_flag_".$this->auth->id,0);
+        $result['change_flag'] = Config::get("change_flag_".$this->auth->id)??0;
         $this->success('', $result);
     }
 
