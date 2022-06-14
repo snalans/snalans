@@ -103,6 +103,7 @@ class Order extends Api
                         }
                         return $item;
                     });
+        Cache::set("change_flag_".$this->auth->id,0);
         $this->success('',$list);
     }
 
