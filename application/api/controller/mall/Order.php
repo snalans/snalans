@@ -199,7 +199,6 @@ class Order extends Api
                 $info['mobile'] = Db::name("mall_product")->where("id",$info['product_id'])->value("mobile");
             }
         }
-        Cache::set("change_flag_".$this->auth->id,0);
         $this->success('',$info);
     }
 
