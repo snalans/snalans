@@ -103,7 +103,6 @@ class Order extends Api
                         }
                         return $item;
                     });
-        Config::set("change_flag_".$this->auth->id,0);
         $this->success('',$list);
     }
 
@@ -199,6 +198,7 @@ class Order extends Api
                 $info['mobile'] = Db::name("mall_product")->where("id",$info['product_id'])->value("mobile");
             }
         }
+        Cache::set("change_flag_".$this->auth->id,0);
         $this->success('',$info);
     }
 
@@ -228,7 +228,7 @@ class Order extends Api
         $wh['order_sn']     = $order_sn;
         $wh['sell_user_id'] = $this->auth->id;
         $wh['status']       = 2;
-        $info = Db::name("mall_order")->field("id,order_sn")->where($wh)->find();
+        $info = Db::name("mall_order")->field("id,order_sn,buy_user_id")->where($wh)->find();
         if(empty($info)){            
             $this->error("无效操作");
         }
@@ -240,6 +240,7 @@ class Order extends Api
         $data['express_no']     = $express_no;
         $rs = Db::name("mall_order")->where($wh)->update($data);
         if($rs){
+            Cache::set("change_flag_".$info['buy_user_id'],1);
             $this->success("发货成功");
         }else{
             $this->error("发货失败,请重试");
@@ -579,7 +580,7 @@ class Order extends Api
             $prs = Db::name("mall_product")->where($wh)->dec('stock',$number)->inc("sell_num",$number)->update();
             if ($rs && $add_rs && $log && $log_fee && $prs) {
                 if($info['user_id'] > 0){
-                    Config::set("change_flag_".$info['user_id'],1);
+                    Cache::set("change_flag_".$info['user_id'],1);
                 }
                 if($info['stock'] <= $number){
                     Db::name("mall_product")->where("id",$id)->update(['status'=>0]);
