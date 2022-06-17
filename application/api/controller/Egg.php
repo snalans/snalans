@@ -897,7 +897,12 @@ class Egg extends Api
             $res = Db::name("egg_kind")->where($kind_where)->setDec('stock',$number);
             $reward_price = Db::name("egg_eliminate_rewards")->where("kind_id",$kind_id)->value("number");
             $price      = $egg_info['price'] * $number;
-            $ot_price   = $reward_price * $number * ($egg_info['per_reward']/100);
+            if($egg_info['per_reward']>0){
+                $ot_price = $reward_price * $number * ($egg_info['per_reward']/100);
+            }else{
+                $ot_price = $reward_price * $number;
+            }
+            
             //生成彩蛋回收订单
             $order_data = [];
             $order_data['order_sn']             = date("Ymdhis", time()).mt_rand(1000,9999);
