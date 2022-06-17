@@ -837,7 +837,7 @@ class Egg extends Api
         $paypwd   = $this->request->post('paypwd',"");
         $google_code = $this->request->post('google_code',"");
         $kind_id     = $kind_id==5 ? 5:6;
-        $number      = $number>0?$number:0;
+        $number      = $number>0 ? $number:0;
         if(ceil($number*10) != intval($number*10) || $number < 0.1){
             $this->error("兑换蛋数量不能小于0.1的1位小数值");
         }
@@ -865,13 +865,11 @@ class Egg extends Api
             $this->error("请往我的、设置、收款管理,添加钱包收款地址");
         }
 
-        //判断用户是否有彩蛋
+        //判断用户是否有蛋资产
         $egg_where = [];
         $egg_where['user_id'] = $user_id;
         $egg_where['kind_id'] = $kind_id;
         $egg_num = Db::name("egg")->where($egg_where)->value('number');
-
-        //蛋数量不够
         if($number>$egg_num){
             $this->error("您的蛋资产不足".$number.'个！');
         }
@@ -898,6 +896,8 @@ class Egg extends Api
             );
             $res = Db::name("egg_kind")->where($kind_where)->setDec('stock',$number);
             $reward_price = Db::name("egg_eliminate_rewards")->where("kind_id",$kind_id)->value("number");
+            $price      = $egg_info['price'] * $number;
+            $ot_price   = $reward_price * $number * ($egg_info['per_reward']/100);
             //生成彩蛋回收订单
             $order_data = [];
             $order_data['order_sn']             = date("Ymdhis", time()).mt_rand(1000,9999);
@@ -907,13 +907,12 @@ class Egg extends Api
             $order_data['sell_mobile']          = $user_info['mobile'];
             $order_data['name']                 = $egg_info['name'];
             $order_data['kind_id']              = $kind_id;
-            $order_data['price']                = $egg_info['price']+$reward_price;
+            $order_data['price']                = $price + $ot_price;
             $order_data['number']               = $number;
-            $order_data['rate']                 = 0;
             $order_data['rate']                 = 0;
             $order_data['attestation_type']     = $pay_count['type'];
             $order_data['attestation_account']  = $pay_count['account'];
-            $order_data['amount']               = $order_data['price'] * $number;
+            $order_data['amount']               = $price + $ot_price;
             $order_data['status']               = 0;
             $order_data['createtime']           = time();
             $re = Db::name("egg_order")->insert($order_data);
@@ -927,7 +926,8 @@ class Egg extends Api
             $add_rs = Db::name("egg")->where($egg_where)->setDec('number',$number);
 
             //蛋日志
-            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$kind_id,1,$order_sn,'-'.$number,$egg_num,($egg_num-$number),"兑换");
+            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$kind_id,1,$order_sn,'-'.$number,$egg_num,($egg_num-$number),"兑换获得 $price USDT");
+            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$kind_id,1,$order_sn,'-'.$number,$egg_num,($egg_num-$number),"获得消除奖励 $ot_price USDT");
 
             if ($re == false || $res == false || $add_rs==false || $log_add==false ) {
                 DB::rollback();
