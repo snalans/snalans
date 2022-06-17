@@ -203,7 +203,10 @@ class Synthesis extends Api
                 $data['createtime'] = time();
                 $hatch_rs = Db::name("egg_hatch")->where("id",$info['id'])->update($data);
             }
-            $k_rs = Db::name('egg_kind')->where("id",6)->setDec('point');
+            $up = [];
+            $up['point'] = $k_info['point']-1;
+            $up['stock'] = $k_info['stock']+1;
+            $k_rs = Db::name('egg_kind')->where("id",6)->update($up);
             if($dec_rs && $dec_log && $hatch_rs && $k_rs && $add_nest){
                 Db::commit();
             }else{
