@@ -835,12 +835,13 @@ class Egg extends Api
         $kind_id  = $this->request->post("kind_id",5);
         $number   = $this->request->post("number",0);
         $paypwd   = $this->request->post('paypwd',"");
-        $google_code   = $this->request->post('google_code',"");
-        $kind_id    = $kind_id==5?5:6;
-        $number     = $number>0?$number:0;
-        if($number < 0.1){
-            $this->error("兑换蛋数量不能小于0.1");
+        $google_code = $this->request->post('google_code',"");
+        $kind_id     = $kind_id==5 ? 5:6;
+        $number      = $number>0?$number:0;
+        if(ceil($number*10) != intval($number*10) || $number < 0.1){
+            $this->error("兑换蛋数量不能小于0.1的1位小数值");
         }
+
         $egg_info = Db::name("egg_kind")->where('id',$kind_id)->find();
 
         $auth = new \app\common\library\Auth();
@@ -855,11 +856,10 @@ class Egg extends Api
             $this->error("库存不足！");
         }
 
-        //卖家钱包支付方式
-        $pay_where = array(
-            'user_id'=>array('eq',$user_id),
-            'type'=>array('eq',3)
-        );
+        //卖家钱包支付方式        
+        $pay_where = [];
+        $pay_where['user_id'] = $user_id;
+        $pay_where['type']    = 3;
         $pay_count = Db::name("egg_charge_code")->where($pay_where)->find();
         if(empty($pay_count)){
             $this->error("请往我的、设置、收款管理,添加钱包收款地址");
