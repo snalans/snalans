@@ -253,7 +253,7 @@ class Order extends Backend
                     $params['attestation_type']     = $info['type'];
                     $params['attestation_image']    = $info['image'];
                     $params['attestation_account']  = $info['account'];
-                    $params['status']               = 2;
+                    $params['status']               = 1;
                     $params['pay_time']             = time();
                     $result = $row->allowField(true)->save($params);
                     if ($result) {  
