@@ -72,9 +72,8 @@ class Order extends Api
                 $wh['mo.status'] = $status;
             }            
         }
-        $wh['mo.kind_id'] = ["<",5];
 
-        $list = Db::name("mall_order")->alias("mo")
+        $list = Db::name("mall_order")->alias("mo")->cache(true,45)
                     ->field("mo.order_sn,mo.title,mo.image,mo.price,mo.number,mo.rate,mo.total_price,mo.status,mo.nest_kind_id,mo.is_virtual,u.serial_number,ek.name,ek.image as egg_image")
                     ->join("user u","u.id=$wh_str","LEFT")
                     ->join("egg_kind ek","ek.id=mo.kind_id","LEFT")

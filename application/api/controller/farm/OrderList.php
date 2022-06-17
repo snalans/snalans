@@ -55,6 +55,7 @@ class OrderList extends Api
         if($status != 9){
             $wh['status'] = $status;
         }
+        $wh['kind_id'] = ["<",5];
         $list = Db::name("egg_order")
                 ->field("order_sn,name,price,number,amount,status,refund_status,createtime")
                 ->where($wh)
