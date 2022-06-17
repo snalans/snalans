@@ -900,17 +900,17 @@ class Egg extends Api
             $reward_price = Db::name("egg_eliminate_rewards")->where("kind_id",$kind_id)->value("number");
             //生成彩蛋回收订单
             $order_data = [];
-            $order_data['order_sn']          = date("Ymdhis", time()).mt_rand(1000,9999);
-            $order_sn                        = $order_data['order_sn'];
-            $order_data['sell_user_id']      = $user_id;
-            $order_data['sell_serial_umber'] = $user_info['serial_number'];
-            $order_data['sell_mobile']       = $user_info['mobile'];
-            $order_data['name']              = $egg_info['name'];
-            $order_data['kind_id']           = $kind_id;
-            $order_data['price']             = $egg_info['price']+$reward_price;
-            $order_data['number']            = $number;
-            $order_data['rate']              = 0;
-            $order_data['rate']              = 0;
+            $order_data['order_sn']             = date("Ymdhis", time()).mt_rand(1000,9999);
+            $order_sn                           = $order_data['order_sn'];
+            $order_data['sell_user_id']         = $user_id;
+            $order_data['sell_serial_umber']    = $user_info['serial_number'];
+            $order_data['sell_mobile']          = $user_info['mobile'];
+            $order_data['name']                 = $egg_info['name'];
+            $order_data['kind_id']              = $kind_id;
+            $order_data['price']                = $egg_info['price']+$reward_price;
+            $order_data['number']               = $number;
+            $order_data['rate']                 = 0;
+            $order_data['rate']                 = 0;
             $order_data['attestation_type']     = $pay_count['type'];
             $order_data['attestation_account']  = $pay_count['account'];
             $order_data['amount']               = $order_data['price'] * $number;
@@ -927,7 +927,7 @@ class Egg extends Api
             $add_rs = Db::name("egg")->where($egg_where)->setDec('number',$number);
 
             //蛋日志
-            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$kind_id,1,$order_sn,'-'.$number,$egg_num,($egg_num-$number),"出售");
+            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$kind_id,1,$order_sn,'-'.$number,$egg_num,($egg_num-$number),"兑换");
 
             if ($re == false || $res == false || $add_rs==false || $log_add==false ) {
                 DB::rollback();
