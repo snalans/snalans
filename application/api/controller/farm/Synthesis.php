@@ -118,7 +118,7 @@ class Synthesis extends Api
         $wh['kind_id']        = 6;
         $wh['is_close']       = 0;
         $nest_num = Db::name("egg_hatch")->where($wh)->count();
-        if($nest_num > 2){
+        if($nest_num >= 2){
             $this->error("兑换已达上限");
         }
 
