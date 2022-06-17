@@ -166,7 +166,6 @@ class Synthesis extends Api
             $info = Db::name("egg_hatch")->where($wh)->find();
             if(empty($info))
             {
-                unset($wh['status']);
                 $position = Db::name("egg_hatch")->where($wh)->max("position");
                 $data = [];
                 $data['user_id']        = $this->auth->id;
@@ -181,10 +180,14 @@ class Synthesis extends Api
                 $data['createtime']     = time();
                 $data['position']       = ($position??0)+1;
                 $hatch_rs = Db::name("egg_hatch")->insert($data);   
+
                 $datas = [];
                 $datas['user_id'] = $this->auth->id;
                 $datas['kind_id'] = 6;            
-                $add_nest = Db::name("egg")->insert($datas);
+                $info = Db::name("egg")->where($datas)->find();
+                if(empty($info)){
+                    $add_nest = Db::name("egg")->insert($datas);
+                }
             }else{                
                 $data = [];
                 $data['status']     = 0;
