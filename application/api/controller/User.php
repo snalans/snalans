@@ -806,17 +806,29 @@ class User extends Api
         $wh['type']         = $type;
         $result = Db::name("egg_charge_code")->where($wh)->find();
         if($result){
-            $this->error("已经添加过,如需修改联系管理员");
+            if($type == 3){                
+                $data = [];
+                $data['name']      = $name;
+                $data['account']   = $account;
+                $rs = Db::name("egg_charge_code")->where($wh)->update($data);
+                if($rs){
+                    $this->success("更新成功");
+                }else{
+                    $this->error("更新失败,请重试");
+                }
+            }else{
+                $this->error("已经添加过,如需修改联系管理员");
+            }            
         }else{            
             $data = [];
-            $data['user_id']      = $this->auth->id;
-            $data['type']         = $type;
-            $data['name']         = $name;
-            $data['mobile']       = $mobile;
-            $data['open_bank']    = $open_bank;
-            $data['account']      = $account;
-            $data['image']        = $image;
-            $data['add_time']     = time();
+            $data['user_id']   = $this->auth->id;
+            $data['type']      = $type;
+            $data['name']      = $name;
+            $data['mobile']    = $mobile;
+            $data['open_bank'] = $open_bank;
+            $data['account']   = $account;
+            $data['image']     = $image;
+            $data['add_time']  = time();
             $result = Db::name("egg_charge_code")->insert($data);
             if($result){
                 $this->success("添加成功");

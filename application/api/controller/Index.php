@@ -35,7 +35,7 @@ class Index extends Api
     public function init()
     {
         $data = [];
-        $list = Db::name("egg_kind")->field("id,name,image,egg_image,ch_image,bg_image,stock,per_reward,price,point")->order("id","asc")->select();
+        $list = Db::name("egg_kind")->field("id,name,image,egg_image,ch_image,bg_image,stock,price,point")->order("id","asc")->select();
         foreach ($list as $key => $value) {
             if(in_array($value['id'],[5,6])){
                 $list[$key]['re_number'] = Db::name("egg_eliminate_rewards")->where("kind_id",$value['id'])->value("number");
