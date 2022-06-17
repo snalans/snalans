@@ -896,11 +896,10 @@ class Egg extends Api
             );
             $res = Db::name("egg_kind")->where($kind_where)->setDec('stock',$number);
             $reward_price = Db::name("egg_eliminate_rewards")->where("kind_id",$kind_id)->value("number");
-            $price      = $egg_info['price'] * $number;
-            if($egg_info['per_reward']>0){
+            $price    = $egg_info['price'] * $number;
+            $ot_price = 0;
+            if($egg_info['per_reward'] > 0){
                 $ot_price = $reward_price * $number * ($egg_info['per_reward']/100);
-            }else{
-                $ot_price = $reward_price * $number;
             }
             
             //生成彩蛋回收订单
@@ -932,9 +931,12 @@ class Egg extends Api
 
             //蛋日志
             $log_add = \app\admin\model\egg\Log::saveLog($user_id,$kind_id,1,$order_sn,'-'.$number,$egg_num,($egg_num-$number),"兑换获得 $price USDT");
-            $log_add = \app\admin\model\egg\Log::saveLog($user_id,$kind_id,1,$order_sn,'-'.$number,$egg_num,($egg_num-$number),"获得消除奖励 $ot_price USDT");
+            $log_adds = true;
+            if($ot_price > 0){
+                $log_adds = \app\admin\model\egg\Log::saveLog($user_id,$kind_id,1,$order_sn,'-'.$number,$egg_num,($egg_num-$number),"获得消除奖励 $ot_price USDT");
+            }
 
-            if ($re == false || $res == false || $add_rs==false || $log_add==false ) {
+            if ($re == false || $res == false || $add_rs==false || $log_add==false || $log_adds==false) {
                 DB::rollback();
                 $this->error("兑换失败!");
             } else {
