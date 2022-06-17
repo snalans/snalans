@@ -228,7 +228,7 @@ class Index extends Api
                             }                            
                         }
                         $flag = true;
-                        if($egg['id'] == 6){
+                        if($egg['kind_id'] == 6){
                             $data['is_close'] = 1;
                         }else{
                             \app\admin\model\egg\RewardConfig::decAward($egg['id']);
