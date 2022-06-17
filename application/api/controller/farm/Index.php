@@ -16,7 +16,7 @@ class Index extends Api
 {
     protected $noNeedLogin = [];
     protected $noNeedRight = '*';
-    public    $alldate = 24*3600;   //签到周期
+    public    $alldate = 5;   //签到周期
 
     public function _initialize()
     {
@@ -56,6 +56,16 @@ class Index extends Api
                 if($val['kind_id']==1){
                     $egg_list[$k]['hatchable'] = intval($val['number']);
                 }
+            }
+            if(count($egg_list) <= 5){
+                $name = Db::name("egg_kind")->where("id",6)->value("name");
+                $data = [];
+                $data["kind_id"]    = 6;
+                $data["name"]       = $name;
+                $data["number"]     = "0.0000";
+                $data["hatchable"]  = 0;
+                $data["point"]      = "0.0000";
+                $egg_list[] = $data;
             }
         }
         $data['egg_list'] = $egg_list;
@@ -218,7 +228,11 @@ class Index extends Api
                             }                            
                         }
                         $flag = true;
-                        \app\admin\model\egg\RewardConfig::decAward($egg['id']);
+                        if($egg['id'] == 6){
+                            $data['is_close'] = 1;
+                        }else{
+                            \app\admin\model\egg\RewardConfig::decAward($egg['id']);
+                        }
                     }
                     if($egg['hatch_num'] > $result['hatch_cycle'] && ($egg['hatch_num']-$result['hatch_cycle'])%$result['raw_cycle'] == 0){
                         $wh = [];

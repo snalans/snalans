@@ -97,6 +97,110 @@ class Synthesis extends Api
     }
 
     /**
+     * 兑换红鸡
+     *
+     * @ApiMethod (POST)
+     * 
+     */
+    public function exChicken()
+    {        
+        if($this->auth->status != 'normal' || $this->auth->is_attestation != 1){
+            $this->error("账号无效或者未认证");
+        }
+        $k_info = Db::name('egg_kind')->where("id",6)->find();
+        if($k_info['point'] <= 0){
+            $this->error("可兑换库查不够.");
+        }
+        $config = Db::name("egg_synthesis_config")->where("kind_id",6)->select();     
+        $egg_list = Db::name("egg")
+                    ->where("user_id",$this->auth->id)
+                    ->column("(number-freezing) as number","kind_id");    
+
+        $flag = true;
+        foreach ($config as $key => $value) {
+            if(intval($value['number']) > $egg_list[$value['ch_kind_id']]){
+                $flag = false;
+                break;
+            }
+        }
+
+        if(!$flag){
+            $this->error("兑换失败,数量不够,请检查.");
+        }
+        
+        Db::startTrans();
+        $dec_rs     = true;
+        $dec_log    = true;
+        $add_nest   = true;
+        try {
+            foreach ($config as $key => $value) {       
+                $dec_num = $value['number'];     
+                $wh = [];
+                $wh['user_id'] = $this->auth->id;
+                $wh['kind_id'] = $value['ch_kind_id'];
+                $wh['number']  = ['>=',$dec_num];
+                $dec_rs = Db::name("egg")->where($wh)->setDec('number',$dec_num);
+                if(!$dec_rs){
+                    break;
+                }
+                $before = $egg_list[$value['ch_kind_id']];
+                $dec_log = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['ch_kind_id'],'type'=>3,'number'=>-$dec_num,'before'=>$before,'after'=>($before-$dec_num),'note'=>"兑换红鸡扣减",'createtime'=>time()]);
+            }
+
+            $wh = [];
+            $wh['user_id']        = $this->auth->id;
+            $wh['nest_kind_id']   = 6;
+            $wh['kind_id']        = 6;
+            $wh['status']         = 1;
+            $info = Db::name("egg_hatch")->where($wh)->find();
+            if(empty($info))
+            {
+                unset($wh['status']);
+                $position = Db::name("egg_hatch")->where($wh)->max("position");
+                $data = [];
+                $data['user_id']        = $this->auth->id;
+                $data['nest_kind_id']   = 6;
+                $data['kind_id']        = 6;
+                $data['status']         = 0;
+                $data['hatch_num']      = 1;
+                $data['shape']          = 1;
+                $data['is_reap']        = 0;
+                $data['uptime']         = time();
+                $data['createtime']     = time();
+                $data['position']       = ($position??0)+1;
+                $hatch_rs = Db::name("egg_hatch")->insert($data);   
+                $datas = [];
+                $datas['user_id'] = $this->auth->id;
+                $datas['kind_id'] = 6;            
+                $add_nest = Db::name("egg")->insert($datas);
+            }else{                
+                $data = [];
+                $data['status']     = 0;
+                $data['hatch_num']  = 1;
+                $data['shape']      = 1;
+                $data['is_reap']    = 0;
+                $data['uptime']     = time();
+                $data['createtime'] = time();
+                $wh = [];
+                $wh['id']       = $info['id'];
+                $wh['status']   = 1;
+                $hatch_rs = Db::name("egg_hatch")->where($wh)->update($data);
+            }
+            $k_rs = Db::name('egg_kind')->where("id",6)->setDec('point');
+            if($dec_rs && $dec_log && $hatch_rs && $k_rs && $add_nest){
+                Db::commit();
+            }else{
+                Db::rollback();
+                $this->error('兑换失败!'); 
+            }            
+        } catch (\Exception $e) {
+            Db::rollback();
+            $this->error($e->getMessage());
+        }   
+        $this->success('兑换成功!'); 
+    }
+
+    /**
      * 发放合成奖励
      * @ApiInternal
      */

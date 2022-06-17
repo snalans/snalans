@@ -65,36 +65,8 @@ class EggHatch extends Backend
                 
                 $row->getRelation('user')->visible(['serial_number','username','mobile']);
             }
-            $ext = [];
-            $ext['ext1'] = "";
-            $ext['ext2'] = "";
-            $ext['ext3'] = "";
-            $sql = "SELECT `level`,COUNT(*) as num FROM (SELECT u.`level`,eh.user_id FROM `fa_egg_hatch` `eh` LEFT JOIN `fa_user` `u` ON `u`.`id`=`eh`.`user_id` WHERE `u`.`level` > 0 AND `eh`.`nest_kind_id` = 1 AND `eh`.`status` = 0 GROUP BY `u`.`id`) AS ehu GROUP BY `level`";  
-            $info = Db::query($sql);
-            if(!empty($info)){
-                foreach ($info as $key => $value) {
-                    $ext['ext1'] .= $value['level'].":".$value['num']." ";
-                }
-            }
-            
 
-            $sql = "SELECT `level`,COUNT(*) as num FROM (SELECT u.`level`,eh.user_id FROM `fa_egg_hatch` `eh` LEFT JOIN `fa_user` `u` ON `u`.`id`=`eh`.`user_id` WHERE `u`.`level` > 0 AND `eh`.`nest_kind_id` = 2 AND `eh`.`status` = 0 GROUP BY `u`.`id`) AS ehu GROUP BY `level`";  
-            $info = Db::query($sql);
-            if(!empty($info)){
-                foreach ($info as $key => $value) {
-                    $ext['ext2'] .= $value['level'].":".$value['num']." ";
-                }
-            }
-                  
-            $sql = "SELECT `level`,COUNT(*) as num FROM (SELECT u.`level`,eh.user_id FROM `fa_egg_hatch` `eh` LEFT JOIN `fa_user` `u` ON `u`.`id`=`eh`.`user_id` WHERE `u`.`level` > 0 AND `eh`.`nest_kind_id` = 3 AND `eh`.`status` = 0 GROUP BY `u`.`id`) AS ehu GROUP BY `level`";  
-            $info = Db::query($sql);
-            if(!empty($info)){
-                foreach ($info as $key => $value) {
-                    $ext['ext3'] .= $value['level'].":".$value['num']." ";
-                }
-            }   
-
-            $result = array("total" => $list->total(), "rows" => $list->items(),"extend"=>$ext);
+            $result = array("total" => $list->total(), "rows" => $list->items());
 
             return json($result);
         }

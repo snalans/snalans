@@ -821,32 +821,35 @@ class Egg extends Api
 
     }
     /**
-     * 彩蛋回收
+     * 彩蛋/红蛋回收
      *
      * @ApiMethod (Post)
+     * @ApiParams   (name="kind_id", type="integer", description="蛋类型 5：彩蛋 6：红蛋")
      * @ApiParams   (name="number", type="integer", description="数量")
      * @ApiParams   (name="paypwd", type="string", description="支付密码")
+     * @ApiParams   (name="google_code", type="string", description="谷歌验证码")
      */
-    public function market_sale_colour(){
+    public function market_sale_colour()
+    {
         $user_id  = $this->auth->id;
-        $kind_id  = 5;
-        $number = $this->request->post("number",0);
-        $paypwd         = $this->request->post('paypwd',"");
-        $egg_info = Db::name("egg_kind")
-            ->field('*')
-            ->where('id',$kind_id)
-            ->find();
-
-        $number = $number>0?$number:0;
-
-        if($number==0){
-            $this->error("请输入蛋数量！");
+        $kind_id  = $this->request->post("kind_id",5);
+        $number   = $this->request->post("number",0);
+        $paypwd   = $this->request->post('paypwd',"");
+        $google_code   = $this->request->post('google_code',"");
+        $kind_id    = $kind_id==5?5:6;
+        $number     = $number>0?$number:0;
+        if($number < 0.1){
+            $this->error("兑换蛋数量不能小于0.1");
         }
+        $egg_info = Db::name("egg_kind")->where('id',$kind_id)->find();
 
         $auth = new \app\common\library\Auth();
         if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
             $this->error('支付密码错误');
         }
+
+        $v_user = new \app\api\controller\User;
+        $v_user->validSecret($google_code,$this->auth->id);
 
         if($number>$egg_info['stock']){
             $this->error("库存不足！");
@@ -857,26 +860,9 @@ class Egg extends Api
             'user_id'=>array('eq',$user_id),
             'type'=>array('eq',3)
         );
-        $pay_count = Db::name("egg_charge_code")
-            ->where($pay_where)
-            ->count();
-        if($pay_count==0){
-            $this->error("请往会员中心添加钱包支付方式");
-        }
-
-        //挂单数量
-        $where = array(
-            'buy_user_id'=>array('eq',$user_id),
-            'kind_id'=>array('eq',$kind_id),
-            'status'=>array('in',[0,2,3])
-        );
-
-        $count = Db::name("egg_order")
-            ->field("id,buy_serial_umber,name,price,number,status")
-            ->where($where)
-            ->count();
-        if($count>0){
-            $this->error("只能有一个彩蛋回收订单！");
+        $pay_count = Db::name("egg_charge_code")->where($pay_where)->find();
+        if(empty($pay_count)){
+            $this->error("请往我的、设置、收款管理,添加钱包收款地址");
         }
 
         //判断用户是否有彩蛋
@@ -887,7 +873,7 @@ class Egg extends Api
 
         //蛋数量不够
         if($number>$egg_num){
-            $this->error("您的彩蛋数量不足".$number.'个！');
+            $this->error("您的蛋资产不足".$number.'个！');
         }
 
         $u_where = [];
@@ -910,25 +896,26 @@ class Egg extends Api
                 'id'=>array('eq',$kind_id),
                 'stock'=>array('egt',$number)
             );
-            $res = Db::name("egg_kind")->where($kind_where)->dec('stock',$number)->update();
-
-
+            $res = Db::name("egg_kind")->where($kind_where)->setDec('stock',$number);
+            $reward_price = Db::name("egg_eliminate_rewards")->where("kind_id",$kind_id)->value("number");
             //生成彩蛋回收订单
-            $order_data = array();
-            $order_data['order_sn'] = date("Ymdhis", time()).mt_rand(1000,9999);
-            $order_sn = $order_data['order_sn'];
-            $order_data['sell_user_id'] = $user_id;
+            $order_data = [];
+            $order_data['order_sn']          = date("Ymdhis", time()).mt_rand(1000,9999);
+            $order_sn                        = $order_data['order_sn'];
+            $order_data['sell_user_id']      = $user_id;
             $order_data['sell_serial_umber'] = $user_info['serial_number'];
-            $order_data['sell_mobile'] = $user_info['mobile'];
-            $order_data['name'] = $egg_info['name'];
-            $order_data['kind_id'] = $kind_id;
-            $order_data['price'] = $egg_info['price'];
-            $order_data['number'] = $number;
-            $order_data['rate'] = 0;
-            $order_data['amount'] = $egg_info['price'] * $number;
-            $order_data['status'] = 0;
-            $order_data['createtime'] = time();
-
+            $order_data['sell_mobile']       = $user_info['mobile'];
+            $order_data['name']              = $egg_info['name'];
+            $order_data['kind_id']           = $kind_id;
+            $order_data['price']             = $egg_info['price']+$reward_price;
+            $order_data['number']            = $number;
+            $order_data['rate']              = 0;
+            $order_data['rate']              = 0;
+            $order_data['attestation_type']     = $pay_count['type'];
+            $order_data['attestation_account']  = $pay_count['account'];
+            $order_data['amount']               = $order_data['price'] * $number;
+            $order_data['status']               = 0;
+            $order_data['createtime']           = time();
             $re = Db::name("egg_order")->insert($order_data);
 
             //扣除蛋
@@ -937,23 +924,22 @@ class Egg extends Api
                 'kind_id'=>array('eq',$kind_id),
                 'number'=>array('egt',$number)
             );
-            $add_rs = Db::name("egg")->where($egg_where)->dec('number',$number)->update();
+            $add_rs = Db::name("egg")->where($egg_where)->setDec('number',$number);
 
             //蛋日志
             $log_add = \app\admin\model\egg\Log::saveLog($user_id,$kind_id,1,$order_sn,'-'.$number,$egg_num,($egg_num-$number),"出售");
 
             if ($re == false || $res == false || $add_rs==false || $log_add==false ) {
                 DB::rollback();
-                $this->error("彩蛋回收失败");
+                $this->error("回收失败!");
             } else {
                 DB::commit();
             }
-        }//end try
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
-            $this->error("彩蛋回收失败");
+            $this->error("回收失败");
         }
-        $this->success("彩蛋回收成功，请耐心等待打款");
+        $this->success("回收成功，请耐心等待打款");
     }
 
     /**

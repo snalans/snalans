@@ -30,8 +30,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'id', title: __('Id'), operate: false},
                         {field: 'sell_mobile', title: __('Sell_mobile'), operate: 'LIKE'},
                         {field: 'order_sn', title: __('Order_sn'), operate: 'LIKE'},
-                        {field: 'attestation.name', title: __('Real_name'), operate: false},
-                        {field: 'attestation_type', title: __('Attestation_type'), formatter: Table.api.formatter.status, searchList: {1: '支付宝', 2: '微信',3: '钱包',4: '银行卡'}},
+                        {field: 'attestation_type', title: __('Attestation_type'), formatter: Table.api.formatter.normal, searchList: {0:'-',1: '支付宝', 2: '微信',3: '钱包',4: '银行卡'}},
                         {field: 'attestation_account', title: __('Attestation_account'), operate: false},
                         {field: 'attestation_image', title: __('Attestation_image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'buy_mobile', title: __('Buy_mobile'), operate: 'LIKE'},
@@ -56,7 +55,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'operate', title: __('Operate'), table: table,buttons: [
                             {name: 'pay', text: '去支付', title: '上传支付凭证', icon: 'fa fa-star', classname: 'btn btn-xs btn-success btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.pay_url
                                 ,visible:function(row){
-                                    if(row.status == 0 && row.kind_id==5){ 
+                                    if(row.status == 0 &&( row.kind_id==5 || row.kind_id==6)){ 
                                         return true; 
                                     }
                                 },

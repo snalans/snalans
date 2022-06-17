@@ -30,7 +30,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'id', title: __('Id'), operate:false},
                         {field: 'user_id', title: __('User_id')},
                         {field: 'user.mobile', title: __('User.mobile'), operate: 'LIKE'},
-                        {field: 'nest_kind_id', title: __('Eggnestkind.name'), formatter: Table.api.formatter.normal, searchList: {1: '白窝', 2: '铜窝', 3: '银窝', 4: '金窝'}},
+                        {field: 'nest_kind_id', title: __('Eggnestkind.name'), formatter: Table.api.formatter.normal, searchList: {1: '白窝', 2: '铜窝', 3: '银窝', 4: '金窝', 6: '红窝'}},
                         {field: 'hatch_num', title: __('Hatch_num'), operate:false},
                         {field: 'shape', title: __('Shape'), operate:false, formatter: Table.api.formatter.normal, searchList: {0: '蛋', 1: '鸡', 2: '鸡', 5: '无'}},
                         {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {0: '孵化中', 1: '空闲'}},
@@ -71,13 +71,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 $(".btn-editone").data("area",["400px","550px"]);
             })
 
-            table.on('load-success.bs.table', function (e, data) {
-                //这里我们手动设置底部的值
-                $("#ext1").text(data.extend.ext1);
-                $("#ext2").text(data.extend.ext2);
-                $("#ext3").text(data.extend.ext3);
-
-            });
             // 为表格绑定事件
             Table.api.bindevent(table);
         },

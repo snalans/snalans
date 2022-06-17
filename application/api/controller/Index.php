@@ -18,7 +18,7 @@ class Index extends Api
 
     /**
      * 加载初始化
-     * @ApiReturnParams   (name="egg_info", type="string", description="蛋的信息 name:蛋名称 image：蛋图片 egg_image:窝里蛋 ch_image:小鸡图片 bg_image:背景图片 stock:库存数量")
+     * @ApiReturnParams   (name="egg_info", type="string", description="蛋的信息 name:蛋名称 image：蛋图片 egg_image:窝里蛋 ch_image:小鸡图片 bg_image:背景图片 stock:库存数量 per_reward:回购占比 price:回收价格 point:红鸡（可兑换数量）re_number:消除奖励")
      * @ApiReturnParams   (name="share_image", type="int", description="分享背景图")
      * @ApiReturnParams   (name="invite_url", type="int", description="邀请地址")
      * @ApiReturnParams   (name="is_open", type="int", description="是否开启APP 1=开启 0=关闭")
@@ -35,7 +35,13 @@ class Index extends Api
     public function init()
     {
         $data = [];
-        $data['egg_info']       = Db::name("egg_kind")->cache(true,300)->field("id,name,image,egg_image,ch_image,bg_image,stock")->order("id","asc")->select();
+        $list = Db::name("egg_kind")->cache(true,300)->field("id,name,image,egg_image,ch_image,bg_image,stock,per_reward,price,point")->order("id","asc")->select();
+        foreach ($list as $key => $value) {
+            if(in_array($value['id'],[5,6])){
+                $list[$key]['re_number'] = Db::name("egg_eliminate_rewards")->where("kind_id",$value['id'])->value("number");
+            }
+        }
+        $data['egg_info']       = $list;
         $data['share_image']    = Db::name("egg_news")->cache(true,300)->where("news_type_id",4)->value("image");
         $data['invite_url']     = Config::get("site.invite_url")??"http://h5.aneggloop.co";
         $data['is_open']        = Config::get("site.is_open")??1;
