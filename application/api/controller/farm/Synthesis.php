@@ -194,10 +194,7 @@ class Synthesis extends Api
                 $data['is_close']   = 0;
                 $data['uptime']     = time();
                 $data['createtime'] = time();
-                $wh = [];
-                $wh['id']       = $info['id'];
-                $wh['status']   = 1;
-                $hatch_rs = Db::name("egg_hatch")->where($wh)->update($data);
+                $hatch_rs = Db::name("egg_hatch")->where("id",$info['id'])->update($data);
             }
             $k_rs = Db::name('egg_kind')->where("id",6)->setDec('point');
             if($dec_rs && $dec_log && $hatch_rs && $k_rs && $add_nest){
