@@ -100,10 +100,14 @@ class Synthesis extends Api
      * 兑换红鸡
      *
      * @ApiMethod (POST)
+     * @ApiParams   (name="paypwd", type="string", description="支付密码")
+     * @ApiParams   (name="google_code", type="string", description="谷歌验证码")
      * 
      */
     public function exChicken()
     {        
+        $paypwd           = $this->request->post('paypwd',"");
+        $google_code      = $this->request->post('google_code');
         if($this->auth->status != 'normal' || $this->auth->is_attestation != 1){
             $this->error("账号无效或者未认证");
         }
@@ -111,6 +115,14 @@ class Synthesis extends Api
         if($k_info['point'] <= 0){
             $this->error("可兑换库查不够.");
         }
+        
+        $auth = new \app\common\library\Auth();
+        if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
+            $this->error('支付密码错误');
+        }   
+
+        $v_user = new \app\api\controller\User;
+        $v_user->validSecret($google_code,$this->auth->id);
 
         $wh = [];
         $wh['user_id']        = $this->auth->id;

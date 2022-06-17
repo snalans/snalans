@@ -931,15 +931,15 @@ class Egg extends Api
 
             if ($re == false || $res == false || $add_rs==false || $log_add==false ) {
                 DB::rollback();
-                $this->error("回收失败!");
+                $this->error("兑换失败!");
             } else {
                 DB::commit();
             }
         } catch (\Exception $e) {
             DB::rollback();
-            $this->error("回收失败");
+            $this->error("兑换失败");
         }
-        $this->success("回收成功，请耐心等待打款");
+        $this->success("兑换成功，请耐心等待打款");
     }
 
     /**
