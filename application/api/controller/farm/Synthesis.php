@@ -166,6 +166,10 @@ class Synthesis extends Api
             $info = Db::name("egg_hatch")->where($wh)->find();
             if(empty($info))
             {
+                $wh = [];
+                $wh['user_id']        = $this->auth->id;
+                $wh['nest_kind_id']   = 6;
+                $wh['kind_id']        = 6;
                 $position = Db::name("egg_hatch")->where($wh)->max("position");
                 $data = [];
                 $data['user_id']        = $this->auth->id;
