@@ -111,6 +111,17 @@ class Synthesis extends Api
         if($k_info['point'] <= 0){
             $this->error("可兑换库查不够.");
         }
+
+        $wh = [];
+        $wh['user_id']        = $this->auth->id;
+        $wh['nest_kind_id']   = 6;
+        $wh['kind_id']        = 6;
+        $wh['is_close']       = 1;
+        $nest_num = Db::name("egg_hatch")->where($wh)->count();
+        if($nest_num > 2){
+            $this->error("兑换已达上限");
+        }
+
         $config = Db::name("egg_synthesis_config")->where("kind_id",6)->select();     
         $egg_list = Db::name("egg")
                     ->where("user_id",$this->auth->id)
@@ -151,7 +162,7 @@ class Synthesis extends Api
             $wh['user_id']        = $this->auth->id;
             $wh['nest_kind_id']   = 6;
             $wh['kind_id']        = 6;
-            $wh['status']         = 1;
+            $wh['is_close']       = 1;
             $info = Db::name("egg_hatch")->where($wh)->find();
             if(empty($info))
             {
@@ -165,6 +176,7 @@ class Synthesis extends Api
                 $data['hatch_num']      = 1;
                 $data['shape']          = 1;
                 $data['is_reap']        = 0;
+                $data['is_close']       = 0;
                 $data['uptime']         = time();
                 $data['createtime']     = time();
                 $data['position']       = ($position??0)+1;
@@ -179,6 +191,7 @@ class Synthesis extends Api
                 $data['hatch_num']  = 1;
                 $data['shape']      = 1;
                 $data['is_reap']    = 0;
+                $data['is_close']   = 0;
                 $data['uptime']     = time();
                 $data['createtime'] = time();
                 $wh = [];
