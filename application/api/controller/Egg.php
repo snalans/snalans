@@ -946,7 +946,7 @@ class Egg extends Api
             DB::rollback();
             $this->error("兑换失败");
         }
-        $this->success("等待审核，审核时间为12小时在此期间如有错误请及时联系客服");
+        $this->success("兑换成功，等待审核，审核时间为12小时在此期间如有疑问或地址错误请及时联系客服");
     }
 
     /**

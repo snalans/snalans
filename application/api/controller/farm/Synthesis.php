@@ -148,7 +148,7 @@ class Synthesis extends Api
         }
 
         if(!$flag){
-            $this->error("兑换失败,数量不够,请检查.");
+            $this->error("兑换失败，数量不足");
         }
         
         Db::startTrans();
