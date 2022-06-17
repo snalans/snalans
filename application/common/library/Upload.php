@@ -316,7 +316,7 @@ class Upload
      * @return \app\common\model\attachment|\think\Model
      * @throws UploadException
      */
-    public function upload($savekey = null)
+    public function upload($savekey = null,$flag=true)
     {
         if (empty($this->file)) {
             throw new UploadException(__('No file upload or server upload limit exceeded'));
@@ -330,8 +330,10 @@ class Upload
         $savekey = $savekey ? $savekey : $this->getSavekey();
         $savekey = '/' . ltrim($savekey, '/');
         $uploadDir = substr($savekey, 0, strripos($savekey, '/') + 1);
+        if(!$flag){
+            $uploadDir = '/uploads/admin/';
+        }
         $fileName = substr($savekey, strripos($savekey, '/') + 1);
-
         $destDir = ROOT_PATH . 'public' . str_replace('/', DS, $uploadDir);
 
         $sha1 = $this->file->hash();
@@ -353,7 +355,7 @@ class Upload
             $file->setSaveName($fileName)->setUploadInfo($info);
         } else {
             $config = Config::get('upload');
-            if(isset($config['BucketId']) && !empty($config['BucketId']))
+            if(isset($config['BucketId']) && !empty($config['BucketId']) && $flag)
             {
                 $this->getBackblazeb2();
                 $client = new Client($config['accountId'],$config['applicationKey']);           

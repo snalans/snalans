@@ -105,7 +105,7 @@ class Ajax extends Backend
             $file = $this->request->file('file');
             try {
                 $upload = new Upload($file);
-                $attachment = $upload->upload();
+                $attachment = $upload->upload("",false);
             } catch (UploadException $e) {
                 $this->error($e->getMessage());
             }
