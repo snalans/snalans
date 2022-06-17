@@ -115,7 +115,7 @@ class Synthesis extends Api
         if($k_info['point'] <= 0){
             $this->error("可兑换库查不够.");
         }
-        
+
         $auth = new \app\common\library\Auth();
         if ($this->auth->paypwd != $auth->getEncryptPassword($paypwd, $this->auth->salt)) {
             $this->error('支付密码错误');
@@ -217,7 +217,6 @@ class Synthesis extends Api
             }
             $up = [];
             $up['point'] = $k_info['point']-1;
-            $up['stock'] = $k_info['stock']+1;
             $k_rs = Db::name('egg_kind')->where("id",6)->update($up);
             if($dec_rs && $dec_log && $hatch_rs && $k_rs && $add_nest){
                 Db::commit();
