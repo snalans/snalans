@@ -116,7 +116,6 @@ class Synthesis extends Api
         $wh['user_id']        = $this->auth->id;
         $wh['nest_kind_id']   = 6;
         $wh['kind_id']        = 6;
-        $wh['is_close']       = 1;
         $nest_num = Db::name("egg_hatch")->where($wh)->count();
         if($nest_num > 2){
             $this->error("兑换已达上限");
