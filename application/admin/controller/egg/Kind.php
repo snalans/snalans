@@ -63,7 +63,7 @@ class Kind extends Backend
                 }
                 Db::startTrans();
                 try {
-                    if($ids==6 && $row['stock']!=$params['stock']){
+                    if($ids==6 && $row['stock']==$params['stock']){
                         $params['stock'] = $row['stock']+$params['point']-$row['point'];
                     }   
                     //是否采用模型验证
