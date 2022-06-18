@@ -189,7 +189,7 @@ class Synthesis extends Api
                 $data['kind_id']        = 6;
                 $data['status']         = 0;
                 $data['hatch_num']      = 1;
-                $data['shape']          = 1;
+                $data['shape']          = 0;
                 $data['is_reap']        = 0;
                 $data['is_close']       = 0;
                 $data['uptime']         = time();
@@ -208,7 +208,7 @@ class Synthesis extends Api
                 $data = [];
                 $data['status']     = 0;
                 $data['hatch_num']  = 1;
-                $data['shape']      = 1;
+                $data['shape']      = 0;
                 $data['is_reap']    = 0;
                 $data['is_close']   = 0;
                 $data['uptime']     = time();
