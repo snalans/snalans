@@ -154,6 +154,7 @@ class Synthesis extends Api
         Db::startTrans();
         $dec_rs     = true;
         $dec_log    = true;
+        $dec_logs   = true;
         $add_nest   = true;
         try {
             foreach ($config as $key => $value) {       
@@ -167,7 +168,8 @@ class Synthesis extends Api
                     break;
                 }
                 $before = $egg_list[$value['ch_kind_id']];
-                $dec_log = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['ch_kind_id'],'type'=>3,'number'=>-$dec_num,'before'=>$before,'after'=>($before-$dec_num),'note'=>"兑换红鸡扣减",'createtime'=>time()]);
+                $dec_log = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['ch_kind_id'],'type'=>3,'number'=>-$dec_num,'before'=>$before,'after'=>($before-$dec_num),'note'=>"兑换红蛋扣减",'createtime'=>time()]);
+                $dec_logs = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['kind_id'],'type'=>3,'number'=>1,'before'=>0,'after'=>,'note'=>"兑换获得红蛋",'createtime'=>time()]);
             }
 
             $wh = [];
@@ -218,7 +220,7 @@ class Synthesis extends Api
             $up = [];
             $up['point'] = $k_info['point']-1;
             $k_rs = Db::name('egg_kind')->where("id",6)->update($up);
-            if($dec_rs && $dec_log && $hatch_rs && $k_rs && $add_nest){
+            if($dec_rs && $dec_log && $dec_logs && $hatch_rs && $k_rs && $add_nest){
                 Db::commit();
             }else{
                 Db::rollback();
