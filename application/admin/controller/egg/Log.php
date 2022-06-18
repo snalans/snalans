@@ -61,35 +61,31 @@ class Log extends Backend
                     ->where($where)    
                     ->order($sort, $order)
                     ->paginate($limit);
-                    
-            $filter = json_decode($this->request->get('filter'),true);
-            $op = json_decode($this->request->get('op'),true);
-            if(isset($filter['type'])){
-                unset($filter['type']);
-                unset($op['type']);
-            }
-            $this->request->get(['filter'=>json_encode($filter)]);
-            $this->request->get(['filter'=>json_encode($op)]);
-            $info = $this->model
-                    ->with(['user'])
-                    ->where($where)  
-                    ->where("type",9)
-                    ->group("kind_id")
-                    ->column("kind_id,sum(number) as rate");
-            $info = collection($info)->toArray();
+               
 
-            $rate = [];
-            $rate['egg1'] = isset($info[1])?abs($info[1]):0;
-            $rate['egg2'] = isset($info[2])?abs($info[2]):0;
-            $rate['egg3'] = isset($info[3])?abs($info[3]):0;            
-
-            $result = array("total" => $list->total(), "rows" => $list->items(),"extend"=>$rate);
+            $result = array("total" => $list->total(), "rows" => $list->items());
             
             return json($result); 
         }
         return $this->view->fetch();
     }
 
+    /**
+     * 蛋手续费数据
+     */
+    public function get_rate()
+    {
+        $info = $this->model
+                ->where("type",9)
+                ->group("kind_id")
+                ->column("kind_id,sum(number) as rate");
+        // $info = collection($info)->toArray();
+        $rate = [];
+        $rate['egg1'] = isset($info[1])?abs($info[1]):0;
+        $rate['egg2'] = isset($info[2])?abs($info[2]):0;
+        $rate['egg3'] = isset($info[3])?abs($info[3]):0;       
+        $this->success("success","",$rate);
+    }
 
     /**
      * 查看

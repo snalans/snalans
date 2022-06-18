@@ -78,13 +78,22 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 ]
             });
 
-            table.on('load-success.bs.table', function (e, data) {
-                //这里我们手动设置底部的值
-                $("#egg1").text(data.extend.egg1);
-                $("#egg2").text(data.extend.egg2);
-                $("#egg3").text(data.extend.egg3);
+            $(".btn-rate").on("click",function () {
+                Fast.api.ajax({
+                   url:'egg/log/get_rate',
+                }, function(data, ret){
+                    //成功的回调
+                    $("#egg1").text(data.egg1);
+                    $("#egg2").text(data.egg2);
+                    $("#egg3").text(data.egg3);
+                    return false;
+                }, function(data, ret){
+                    //失败的回调
+                    layer.msg(ret.msg);
+                    return false;
+                });
 
-            });
+            })
 
             // 为表格绑定事件
             Table.api.bindevent(table);
