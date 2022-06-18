@@ -63,9 +63,65 @@ class Kind extends Backend
                 }
                 Db::startTrans();
                 try {
-                    if($ids==6 && $row['stock']==$params['stock']){
-                        $params['stock'] = $row['stock']+$params['point']-$row['point'];
-                    }   
+                    //是否采用模型验证
+                    if ($this->modelValidate) {
+                        $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
+                        $row->validateFailException(true)->validate($validate);
+                    }
+                    $result = $row->allowField(true)->save($params);
+                    Db::commit();
+                } catch (ValidateException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (PDOException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (Exception $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                }
+                if ($result !== false) {
+                    $this->success();
+                } else {
+                    $this->error(__('No rows were updated'));
+                }
+            }
+            $this->error(__('Parameter %s can not be empty', ''));
+        }
+        $this->view->assign("row", $row);
+        return $this->view->fetch();
+    }
+
+
+    /**
+     * 编辑库存
+     */
+    public function change($ids = null)
+    {
+        $row = $this->model->get($ids);
+        if (!$row) {
+            $this->error(__('No Results were found'));
+        }
+        $adminIds = $this->getDataLimitAdminIds();
+        if (is_array($adminIds)) {
+            if (!in_array($row[$this->dataLimitField], $adminIds)) {
+                $this->error(__('You have no permission'));
+            }
+        }
+        if ($this->request->isPost()) {
+            $params = $this->request->post("row/a");
+            if ($params) {
+                $params = $this->preExcludeFields($params);
+                $point = $row['point']+$params['change_number'];
+                if($point < 0){
+                    $this->error("红鸡数量不能为负数");
+                }
+                $result = false;
+                Db::startTrans();
+                try {
+                    $params['point'] = $point;
+                    $params['stock'] = $row['stock']+$params['change_number'];
                     //是否采用模型验证
                     if ($this->modelValidate) {
                         $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));

@@ -8,6 +8,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     index_url: 'egg/kind/index' + location.search,
                     add_url: 'egg/kind/add',
                     edit_url: 'egg/kind/edit',
+                    change_url: 'egg/kind/change',
                     del_url: 'egg/kind/del',
                     multi_url: 'egg/kind/multi',
                     import_url: 'egg/kind/import',
@@ -41,7 +42,16 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'per_reward', title: __('Per_reward'), operate:false},
                         {field: 'weigh', title: __('Weigh'), operate: false},
                         {field: 'status', title: "APP首页是否显示", formatter:Table.api.formatter.toggle, searchList: {1: '显示', 0: '不显示'}},
-                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                        {field: 'operate', title: __('Operate'), table: table,buttons: [
+                            {name: 'change', text: '更新库存', title: '红鸡库存', icon: 'fa fa-pencil', classname: 'btn btn-xs btn-success btn-dialog' ,url:$.fn.bootstrapTable.defaults.extend.change_url,
+                                visible:function(row){
+                                    if(row.id == 6){
+                                        return true; 
+                                    }
+                                },
+                                extend: 'data-area=\'["800px", "400px"]\''
+                            },                            
+                        ], events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
             });
@@ -53,6 +63,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Controller.api.bindevent();
         },
         edit: function () {
+            Controller.api.bindevent();
+        },
+        change: function () {
             Controller.api.bindevent();
         },
         api: {
