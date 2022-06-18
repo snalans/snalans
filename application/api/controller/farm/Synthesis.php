@@ -169,7 +169,7 @@ class Synthesis extends Api
                 }
                 $before = $egg_list[$value['ch_kind_id']];
                 $dec_log = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['ch_kind_id'],'type'=>3,'number'=>-$dec_num,'before'=>$before,'after'=>($before-$dec_num),'note'=>"兑换红蛋扣减",'createtime'=>time()]);
-                $dec_logs = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['kind_id'],'type'=>3,'number'=>1,'before'=>0,'after'=>,'note'=>"兑换获得红蛋",'createtime'=>time()]);
+                $dec_logs = Db::name("egg_log")->insert(['user_id'=>$this->auth->id,'kind_id'=>$value['kind_id'],'type'=>3,'number'=>1,'before'=>0,'after'=>1,'note'=>"兑换获得红蛋",'createtime'=>time()]);
             }
 
             $wh = [];
