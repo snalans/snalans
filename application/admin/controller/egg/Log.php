@@ -18,6 +18,8 @@ class Log extends Backend
      * @var \app\admin\model\egg\Log
      */
     protected $model = null;
+    // 无需鉴权的接口,*表示全部
+    protected $noNeedRight = ['get_rate'];
 
     public function _initialize()
     {
