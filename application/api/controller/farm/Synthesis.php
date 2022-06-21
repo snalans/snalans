@@ -113,7 +113,7 @@ class Synthesis extends Api
         }
         $k_info = Db::name('egg_kind')->where("id",6)->find();
         if($k_info['point'] <= 0){
-            $this->error("可兑换库查不够.");
+            $this->error("可兑换库存不够.");
         }
 
         $auth = new \app\common\library\Auth();

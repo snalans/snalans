@@ -811,7 +811,7 @@ class User extends Api
                 $data['name']      = $name;
                 $data['account']   = $account;
                 $rs = Db::name("egg_charge_code")->where($wh)->update($data);
-                if($rs){
+                if($rs != false){
                     $this->success("更新成功");
                 }else{
                     $this->error("更新失败,请重试");
