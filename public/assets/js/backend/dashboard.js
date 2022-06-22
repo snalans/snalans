@@ -73,25 +73,6 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'table', 'echarts', 'echart
                 }, 0);
             });
 
-
-            $(".btn-rate").on("click",function () {
-                Fast.api.ajax({
-                   url:'dashboard/get_rate',
-                }, function(data, ret){
-                    //成功的回调
-                    $("#egg1").text(data.egg1);
-                    $("#egg2").text(data.egg2);
-                    $("#egg3").text(data.egg3);
-                    $("#egg4").text(data.egg4);
-                    return false;
-                }, function(data, ret){
-                    //失败的回调
-                    layer.msg(ret.msg);
-                    return false;
-                });
-
-            })
-
         }
     };
 
