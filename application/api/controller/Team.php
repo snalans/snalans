@@ -58,6 +58,17 @@ class Team extends Api
                 {
                     if($value['level'] == $v['level'])
                     {
+                        $lwh = [];
+                        $lwh['type']        = 1;
+                        $lwh['user_id']     = $v['id'];
+                        $lwh['kind_id']     = $value['kind_id'];
+                        $lwh['createtime']  = ['>',strtotime(date("Y-m-d"))];
+                        $linfo = Db::name("egg_score_log")->where($lwh)->find();
+                        if(!empty($linfo)){
+                            $msg .= $v['id']." >> ".$egg_name[$value['kind_id']]." 已经发放\n";
+                            continue;
+                        }
+
                         $is_give = true;
                         $wh = [];
                         $wh['user_id']  = $v['id'];
@@ -71,7 +82,7 @@ class Team extends Api
                             $wh['type']    = ['in',[10,11]];
                             $log_type = Db::name("egg_log")->where($wh)->order("createtime desc")->value("type");
                             if($log_type == 11){
-                                $flag = false;
+                                $is_give = false;
                             }
                         }
                         if($info && $is_give){
