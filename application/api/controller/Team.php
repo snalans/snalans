@@ -45,7 +45,7 @@ class Team extends Api
         $wh['status']            = 'normal';
         $wh['is_attestation']    = 1;
         $wh['level']             = ['>',0];
-        $list = Db::name("user")->where($wh)->order("id","asc")->limit(50)->select();
+        $list = Db::name("user")->where($wh)->order("id","asc")->limit(10)->select();
 
         if(!empty($list)){            
             $config_list = Db::name("bonus_config")->select();
@@ -58,12 +58,23 @@ class Team extends Api
                 {
                     if($value['level'] == $v['level'])
                     {
+                        $is_give = true;
                         $wh = [];
-                        $wh['user_id'] = $v['id'];
-                        $wh['kind_id'] = $value['kind_id'];
-                        $wh['status']  = 0;
-                        $info = Db::name("egg_hatch")->where($wh)->find();
-                        if($info){
+                        $wh['user_id']  = $v['id'];
+                        $wh['kind_id']  = $value['kind_id'];
+                        $wh['is_close'] = 0;
+                        $wh['status']   = 0;
+                        $info = Db::name("egg_hatch")->where($wh)->order("is_give","asc")->find();
+                        if($info['is_give'] == 1){
+                            $wh = [];
+                            $wh['user_id'] = $v['id'];
+                            $wh['type']    = ['in',[10,11]];
+                            $log_type = Db::name("egg_log")->where($wh)->order("createtime desc")->value("type");
+                            if($log_type == 11){
+                                $flag = false;
+                            }
+                        }
+                        if($info && $is_give){
                             //添加积分发放日志
                             DB::startTrans();
                             $log = [];
@@ -96,7 +107,6 @@ class Team extends Api
             }/*---foreach---*/
             echo $msg;
         }
-
         $this->success("分红成功");
     }
 
