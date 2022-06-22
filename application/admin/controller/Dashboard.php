@@ -46,10 +46,10 @@ class Dashboard extends Backend
 
         $dbTableList = Db::query("SHOW TABLE STATUS");
 
-        $degg = Db::name("egg_log")
-                    ->whereTime('createtime', 'd')
-                    ->group("kind_id")
-                    ->column("kind_id,sum(number)");
+        // $degg = Db::name("egg_log")
+        //             ->whereTime('createtime', 'd')
+        //             ->group("kind_id")
+        //             ->column("kind_id,sum(number)");
 
         // $minfo = Db::name("egg_log_all")->where("createtime",date("Y-m",strtotime("-1 month")))->select();
         // if(empty($minfo)){
@@ -76,10 +76,6 @@ class Dashboard extends Backend
             'egg2'            => isset($megg['2'])?$megg['2']:0,
             'egg3'            => isset($megg['3'])?$megg['3']:0,
             'egg4'            => isset($megg['4'])?$megg['4']:0,
-            'degg1'           => isset($degg['1'])?$degg['1']:0,
-            'degg2'           => isset($degg['2'])?$degg['2']:0,
-            'degg3'           => isset($degg['3'])?$degg['3']:0,
-            'degg4'           => isset($degg['4'])?$degg['4']:0,
             'totaluser'       => User::count(),
             'totaladdon'      => count(get_addon_list()),
             'totaladmin'      => Admin::count(),
@@ -142,4 +138,20 @@ class Dashboard extends Backend
         return $this->view->fetch();
     }
 
+    /**
+     * 蛋增加数量
+     */
+    public function get_rate()
+    {
+        $degg = Db::name("egg_log")
+                    ->whereTime('createtime', 'd')
+                    ->group("kind_id")
+                    ->column("kind_id,sum(number)");
+        $rate = [];
+        $rate['egg1'] = isset($degg[1])?$degg[1]:0;
+        $rate['egg2'] = isset($degg[2])?$degg[2]:0;
+        $rate['egg3'] = isset($degg[3])?$degg[3]:0;       
+        $rate['egg4'] = isset($degg[4])?$degg[4]:0;       
+        $this->success("success","",$rate);
+    }
 }
