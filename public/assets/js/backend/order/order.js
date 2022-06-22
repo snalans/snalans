@@ -36,11 +36,11 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'buy_mobile', title: __('Buy_mobile'), operate: 'LIKE'},
                         {field: 'pay_img', title: __('Pay_img'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'name', title: __('Name'), operate: 'LIKE'},
-                        {field: 'price', title: __('Price'), operate: false},
-                        {field: 'number', title: __('Number'), operate: false},
+                        {field: 'price', title: __('Price'), operate: false, sortable:true},
+                        {field: 'number', title: __('Number'), operate: false, sortable:true},
                         {field: 'rate', title: __('Rate'), operate: false},
-                        {field: 'amount', title: __('Amount'), operate: false},
-                        {field: 'status', title: __('Status'), formatter: Table.api.formatter.normal, searchList: {0: '待付款', 1: '完成', 2: '待确认', 3: '申诉', 4: '撤单', 5: '挂单',6:'退款'}},
+                        {field: 'amount', title: __('Amount'), operate: false, sortable:true},
+                        {field: 'status', title: __('Status'), operate: false, formatter: Table.api.formatter.normal, searchList: {0: '待付款', 1: '完成', 2: '待确认', 3: '申诉', 4: '撤单', 5: '挂单',6:'退款'}},
                         {field: 'refund_status', title:'退款类型',formatter:function(value,row,index){
                             if(row.status == 6){
                                 return row.refund_status==1?'超时未付款取消':'申诉退款';
